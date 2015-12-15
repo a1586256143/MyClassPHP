@@ -1,0 +1,32 @@
+<?php
+	/*
+		Author : Colin,
+		Creation time : 2015-8-1
+		FileType : 配置文件
+		FileName : config.php
+	*/
+	return array(
+		//数据库配置信息
+		'DB_TYPE'=>'mysqli',					     //数据库类型(mysql,mysqli,pdo)
+		'DB_HOST'=>'localhost',				      //主机地址
+		'DB_USER'=>'',						          //用户名
+		'DB_PASS'=>'',						//密码
+		'DB_TABS'=>'',						//数据库名称
+		'DB_PREFIX'=>'',					//数据表前缀
+		'DB_CODE'=>'UTF8',						//数据库编码
+		
+        //默认参数设置
+		'TPL_MODEL'=>'tpl',					//模板引擎
+		'TPL_TYPE'=>'.html',				//模板类型
+		'URL_MODEL'=>2,						//地址模式
+		'PUBLIC_DIR'=>'/Public',		//公共文件地址
+		'LAYOUT_DIR'=>'/View/Layout',		//视图公共模块
+	    'SESSION_OPEN'=>1,            //开启session
+	    'DEFAULT_CONTROLLER'=>'Index', //默认控制器
+	    'DEFAULT_ACTION'=>'index', //默认方法
+	    
+	    //模板引擎设置
+        'TPL_C_DIR'=>'/RunTime/Template_c/',//编译文件存放目录
+        'CACHE'=>'/RunTime/Cache/',         //缓存文件存放目录
+	);
+?>

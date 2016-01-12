@@ -5,4 +5,3 @@ class IndexController extends \MyClass\libs\Controller{
 		echo "Welcome Select MyclassPHP";
 	}
 }
-?>

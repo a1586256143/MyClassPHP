@@ -8,8 +8,7 @@
 	
 	define('MyClass',dirname(__FILE__));
 	
-	if(defined(APP_PATH))
-	{
+	if(defined(APP_PATH)){
 		defined('APP_PATH','./Application');
 	}
 	
@@ -24,12 +23,6 @@
 	
 	//配置文件目录
 	define('ConfDIR',APP_PATH.'/Conf');
-	
-	//模板文件存放目录
-	define('TPL_DIR','/View/');
-
-	//是否开启缓存
-	define('IS_CACHE',false);
 	
 	//引入MyClass核心文件
 	require_once './MyClass/libs/MyClass.php';

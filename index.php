@@ -13,6 +13,4 @@
 	
 	//引入核心文件
 	require_once './MyClass/MyClass.php';
-
-	
 ?>

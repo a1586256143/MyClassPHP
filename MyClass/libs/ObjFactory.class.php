@@ -1,82 +1,101 @@
 <?php
-    /*
-        Author : Colin,
-        Creation time : 2015/8/7 19:50
-        FileType : 工厂类  new对象
-        FileName : ObjFactory.class.php
-    */
-    namespace MyClass\libs;
+/*
+    Author : Colin,
+    Creation time : 2015/8/7 19:50
+    FileType : 工厂类  new对象
+    FileName : ObjFactory.class.php
+*/
+namespace MyClass\libs;
 
-    class ObjFactory
-    {
-        //创建数据库对象
-        static function CreateDateBase()
-        {
-            return new Db();
-        }
-
-        //创建模板类对象
-        static function CreateTemplates()
-        {
-            return new Templates();
-        }
-
-        //创建模板解析类对象
-        static function CreateTemplatesParse($_tplFile)
-        {
-            return new Parser($_tplFile);
-        }
-
-        //创建控制器类
-        //@_name为控制器名
-        static function CreateController($_name)
-        {
-            $_obj = $_name.'Controller';
-            return new $_obj();
-        }
-
-        //创建模型类
-        //@_name为模型名
-        static function CreateModel($_name)
-        {
-            $_obj = $_name.'Model';
-            return new $_obj($_name);
-        }
-
-        //创建模型类
-        //@_tables 为数据表名称
-        static function CreateSystemModel($_tables)
-        {
-            return new Model($_tables);
-        }
-
-        //创建视图类
-        //@_name为视图文件名称
-        static function CreateView($_name)
-        {
-            $_obj = $_name.'View';
-            return new $_obj();
-        }
-
-        //创建分页类
-        //@_total 总数
-        //@_pagesize 分页数
-        static function CreatePage($_total,$_pagesize)
-        {
-            return new Page($_total,$_pagesize);
-        }
-
-        //创建时间类
-        static function CreateDate()
-        {
-            return new Date();
-        }
-
-        //验证码类
-        static function CreateCode()
-        {
-            return new Code();
-        }
+class ObjFactory{
+    /**
+     * 创建数据库对象
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateDateBase(){
+        return new Db();
     }
 
+    /**
+     * 创建模板类对象
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateTemplates(){
+        return new Templates();
+    }
+
+    /**
+     * 创建模板解析类对象
+     * @param tplFile 解析的文件名
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateTemplatesParse($tplFile){
+        return new Parser($tplFile);
+    }
+
+    /**
+     * 创建控制器类
+     * @param name 控制器名称
+     * @author Colin <15070091894@163.com>
+     */
+   public static function CreateController($name){
+        $_obj = $name.'Controller';
+        return new $_obj();
+    }
+
+    /**
+     * 创建模型类
+     * @param name 控制器名称
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateModel($name){
+        $model = $name.'Model';
+        return new $model($name);
+    }
+
+    /**
+     * 创建系统模型类
+     * @param tables 表名
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateSystemModel($tables){
+        return new Model($tables);
+    }
+
+    /**
+     * 创建视图类
+     * @param name 为视图文件名称
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateView($name){
+        $obj = $name.'View';
+        return new $obj();
+    }
+
+    /**
+     * 创建分页类
+     * @param total 总数
+     * @param pagesize 分页数
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreatePage($total , $pagesize){
+        return new Page($total , $pagesize);
+    }
+
+    /**
+     * 创建时间类
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateDate(){
+        return new Date();
+    }
+
+     /**
+     * 验证码类
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateCode(){
+        return new Code();
+    }
+}
 ?>

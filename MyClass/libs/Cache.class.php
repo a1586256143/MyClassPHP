@@ -10,8 +10,30 @@ class Cache {
 	public function __construct(){
 		$this->file = new File();
 		$this->cache_out_suffix = Config('CACHE_OUT_SUFFIX');
-		$this->cache_out_filename = Config('CACHE_OUT_FILENAME');
+		$this->cache_out_prefix = Config('CACHE_OUT_PREFIX');
 		$this->cache_data_dir = APP_PATH.Config('CACHE_DATA_DIR');
+		//检查目录的状态和权限
+		$this->CacheDir();
+	}
+
+	/**
+	 * 验证缓存目录是否存在
+	 * @param name 缓存名
+	 * @param data 存储数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function CacheDir(){
+		if(!file_exists($this->cache_data_dir)){
+			throw new MyError('缓存目录不存在！请手动创建'.$this->cache_data_dir);
+		}
+		//检查是否有可写的权限
+		if(!is_writable($this->cache_data_dir)){
+			throw new MyError('该目录没有可写权限！'.$this->cache_data_dir);
+		}
+		//检查是否有可读的全选
+		if(!is_readable($this->cache_data_dir)){
+			throw new MyError('该目录没有可读权限！'.$this->cache_data_dir);
+		}
 	}
 
 	/**
@@ -35,9 +57,9 @@ class Cache {
 	 * @param data 存储数据
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function cache_out_filename(){
-		if(empty($this->cache_out_filename)){
-			$this->cache_out_filename = substr(date('Y') , 2 , 2).'_';
+	public function cache_out_prefix(){
+		if(empty($this->cache_out_prefix)){
+			$this->cache_out_prefix = substr(date('Y') , 2 , 2).'_';
 		}
 	}
 
@@ -48,9 +70,9 @@ class Cache {
 	 */
 	public function UrlAndDefaultSuffix($name){
 		//生成文件名默认前缀
-		$this->cache_out_filename();
+		$this->cache_out_prefix();
 		//生成文件名
-		$FileName = $this->cache_out_filename.md5($this->cache_out_filename.$name).$this->cache_out_suffix;
+		$FileName = $this->cache_out_prefix.md5($this->cache_out_prefix.$name).$this->cache_out_suffix;
 		//组合地址
 		$FileName = $this->cache_data_dir.$FileName;
 		return $FileName;

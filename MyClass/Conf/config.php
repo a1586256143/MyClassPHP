@@ -38,7 +38,7 @@ return array(
 
     //缓存设置
     'CACHE_DATA_DIR'	=>	'/RunTime/Cache/Data/', //缓存文件存放目录
-    'CACHE_OUT_FILENAME'=>	'ca_',   				//缓存文件名生成规则
+    'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
     'CACHE_OUT_SUFFIX'	=>	'.json'   				//缓存存储后缀
 );
 ?>

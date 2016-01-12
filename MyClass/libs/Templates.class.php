@@ -18,7 +18,7 @@
          */
 		public function __construct(){
 			if(!is_dir(APP_PATH.Config('TPL_DIR'))){
-				E('请正确设置模板文件目录');
+				throw new MyError('请正确设置模板文件目录');
 			}
 		}
 		
@@ -33,7 +33,7 @@
 				//相当于 $this->_vars['name'] = 'Colin';
 				$this->_vars[$var] = $_value;
 			}else{
-				E('请设置模板变量名！');
+				throw new MyError('请设置模板变量名！');
 			}
 		}
 
@@ -70,7 +70,7 @@
 			$default_action = Config('DEFAULT_ACTION');
 			//检查默认控制器是否存在
 			if(!file_exists(APP_PATH.'/Controller/'.$default_controller.'Controller.class.php')){
-			    E($default_controller.'控制器不存在！');
+			    throw new MyError($default_controller.'控制器不存在！');
 			}
 			
 			//这里会出问题
@@ -86,7 +86,7 @@
 
 			//判断方法目录是否存在
 			if(!is_dir($_dirname)){
-				E($_dirname.'目录不存在');
+				throw new MyError($_dirname.'目录不存在');
 			}
 
 			//设置模板文件路径
@@ -94,7 +94,7 @@
 
 			//判断模板文件是否存在
 			if(!file_exists($_tplFile)){
-				E($_tplFile.'模板文件不存在！');
+				throw new MyError($_tplFile.'模板文件不存在！');
 			}
 			
 			//判断编译文件夹和缓存文件夹是否存在
@@ -168,7 +168,7 @@
 
 			//判断模板文件是否存在
 			if(!file_exists($_tplFile)){
-				E($_tplFile.'视图文件不存在！');
+				throw new MyError($_tplFile.'视图文件不存在！');
 			}
 
 			//引入编译文件

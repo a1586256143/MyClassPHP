@@ -13,7 +13,7 @@ class Parser{
 	//构造方法用于获取模板内容
 	public function __construct($_tplFile){
 		if(!$this->_tpl = file_get_contents($_tplFile)){
-			E('读取模板文件出错！'.$this->_tpl);
+			throw new MyError('读取模板文件出错！'.$this->_tpl);
 		}
 	}
 	
@@ -51,7 +51,7 @@ class Parser{
 					$this->_tpl = preg_replace($_elsepatten,"<?php }else{ ?>",$this->_tpl);
 				}
 			}else{
-				E('if语句未关闭！'.$this->_tpl);
+				throw new MyError('if语句未关闭！'.$this->_tpl);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ class Parser{
 					$this->_tpl = preg_replace($_pattenvar,"<?php echo \$$1$2 ?>",$this->_tpl);
 				}
 			}else {
-				E('foreach语句未关闭！'.$this->_tpl);
+				throw new MyError('foreach语句未关闭！'.$this->_tpl);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ class Parser{
 		if(preg_match($_patten,$this->_tpl,$_file)){
 			$_filename = APP_PATH.TPL_DIR.$_file[2].TPL_TYPE;
 			if(!file_exists($_filename) || empty($_file)){
-				E($_filename.'包含文件出错！请检查！');
+				throw new MyError($_filename.'包含文件出错！请检查！');
 			}
 			$_patten1 = '/Layout/';
 			if(preg_match($_patten1,$_file[2])){

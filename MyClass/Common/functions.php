@@ -75,7 +75,6 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function E($message){
-		header('Content-type:text/html;charset="utf-8"');
 		throw new \MyClass\libs\MyError($message);
 	}
 	
@@ -130,7 +129,7 @@
 				unset($_SESSION["$name"]);
 			}
 		}else{
-			E('session未打开！请进入config.php打开');
+			throw new MyError('session未打开！请进入config.php打开');
 		}
 	}
 
@@ -157,6 +156,7 @@
 				break;
 		}
 		$function = explode(',', $function);
+		$processing = '';
 		if(is_array($string)){
 			foreach ($string as $key => $value) {
 				foreach ($function as $k => $v) {
@@ -170,6 +170,29 @@
 			}
 		}
 		return $processing;
+	}
+
+	/**
+	 * 缓存管理
+	 * @param name 存储的名称
+	 * @param value 存储的value
+	 * @author Colin <15070091894@163.com>
+	 */
+	function S($name , $value = null){
+		//实例化一个缓存句柄
+		$cache = \MyClass\libs\ObjFactory::CreateCache();
+		if($name == 'null'){
+			$cache->clearCache();
+		}elseif(!empty($name) && $value == 'null'){
+			//移除缓存
+			$cache->removeCache($name);
+		}elseif(!empty($name) && !empty($value)){
+			//生成缓存
+			$cache->outputFileName($name , $value);
+		}elseif(!empty($name) && empty($value)){
+			//读取缓存
+			$cache->readCache($name);
+		}
 	}
 
 	/**

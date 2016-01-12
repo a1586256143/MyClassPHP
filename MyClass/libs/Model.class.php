@@ -93,7 +93,7 @@ class Model
 	 */
 	public function Field($field){
 	    if(empty($field)){
-	        E(__METHOD__.'请设置字段！');
+	        throw new MyError(__METHOD__.'请设置字段！');
 	    }else {
 	        $this->_Fields = $field;
 	    }
@@ -300,7 +300,7 @@ class Model
 	 */
 	public function Add($data){
         if(empty($data)){
-            E(__METHOD__.'没有传入参数值！');
+            throw new MyError(__METHOD__.'没有传入参数值！');
         }
 		$this->ParData('ist',$data);
 		$this->_Sql = "INSERT INTO ".$this->_TablesName."(".$this->_ParKey.") VALUES (".$this->_ParValue.")";
@@ -433,7 +433,7 @@ class Model
 	 */
 	public static function CheckConnectInfo(){
 		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_PASS') || !Config('DB_TABS')){
-			E('请设置数据库连接信息！');
+			throw new MyError('请设置数据库连接信息！');
 		}
 	}
 
@@ -444,7 +444,7 @@ class Model
 	public function CheckDataBase(){
 		$result = $this->_db->query("SHOW TABLES LIKE '%$this->_DataName%'");
 		if(!$result){
-			E('数据库不存在！');
+			throw new MyError('数据库不存在！');
 		}
 	}
 }

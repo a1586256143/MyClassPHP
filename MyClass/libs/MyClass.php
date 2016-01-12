@@ -26,7 +26,7 @@ class MyClass{
 			//初始化URL模式
 			self::UrlModel();
 		}catch (MyError $m){
-			E($m);
+			throw new MyError($m);
 		}
 	}
 	
@@ -106,10 +106,10 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
-		@mkdir(APP_PATH);        //建立App目录
+		@mkdir(APP_PATH);       	//建立App目录
 		@mkdir(RunTime);            //建立运行目录
-		@mkdir(ControllerDIR);   //建立控制器目录
-		@mkdir(ModelDIR);        //建立模型目录
+		@mkdir(ControllerDIR);   	//建立控制器目录
+		@mkdir(ModelDIR);        	//建立模型目录
 		@mkdir(ConfDIR);            //建立配置文件目录
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
@@ -121,8 +121,8 @@ class MyClass{
 		}
 		//加载常量
 		self::ReqConst();
-		//创建视图文件目录
-		@mkdir(APP_PATH.Config('TPL_DIR'));
+		@mkdir(APP_PATH.Config('TPL_DIR'));			//创建视图文件目录
+		@mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
 	}
 	
 	/**

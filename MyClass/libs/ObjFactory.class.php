@@ -17,6 +17,14 @@ class ObjFactory{
     }
 
     /**
+     * 创建缓存类
+     * @author Colin <15070091894@163.com>
+     */
+    public static function CreateCache(){
+        return new Cache();
+    }
+
+    /**
      * 创建模板类对象
      * @author Colin <15070091894@163.com>
      */

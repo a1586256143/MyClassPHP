@@ -17,6 +17,9 @@ class Mysql implements IDataBase{
      */
     function connect(){
         $this->_db = mysql_connect(Config('DB_HOST'),Config('DB_USER'),Config('DB_PASS'));
+        if(!$this->_db){
+            throw new MyError(mysql_error());
+        }
         mysql_select_db(Config('DB_TABS'));
     }
 

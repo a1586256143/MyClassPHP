@@ -40,5 +40,11 @@ return array(
     'CACHE_DATA_DIR'	=>	'/RunTime/Cache/Data/', //缓存文件存放目录
     'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
     'CACHE_OUT_SUFFIX'	=>	'.json'   				//缓存存储后缀
+
+    //上传配置
+    'UPLOAD_DIR'		=>	'/Upload',				//上传文件的目录
+    'UPLOAD_TYPE'       =>  array('jpg','png','gif'),  //上传文件类型
+    'UPLOAD_MAXSIZE'    =>  2000,                   //上传文件大小
+    'UPLOAD_ISRANDNAME' =>  1,                   //设置是否随机文件名
 );
 ?>

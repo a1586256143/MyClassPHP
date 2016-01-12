@@ -108,7 +108,7 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function session($name = '' , $value = ''){
-		if(Config('SESSION_OPEN')){
+		if(Config('SESSION_START')){
 			//session名称为空 返回所有
 			if($name == ''){
 				return $_SESSION;

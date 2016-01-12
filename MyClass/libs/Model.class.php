@@ -12,7 +12,7 @@ class Model
 	//数据库句柄
 	protected $_db = '';
 	//获取数据表前缀
-	protected $_Prefix = DB_PREFIX;
+	protected $_Prefix = '';
 	//获取数据库名
 	protected $_DataName = '';
 	//多表查询数据库名，必须带数据前缀
@@ -46,16 +46,22 @@ class Model
 	 * 构造方法
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function __construct($_tables=null){
+	public function __construct($_tables = null){
+		//数据库信息是否填写
+		self::CheckConnectInfo();
+		//配置数据库表前缀
+		$this->_Prefix = Config('DB_PREFIX');
 		if(empty($_tables)){
 			return $this;
 		}
 		//获取数据库对象
 		$this->_db = ObjFactory::CreateDateBase()->GetDB();
 		//转小写
-		$this->_DataName = strtolower($_tables);
+		$this->_DataName = strtolower($_tables);		
 		//执行判断表方法
 		$this->TablesType();
+		//确认表是否存在
+		self::CheckDataBase();
 	}
 	
 	/**
@@ -421,5 +427,25 @@ class Model
 		ShowMessage(__CLASS__.'这不是一个函数');
 	}
 
+	/**
+	 * 验证数据库信息是否填写
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function CheckConnectInfo(){
+		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_PASS') || !Config('DB_TABS')){
+			E('请设置数据库连接信息！');
+		}
+	}
+
+	/**
+	 * 检查数据库是否存在
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function CheckDataBase(){
+		$result = $this->_db->query("SHOW TABLES LIKE '%$this->_DataName%'");
+		if(!$result){
+			E('数据库不存在！');
+		}
+	}
 }
 ?>

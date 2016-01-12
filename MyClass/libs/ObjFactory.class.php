@@ -58,7 +58,7 @@ class ObjFactory{
      * @param tables 表名
      * @author Colin <15070091894@163.com>
      */
-    public static function CreateSystemModel($tables){
+    public static function CreateSystemModel($tables = null){
         return new Model($tables);
     }
 

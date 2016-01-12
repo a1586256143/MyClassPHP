@@ -22,15 +22,15 @@ class Db{
         if($this->_db){
             return $this->_db;
         }else{
-            if(strtolower(DB_TYPE) == 'mysqli'){
+            if(strtolower(Config('DB_TYPE')) == 'mysqli'){
                 $this->_db = new \MyClass\libs\DataBase\Mysqli();
-            }else if(strtolower(DB_TYPE) == 'mysql'){
+            }else if(strtolower(Config('DB_TYPE')) == 'mysql'){
                 $this->_db = new \MyClass\libs\DataBase\Mysql();
-            }else if(strtolower(DB_TYPE) == 'pdo'){
+            }else if(strtolower(Config('DB_TYPE')) == 'pdo'){
                 $this->_db = new \MyClass\libs\DataBase\PDO();
             }
             $this->_db->connect();
-            $this->_db->query('SET NAMES '.DB_CODE);
+            $this->_db->query('SET NAMES '.Config('DB_CODE'));
             return $this->_db;
         }
     }

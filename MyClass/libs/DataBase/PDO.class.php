@@ -16,7 +16,7 @@ class PDO implements IDataBase{
      * @author Colin <15070091894@163.com>
      */
     function connect(){
-        $this->_db = new \PDO("mysql:host=".DB_HOST.";dbname=".DB_TABS."","".DB_USER."","".DB_PASS."");
+        $this->_db = new \PDO("mysql:host=".Config('DB_HOST').";dbname=".Config('DB_TABS')."","".Config('DB_USER')."","".Config('DB_PASS')."");
     }
 
     /**

@@ -21,7 +21,7 @@ return array(
 	'URL_MODEL'			=>	1,						//URL模式
 	'PUBLIC_DIR'		=>	'/Public',				//公共文件地址
 	'LAYOUT_DIR'		=>	'/View/Layout',			//视图公共模块
-    'SESSION_OPEN'		=>	1,            			//开启session
+    'SESSION_START'		=>	1,            			//开启session
 
     //默认控制器
     'DEFAULT_CONTROLLER'=>	'Index', 				//默认控制器

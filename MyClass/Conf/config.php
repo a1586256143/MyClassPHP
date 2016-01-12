@@ -18,7 +18,7 @@ return array(
     //默认参数设置
 	'TPL_MODEL'			=>	'tpl',					//模板引擎
 	'TPL_TYPE'			=>	'.html',				//模板类型
-	'URL_MODEL'			=>	1,						//URL模式
+	'URL_MODEL'			=>	2,						//URL模式
 	'PUBLIC_DIR'		=>	'/Public',				//公共文件地址
 	'LAYOUT_DIR'		=>	'/View/Layout',			//视图公共模块
     'SESSION_START'		=>	1,            			//开启session

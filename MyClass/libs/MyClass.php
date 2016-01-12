@@ -19,10 +19,10 @@ class MyClass{
 		try {
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
-			//判断文件夹是否存在
-			self::Dir();
 			//加载常亮函数
 			self::ReqConst();
+			//判断文件夹是否存在
+			self::Dir();
 			//解析常量方法
 			self::ParConst();
 			//视图初始化
@@ -86,7 +86,7 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){
-		
+		require_once MyClass . '/Common/functions.php';
 		$const = require_once MyClass . '/Conf/config.php';
 		$const1 = require_once APP_PATH . '/Conf/config.php';
 		$const3 = array_replace_recursive($const , $const1);
@@ -108,7 +108,6 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
-		require_once MyClass . '/Common/functions.php';
 		@mkdir(APP_PATH);        //建立App目录
 		@mkdir(RunTime);            //建立运行目录
 		@mkdir(ControllerDIR);   //建立控制器目录

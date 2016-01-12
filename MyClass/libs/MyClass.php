@@ -19,12 +19,8 @@ class MyClass{
 		try {
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
-			//加载常亮函数
-			self::ReqConst();
 			//判断文件夹是否存在
 			self::Dir();
-			//解析常量方法
-			self::ParConst();
 			//视图初始化
 			self::View();
 			//初始化URL模式
@@ -91,6 +87,8 @@ class MyClass{
 		$const1 = require_once APP_PATH . '/Conf/config.php';
 		$const3 = array_replace_recursive($const , $const1);
 		Config($const3);
+		//解析常量方法
+		self::ParConst();
 	}
 
 	/**
@@ -113,8 +111,6 @@ class MyClass{
 		@mkdir(ControllerDIR);   //建立控制器目录
 		@mkdir(ModelDIR);        //建立模型目录
 		@mkdir(ConfDIR);            //建立配置文件目录
-		@mkdir(APP_PATH.Config('TPL_DIR'));//建立视图文件目录
-
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
             @file_put_contents(ConfDIR.'/config.php',@file_get_contents(MyClass.'/tpl/config.php'));
@@ -123,7 +119,10 @@ class MyClass{
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
 			@file_put_contents(ControllerDIR.'/IndexController.class.php',@file_get_contents(MyClass.'/tpl/index.php'));
 		}
-
+		//加载常量
+		self::ReqConst();
+		//创建视图文件目录
+		@mkdir(APP_PATH.Config('TPL_DIR'));
 	}
 	
 	/**

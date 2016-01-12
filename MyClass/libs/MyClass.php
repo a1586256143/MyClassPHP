@@ -86,7 +86,7 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){
-		require_once MyClass . '/Common/functions.php';
+		
 		$const = require_once MyClass . '/Conf/config.php';
 		$const1 = require_once APP_PATH . '/Conf/config.php';
 		$const3 = array_replace_recursive($const , $const1);
@@ -108,12 +108,14 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
+		require_once MyClass . '/Common/functions.php';
 		@mkdir(APP_PATH);        //建立App目录
 		@mkdir(RunTime);            //建立运行目录
 		@mkdir(ControllerDIR);   //建立控制器目录
 		@mkdir(ModelDIR);        //建立模型目录
 		@mkdir(ConfDIR);            //建立配置文件目录
 		@mkdir(APP_PATH.Config('TPL_DIR'));//建立视图文件目录
+
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
             @file_put_contents(ConfDIR.'/config.php',@file_get_contents(MyClass.'/tpl/config.php'));
@@ -122,6 +124,7 @@ class MyClass{
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
 			@file_put_contents(ControllerDIR.'/IndexController.class.php',@file_get_contents(MyClass.'/tpl/index.php'));
 		}
+
 	}
 	
 	/**

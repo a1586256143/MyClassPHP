@@ -27,7 +27,6 @@
 		}
 		if(empty($method)){
 			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
-
 			$_controller->index();
 		}else{
 			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
@@ -67,8 +66,7 @@
 			return $obj;
 		}else{
 			return $obj->$method();
-		}
-		
+		}	
 	}
 	
 	/**
@@ -104,28 +102,94 @@
 	}
 
 	/**
-	 * 接收post和get值函数
-	 * @param array 要被打印的数据
+	 * 设置session
+	 * @param name session的名称
+	 * @param value session要保存的值
 	 * @author Colin <15070091894@163.com>
 	 */
-	function value($type , $name){
-		switch ($type) {
-			case 'get':
-				return $_GET[$name];
-				break;
-			case 'post':
-				return $_POST[$name];
-				break;
+	function session($name = '' , $value = ''){
+		if(Config('SESSION_OPEN')){
+			//session名称为空 返回所有
+			if($name == ''){
+				return $_SESSION;
+			}
+			//清空session
+			if($name == 'null'){
+				return session_destroy();
+			}
+			//session值为空
+			if(!empty($name) && $value == ''){
+				return $_SESSION["$name"];
+			}
+			//session名称和值都不为空
+			if(!empty($name) && !empty($value)){
+				$_SESSION["$name"] = $value;
+			}
+			if(!empty($name) && $value == 'null'){
+
+				unset($_SESSION["$name"]);
+			}
+		}else{
+			E('session未打开！请进入config.php打开');
 		}
 	}
 
+	/**
+	 * 接收post和get值函数
+	 * @param type 要获取的POST或GET
+	 * @param formname 要获取的POST或type的表单名
+	 * @param function 要使用的函数
+	 * @author Colin <15070091894@163.com>
+	 */
+	function value($type , $formname = null , $function = 'trim'){
+		switch ($type) {
+			case 'get':
+				$string = $_GET[$formname];
+				break;
+			case 'get.':
+				$string = $_GET;
+				break;
+			case 'post':
+				$string = $_POST[$formname];
+				break;
+			case 'post.':
+				$string = $_POST;
+				break;
+		}
+		$function = explode(',', $function);
+		if(is_array($string)){
+			foreach ($string as $key => $value) {
+				foreach ($function as $k => $v) {
+					$value = $v($value);
+				}
+				$processing[] = $value;
+			}
+		}elseif(is_string($string)){
+			foreach ($function as $key => $value) {
+				$processing = $value($string);
+			}
+		}
+		return $processing;
+	}
+
+	/**
+	 * 系统配置
+	 * @param name 存储的名称
+	 * @param value 存储的value
+	 * @author Colin <15070091894@163.com>
+	 */
 	function Config($name , $value = ''){
 		static $config = array();
+		if(empty($name)){
+			return $config;
+		}
 		if(is_array($name)){
 			//设置
 			$config = $name;
-		}elseif(is_string($name)){
+		}elseif(is_string($name) && $value == ''){
 			return $config[$name];
+		}elseif(is_string($name) && !empty($value)){
+			$config[$name] = $value;
 		}
 	}
 ?>

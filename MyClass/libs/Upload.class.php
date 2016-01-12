@@ -11,19 +11,19 @@ class Upload{
 	public $allowtype;					//设置上传文件类型
 	public $maxsize;					//限制文件上传大小
 	public $israndname;					//设置是否随机重命名文件
-	public $originName;					//源文件名
-	public $tmpFIlename;				//临时文件名
-	public $FileType;					//文件类型
-	public $fileSize;					//文件大小
 	public $newFileName;				//新文件名
 	public $errorNum = 0;				//错误号
 	public $errorMess;					//错误报告消息
 
-	public function __construct(){
+	public function __construct($file){
 		$this->path = Config('UPLOAD_DIR');
-		$this->allowtype = Config('UPLOAD_TYPE');
+		$this->allowtype = explode(',',Config('UPLOAD_TYPE'));
 		$this->maxsize = Config('UPLOAD_MAXSIZE'); 
 		$this->israndname = Config('UPLOAD_ISRANDNAME');
+		//检查上传目录是否存在
+		$this->checkFilePath();
+		//初始化文件信息
+		$this->file = $file;
 	}
 
 	/**
@@ -31,23 +31,30 @@ class Upload{
 	 * @author Major <1450494434@qq.com>
 	 */
 	public function upload(){
-		$return = true;
-		//检测文件名是否合法
-
+		if(empty($this->file)){
+			throw new MyError($this->UploadError(-5));
+		}
+		//检测文件类型是否正确
+		if(!$this->checkFileType()){
+			throw new MyError($this->UploadError(-1));
+		}
+		if(!$this->checkSize()){
+			throw new MyError($this->UploadError(-2));
+		}
+		$this->proRandName();
+		return $this->start_upload();
 	}
 
 	/**
-	 *检测是否有存在文件上传的目录
+	 * 检测是否有存在文件上传的目录
 	 * @author Major <1450494434@qq.com>
 	 */
 	public function checkFilePath(){
 		if (empty($this->path)) {
-			$this->errorNum = -5;
 			return false;
 		}
-		if(!file_exists($this->path) || is_writable($this->path)){
-			if (!@mkdir($this->path,0755)) {
-				$this->errorNum = -4;
+		if(!file_exists($this->path) || !is_writable($this->path)){
+			if (!@mkdir($this->path , 0777)) {
 				return false;
 			}
 		}
@@ -55,32 +62,73 @@ class Upload{
 	}
 
 	/**
-	 *设置随机文件名
+	 * 设置随机文件名
 	 * @author Major <1450494434@qq.com>
 	 */
-    public function proRandName() {    
-      $this->fileName = date('YmdHis')."_".rand(100,999);    
-      return $this->fileName.'.'.$this->fileType; 
-    }
-
-    /**
-	 *检测上传的文件是合法的类型
-	 * @author Major <1450494434@qq.com>
-	 */
-	public function checkFileType(){
-
+	public function proRandName() {    
+		$this->fileName = date('YmdHis')."_".rand(100,999);
+		$patten = '/(\.[a-z]+)/';
+		preg_match($patten , $this->file['name'] , $match);
+		if(empty($match[0])){
+			$this->newFileName = $this->path.'/'.$this->fileName.'.jpg';
+		}else{
+			$this->newFileName = $this->path.'/'.$this->fileName.$match[0];
+		}
 	}
 
     /**
-	 *检测上传的文件是否允许的大小
+	 * 检测上传的文件是合法的类型
+	 * @author Major <1450494434@qq.com>
+	 */
+	public function checkFileType(){
+		return in_array($this->file['type'],$this->allowtype);
+	}
+
+    /**
+	 * 检测上传的文件是否允许的大小
 	 * @author Major <1450494434@qq.com>
 	 */
 	public function checkSize(){
-		if($this->fileSize > $this->maxsize){
-			$this->errorNum = -2;
-			return false;
-		} else{
-			return true;
+		return $this->file['size'] < $this->maxsize;
+	}
+
+	/**
+	 * 开始上传图片
+	 * @author Major <1450494434@qq.com>
+	 */
+	public function start_upload(){
+		if(!is_uploaded_file($this->file['tmp_name'])){
+			throw new MyError($this->UploadError(-3));
 		}
+		if(move_uploaded_file($this->file['tmp_name'] , $this->newFileName)){
+			return $this->file;
+		}else{
+			throw new MyError($this->UploadError(-4));
+		}
+	}
+
+	/**
+	 * 输出上传错误信息
+	 * @author Major <1450494434@qq.com>
+	 */
+	public function UploadError($code){
+		switch ($code) {
+			case -1:
+				$message = '上传类型不正确！';
+				break;
+			case -2:
+				$message = '上传大小不能超过'.ceil($this->maxsize/1024/1024).'M！';
+				break;
+			case -3:
+				$message = '非法上传文件！';
+				break;
+			case -4:
+				$message = '上传文件失败！';
+				break;
+			case -5:
+				$message = '没有文件被上传！';
+				break;
+		}
+		return $message;
 	}
 }

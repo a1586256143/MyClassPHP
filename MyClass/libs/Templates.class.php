@@ -82,7 +82,7 @@
 			//设置路径
 			$_dirname = APP_PATH.Config('TPL_DIR').$_array[1].'/';
 			$_dircname = APP_PATH.Config('TPL_C_DIR').$_array[1].'/';
-			$_dircache = APP_PATH.Config('CACHE').$_array[1].'/';
+			//$_dircache = APP_PATH.Config('CACHE').$_array[1].'/';
 
 			//判断方法目录是否存在
 			if(!is_dir($_dirname)){
@@ -99,16 +99,15 @@
 			
 			//判断编译文件夹和缓存文件夹是否存在
 			if(!is_dir(APP_PATH.Config('TPL_C_DIR')))@mkdir(APP_PATH.Config('TPL_C_DIR'));
-			if(!is_dir(APP_PATH.Config('CACHE')))@mkdir(APP_PATH.Config('CACHE'));
+			//if(!is_dir(APP_PATH.Config('CACHE')))@mkdir(APP_PATH.Config('CACHE'));
 
 			//判断缓存文件夹以控制器命名的文件夹
 			if(!is_dir($_dircname))@mkdir($_dircname);
-			if(!is_dir($_dircache))@mkdir($_dircache);
-
+			//if(!is_dir($_dircache))@mkdir($_dircache);
 			//处理传入数据
 			if(is_array($data)){
 				foreach ($data as $key => $value) {
-					$keyname = "$$key=$value;";
+					$keyname = "$$key = '$value';";
 					eval($keyname);
 				}
 			}elseif(is_string($data)){

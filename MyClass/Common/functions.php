@@ -153,7 +153,15 @@
 				break;
 			case 'post.':
 				$string = $_POST;
+			case 'files':
+				$string = $_FILES[$formname];
 				break;
+			case 'files.':
+				$string = $_FILES;
+				break;
+		}
+		if($function == null){
+			return $string;
 		}
 		$function = explode(',', $function);
 		$processing = '';
@@ -214,5 +222,9 @@
 		}elseif(is_string($name) && !empty($value)){
 			$config[$name] = $value;
 		}
+	}
+
+	function getUrl(){
+		return \MyClass\libs\Url::getCurrentUrl(true);
 	}
 ?>

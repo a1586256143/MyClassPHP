@@ -34,42 +34,6 @@
 			}
 		}
 		
-		//自动加载方法
-		/*public static function autoload($_ClassName)
-		{
-			$_patten = "#.*\\\\#";
-			if(substr($_ClassName,-5) == 'Model')
-			{
-				if(preg_match_all($_patten,$_ClassName))
-				{
-					//匹配到了\号  就从libs下加载文件
-					require_once $_ClassName.'.class.php';
-				}else
-				{
-					//没有匹配到，判断是否为空 为空则是libs下的model  否则是 APP_PATH下的Model
-					empty(substr($_ClassName,0,-5)) ? require_once $_ClassName.'.class.php': require_once APP_PATH.'/Model/'.$_ClassName.'.class.php';
-				}
-			}else if(substr($_ClassName,-10) == 'Controller')
-			{
-				//判断截取后的字符是否为空，如果为空就是libs\下的controller
-				//判断是否有/  如果有那么代表是命名空间
-				if(preg_match_all($_patten,$_ClassName))
-				{
-					//匹配到了\号  就从libs下加载文件
-					require_once $_ClassName.'.class.php';
-				}else
-				{
-					//没有匹配到，判断是否为空 为空则是libs下的controller  否则是 APP_PATH下的controller
-					empty(substr($_ClassName,0,-10)) ? require_once $_ClassName.'.class.php': require_once APP_PATH.'/Controller/'.$_ClassName.'.class.php';
-				}
-
-			}else
-			{
-				//如果$_classname不满足以上两个条件，那么加载libs下的文件
-				require_once $_ClassName.'.class.php';
-			}
-		}*/
-		
 		public static function autoload($_ClassName)
 		{
             $_patten = "/\//";
@@ -85,8 +49,9 @@
 					require_once $_ClassName.'.class.php';
 				}else
 				{
+					$_name = substr($_ClassName,0,-5);
 					//没有匹配到，判断是否为空 为空则是libs下的model  否则是 APP_PATH下的Model
-					empty(substr($_ClassName,0,-5)) ? require_once $_ClassName.'.class.php': require_once APP_PATH.'/Model/'.$_ClassName.'.class.php';
+					empty($_name) ? require_once $_ClassName.'.class.php': require_once APP_PATH.'/Model/'.$_ClassName.'.class.php';
 				}
 			}else if(substr($_ClassName,-10) == 'Controller')
 			{
@@ -98,10 +63,9 @@
 					require_once $_ClassName.'.class.php';
 				}else
 				{
-                   
-                    
+					$_name = substr($_ClassName,0,-10);
 					//没有匹配到，判断是否为空 为空则是libs下的controller  否则是 APP_PATH下的controller
-					empty(substr($_ClassName,0,-10)) ? require_once $_ClassName.'.class.php': require_once APP_PATH.'/Controller/'.$_ClassName.'.class.php';
+					empty($_name) ? require_once $_ClassName.'.class.php': require_once APP_PATH.'/Controller/'.$_ClassName.'.class.php';
 				}
 
 			}else

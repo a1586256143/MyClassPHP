@@ -15,13 +15,17 @@
             {
                 $_c = $_GET['c'];
                 $_a = $_GET['a'];
-                C($_c,$_a);
+                C($_c , $_a);
             }else if(URL_MODEL == 2)
             {
                 //获取当前URL
                 $_url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
                 $_patten = '/.php\/(.*)(.*)/';
-                preg_match_all($_patten,$_url,$_match);
+                if(!preg_match_all($_patten,$_url,$_match)){
+                    $_patten = '/(.*)+/';
+                    preg_match_all($_patten,$_url,$_match);
+                }
+                
                 if(empty($_match[0]))
                 {
                     C('Index');

@@ -13,7 +13,29 @@
 	 */
 	function ShowMessage($_message){
 		header('Content-Type:text/html;charset=UTF-8');
-		die('<div style="width:35%;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;"><dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;"><dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt><dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">'.$_message.'</dd></dl></div>');
+		die('
+			<div style="width:400px;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;">
+				<dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;">
+					<dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">
+						MyClass提示信息
+					</dt>
+					<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">
+					'.$_message.'
+					</dd>
+					<dd style="padding:0px;margin:0px;">
+						<a href="javascript:void(0);" style="font-size:15px;color:#181884;width:100%;text-align:center;display:block;" id="back">
+							[ 返回 ]
+						</a>
+					</dd>
+				</dl>
+			</div>
+			<script>
+				var back = document.getElementById("back");
+				back.onclick = function(){
+					window.history.back();
+				}
+			</script>
+		');
 	}
 
 	/**
@@ -22,8 +44,9 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function C($name , $method = null){
+		$noValue = \MyClass\libs\ObjFactory::CreateController('MyClass\\libs\\Controller\\NoValue');
 		if(!file_exists(APP_PATH.'/Controller/'.$name.'Controller.class.php')){
-			ShowMessage($name.'控制器不存在！');
+			$noValue->_showError($name.'控制器不存在！' , 'controller');
 		}
 		if(empty($method)){
 			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
@@ -32,7 +55,7 @@
 			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
 
 			if(!method_exists($_controller,$method)){
-				ShowMessage($method.'这个方法不存在');
+				$noValue->_showError($method.'这个方法不存在' , 'method');
 			}
 			return $_controller->$method();
 		}
@@ -84,9 +107,9 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function U($url){
-		$_subjecturl = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['SCRIPT_NAME'];
-		$_newurl = $_subjecturl.'/'.$url;
-		return $_newurl;
+		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
+		$newurl = '/'.ltrim($url , '/');
+		return $newurl;
 	}
 
 	/**
@@ -141,6 +164,7 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function value($type , $formname = null , $function = 'trim'){
+
 		switch ($type) {
 			case 'get':
 				$string = $_GET[$formname];
@@ -153,6 +177,7 @@
 				break;
 			case 'post.':
 				$string = $_POST;
+				break;
 			case 'files':
 				$string = $_FILES[$formname];
 				break;
@@ -170,7 +195,7 @@
 				foreach ($function as $k => $v) {
 					$value = $v($value);
 				}
-				$processing[] = $value;
+				$processing[$key] = $value;
 			}
 		}elseif(is_string($string)){
 			foreach ($function as $key => $value) {

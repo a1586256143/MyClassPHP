@@ -56,10 +56,11 @@ class Url{
     /**
      * 获取当前url
      * @param is_return_current_url 是否返回当前地址
+     * @param is_return_array       是否返回数组
      * @return array
      * @author Colin <15070091894@163.com>
      */
-    public static function getCurrentUrl($is_return_current_url = false){
+    public static function getCurrentUrl($is_return_current_url = false , $is_return_array = false){
         $current_url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         $parse_url = parse_url($current_url);
         if(Config('URL_MODEL') == 1){
@@ -72,6 +73,9 @@ class Url{
         }
         if($is_return_current_url){
             return $current_url;
+        }
+        if($is_return_array){
+            return $parse_url;
         }
         return $parse_path;
     }

@@ -5,7 +5,7 @@
 	FileType :文件类
 	FileName :File.class.php
 */
-namespace Myclass\libs;
+namespace MyClass\libs;
 class File {
 	protected $file;
 

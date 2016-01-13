@@ -5,7 +5,7 @@
 	FileType :缓存类
 	FileName :Cache.class.php
 */
-namespace Myclass\libs;
+namespace MyClass\libs;
 class Cache {
 	public function __construct(){
 		$this->file = new File();

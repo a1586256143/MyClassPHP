@@ -5,7 +5,7 @@
     FileType :
     FileName : MyError.class.php
 */
-namespace Myclass\libs;
+namespace MyClass\libs;
 class MyError extends \Exception{
 	/**
 	 * 构造方法

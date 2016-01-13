@@ -1,95 +1,108 @@
 <?php
-    /*
-        Author : Colin,
-        Creation time : 2015/8/17 16:09
-        FileType : ÑéÖ¤Àà
-        FileName : Validate.class.php
-    */
-    namespace Myclass\libs;
-    class Validate
-    {
-        public $_string = '';           //×Ö¶Î
-        public $_required = true;       //±ØÌî
-        public $_parstring = array();   //½âÎöºó´æ´¢×Ö¶Î
-        public $_maxlength = '';        //×î´ó³¤¶È
-        public $_minlength = '';        //×îĞ¡³¤¶È
-        public $_msg = '';              //ÌáÊ¾ĞÅÏ¢
-        public $_code = 'utf-8';        //×Ö·û±àÂë
 
-        public function __construct($_string)
-        {
-            $this->_string = $_string;
-            $this->parString();
-        }
+/*
+Author : Colin,
+Creation time : 2015/8/17 16:09
+FileType : éªŒè¯ç±»
+FileName : Validate.class.php
+*/
+namespace MyClass\libs;
+class Validate {
+	public $string = '';		//è¦å¤„ç†çš„å­—ç¬¦ä¸²
+	public $require = 0;		//æ˜¯å¦å¿…å¡«
+	public $parstring = array();//å¤„ç†åçš„å­—ç¬¦ä¸²
+	public $maxlength = '';		//æœ€å¤§é•¿åº¦
+	public $minlength = '';		//æœ€å°é•¿åº¦
+	public $info = '';			//æç¤ºæ¶ˆæ¯
+	public $charset = 'utf-8';	//é•¿åº¦åˆ¤æ–­ç¼–ç 
 
-        //½âÎö×Ö¶Î
-        public function parString()
-        {
-            if(is_array($this->_string))
-            {
-                foreach($this->_string as $_key=>$_value)
-                {
-                    $this->_parstring[$_key] = trim($_value);
-                }
-            }
-        }
+	public function __construct($config = null){
+		if(!empty($config)){
+			foreach ($config as $key => $value) {
+				$this->$key = $value;
+			}
+		}
+	}
 
-        //ÑéÖ¤ÊÇ·ñÎª¿Õ
-        public function CheckNull()
-        {
-            foreach($this->_parstring as $_key=>$_value)
-            {
-                if(strlen($this->_parstring[$_key]) == 0)
-                {
-                    $this->_msg = $_key.'ÕâÊÇÒ»¸ö±ØÌî×Ö¶Î';
-                    return true;
-                }
-            }
-        }
-
-        //ÑéÖ¤×î´ó³¤¶È
-        public function CheckMaxLength()
-        {
-            if(mb_strlen($this->_parstring->$_key,$this->_code) > $this->_maxlength)
-            {
-                return $this->_msg;
-            }
-        }
-
-        //ÑéÖ¤×îĞ¡³¤¶È
-        public function CheckMinLength()
-        {
-            if(mb_strlen($this->_parstring->$_key,$this->_code) < $this->_minlength)
-            {
-                return $this->_msg;
-            }
-        }
-
-        //ÑéÖ¤×î´óºÍ×îĞ¡
-        public function CheckLength()
-        {
-            foreach($this->_parstring as $_key=>$_value)
-            {
-                for($_i = 1;$_i<count($this->_parstring[$_key]);$_i++)
-                {
-                    if(mb_strlen($this->_parstring[$_key],$this->_code) <= $this->_minlength)
-                    {
-                        $this->_msg = $_key.'×Ö¶Î³¤¶È²»Âú×ã'.$this->_maxlength;
-                        return true;
-                    }elseif(mb_strlen($this->_parstring[$_key],$this->_code) > $this->_maxlength)
-                    {
-                        $this->_msg = $_key.'×Ö¶Î³¤¶È³¬¹ıÁË'.$this->_maxlength;
-                        return true;
-                    }
-                }
-            }
-        }
-
-        //¹«¹²·½·¨
-        public function common()
-        {
-            $this->CheckNull();
-        }
-    }
-
+	/**
+	 * å¼€å§‹éªŒè¯
+	 * @param string è¦å¤„ç†çš„å­—ç¬¦ä¸²
+	 * @author Colin <15070091894.com>
+	 */
+	public function Validate($string = null) {
+		$this->string = $string;
+		if(empty($string)){
+			$this->string = value('post.');
+		}
+		$this->parString();
+		if(is_array($this->parstring)){
+			foreach ($this->parstring as $key => $value) {
+				$this->CheckNull($value , $key);
+			}
+		}
+	}
+	
+	/**
+	 * è§£æå­—ç¬¦ä¸²
+	 * @author Colin <15070091894.com>
+	 */
+	public function parString() {
+		if (is_array($this->string)) {
+			foreach ($this->string as $key => $value) {
+				$this->parstring[$key] = trim($value);
+			}
+		}
+	}
+	
+	/**
+	 * éªŒè¯æ˜¯å¦ä¸ºç©º
+	 * @author Colin <15070091894.com>
+	 */
+	public function CheckNull($string , $name) {
+		if($this->require){
+			if(empty($string) && strlen($string) == 0){
+				showMessage($name . 'ä¸èƒ½ä¸ºç©ºï¼');
+			}
+		}
+	}
+	
+	/**
+	 * éªŒè¯æœ€å¤§é•¿åº¦
+	 * @author Colin <15070091894.com>
+	 */
+	public function CheckMaxLength() {
+		if (mb_strlen($this->parstring->$key, $this->charset) > $this->maxlength) {
+			return $this->info;
+		}
+	}
+	
+	/**
+	 * éªŒè¯æœ€å°é•¿åº¦
+	 * @author Colin <15070091894.com>
+	 */
+	public function CheckMinLength() {
+		if (mb_strlen($this->parstring->$key, $this->charset) < $this->minlength) {
+			return $this->info;
+		}
+	}
+	
+	/**
+	 * éªŒè¯é•¿åº¦
+	 * @author Colin <15070091894.com>
+	 */
+	public function CheckLength() {
+		foreach ($this->parstring as $key => $value) {
+			for ($i = 1;$i < count($this->parstring[$key]);$i++) {
+				if (mb_strlen($this->parstring[$key], $this->charset) <= $this->minlength) {
+					$this->info = $key . 'é•¿åº¦ä¸èƒ½å°äº' . $this->maxlength;
+					return true;
+				} 
+				elseif (mb_strlen($this->parstring[$key], $this->charset) > $this->maxlength) {
+					$this->info = $key . 'é•¿åº¦ä¸èƒ½å¤§äº' . $this->maxlength;
+					return true;
+				}
+			}
+		}
+	}
+}
 ?>

@@ -61,7 +61,7 @@
          * @return data 文件值
          * @author Colin <15070091894@163.com>
          */
-		public function display($file , $data){
+		public function display($file , $data = null){
 			$_array = Url::getCurrentUrl();
 
 			//注入核心变量
@@ -105,13 +105,15 @@
 			if(!is_dir($_dircname))@mkdir($_dircname);
 			//if(!is_dir($_dircache))@mkdir($_dircache);
 			//处理传入数据
-			if(is_array($data)){
-				foreach ($data as $key => $value) {
-					$keyname = "$$key = '$value';";
-					eval($keyname);
+			if(!empty($data)){
+				if(is_array($data)){
+					foreach ($data as $key => $value) {
+						$keyname = "$$key = '$value';";
+						eval($keyname);
+					}
+				}elseif(is_string($data)){
+					$data = $data;
 				}
-			}elseif(is_string($data)){
-				$data = $data;
 			}
 			include $_tplFile;
 		}

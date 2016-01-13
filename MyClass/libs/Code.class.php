@@ -5,7 +5,7 @@
 	FileType :验证码类
 	FileName :Code.class.php
 */
-namespace Myclass\libs;
+namespace MyClass\libs;
 class Code {
 	private $charset = 'abcdefghkmnprstuvwxyz23456789';	//随机因子
 	private $code;							//验证码

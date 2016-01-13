@@ -47,7 +47,7 @@ class ObjFactory{
      * @author Colin <15070091894@163.com>
      */
    public static function CreateController($name){
-        $_obj = $name.'Controller';
+        $_obj = $name.Config('DEFAULT_CONTROLLER_SUFFIX');
         return new $_obj();
     }
 
@@ -57,7 +57,7 @@ class ObjFactory{
      * @author Colin <15070091894@163.com>
      */
     public static function CreateModel($name){
-        $model = $name.'Model';
+        $model = $name.Config('DEFAULT_MODEL_SUFFIX');
         return new $model($name);
     }
 

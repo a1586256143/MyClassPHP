@@ -209,7 +209,7 @@
 	 * @param value 存储的value
 	 * @author Colin <15070091894@163.com>
 	 */
-	function Config($name , $value = ''){
+	function Config($name = null , $value = ''){
 		static $config = array();
 		if(empty($name)){
 			return $config;
@@ -224,7 +224,11 @@
 		}
 	}
 
-	function getUrl(){
+	/**
+	 * 获取当前地址
+	 * @author Colin <15070091894@163.com>
+	 */
+	function getCurrentUrl(){
 		return \MyClass\libs\Url::getCurrentUrl(true);
 	}
 ?>

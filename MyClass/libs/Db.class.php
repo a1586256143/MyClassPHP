@@ -9,7 +9,9 @@ namespace MyClass\libs;
 //适配器接口
 interface IDataBase{
     function connect();
-    function query($_sql);
+    function query($sql);
+    function select_db($tables);
+    function fetch_array($query);
     function close();
 }
 class Db{
@@ -30,8 +32,21 @@ class Db{
                 $this->_db = new \MyClass\libs\DataBase\PDO();
             }
             $this->_db->connect();
+            $this->CheckDatabase();
             $this->_db->query('SET NAMES '.Config('DB_CODE'));
             return $this->_db;
+        }
+    }
+
+    /**
+     * 确认数据库是否存在
+     * @author Colin <15070091894@163.com>
+     */
+    public function CheckDatabase(){
+        $database = Config('DB_TABS');
+        $result = $this->_db->select_db($database);
+        if(!$result){
+            throw new MyError('数据库不存在或数据库名不正确！'.$database);
         }
     }
 

@@ -7,12 +7,11 @@
 */
 namespace MyClass\libs;
 
-class Model
-{
+class Model{
 	//数据库句柄
 	protected $_db = '';
 	//获取数据表前缀
-	protected $_Prefix = '';
+	protected $db_prefix = '';
 	//获取数据库名
 	protected $_DataName = '';
 	//多表查询数据库名，必须带数据前缀
@@ -46,34 +45,45 @@ class Model
 	 * 构造方法
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function __construct($_tables = null){
+	public function __construct($tables = null){
+		//设置类成员
+		self::setClassMember();
 		//数据库信息是否填写
 		self::CheckConnectInfo();
-		//配置数据库表前缀
-		$this->_Prefix = Config('DB_PREFIX');
-		if(empty($_tables)){
+		if(empty($tables)){
 			return $this;
 		}
 		//获取数据库对象
-		$this->_db = ObjFactory::CreateDateBase()->GetDB();
-		//转小写
-		$this->_DataName = strtolower($_tables);		
+		$this->_db = ObjFactory::CreateDateBase()->GetDB();	
 		//执行判断表方法
-		$this->TablesType();
+		$this->TablesType($tables);
 		//确认表是否存在
-		self::CheckDataBase();
+		$this->CheckTables();
 	}
 	
 	/**
 	 * 判断类型
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function TablesType(){
+	protected function TablesType($tables){
+		$tables = $this->parTableName($tables);
+		//转小写
+		$this->_DataName = strtolower($tables);	
 		if(empty($this->_TrueTables)){
-			$this->_TablesName = '`'.$this->_Prefix.$this->_DataName.'`';
+			$this->_TablesName = '`'.$this->db_prefix.$this->_DataName.'`';
 		}else {
 			$this->_TablesName = '`'.$this->_TrueTables.'`';
 		}
+	}
+
+	/**
+	 * 解析表名的大写
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function parTableName($tables){
+		$tablename = array_filter(preg_split('/(?=[A-Z])/', $tables));
+		$tablename = implode('_', $tablename);
+		return $tablename;
 	}
 	
 	/**
@@ -402,6 +412,16 @@ class Model
 		return $this;
 	}
 
+	/**
+     * 执行源生sql语句并返回结果
+     * @param sql 要执行的sql语句
+     * @author Colin <15070091894@163.com>
+     */
+	public function execute($sql){
+		$query = $this->_db->query($sql);
+        $result = $this->_db->fetch_array($query);
+        return $result;
+	}
 
 	/**
 	 * 容错处理机制
@@ -438,14 +458,34 @@ class Model
 	}
 
 	/**
-	 * 检查数据库是否存在
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function CheckDataBase(){
-		$result = $this->_db->query("SHOW TABLES LIKE '%$this->_DataName%'");
-		if(!$result){
-			throw new MyError('数据库不存在！');
+     * 设置类成员
+     * @param tables 要验证的表名
+     * @author Colin <15070091894@163.com>
+     */
+	protected function setClassMember(){
+		$patten = '/(DB\_.*)/';
+		foreach (Config() as $key => $value) {
+			if(!preg_match($patten , $key , $match)){
+				continue;
+			}
+			$member = strtolower($match[0]);
+			eval('$this->'.$member.' = "'.$value.'";');
 		}
 	}
+
+	/**
+     * 确认表是否存在
+     * @param tables 要验证的表名
+     * @author Colin <15070091894@163.com>
+     */
+    public function CheckTables($tables = null){
+    	if($tables == null){
+    		$tables = $this->db_prefix.$this->_DataName;
+    	}
+        $result = $this->execute("SHOW TABLES LIKE '%$tables%'");
+       	if(empty($result)){
+       		throw new MyError('数据表不存在！'.$tables);
+       	}
+    }
 }
 ?>

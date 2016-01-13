@@ -17,6 +17,7 @@ class PDO implements IDataBase{
      */
     function connect(){
         $this->_db = new \PDO("mysql:host=".Config('DB_HOST').";dbname=".Config('DB_TABS')."","".Config('DB_USER')."","".Config('DB_PASS')."");
+        //$this->_db = new \PDO("mysql:host=".Config('DB_HOST').";","".Config('DB_USER')."","".Config('DB_PASS')."");
     }
 
     /**
@@ -27,6 +28,12 @@ class PDO implements IDataBase{
         $_result = $this->_db->query($sql);
         return $_result;
     }
+
+    /**
+     * 选择数据库方法
+     * @author Colin <15070091894@163.com>
+     */
+    public function select_db(){}
 
     /**
      * close方法

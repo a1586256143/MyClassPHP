@@ -96,7 +96,7 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ParConst(){
-	    if(Config('SESSION_START') != 0){
+	    if(Config('SESSION_START')){
 	        session_start();
 	    }
 	}

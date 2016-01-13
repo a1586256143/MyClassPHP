@@ -15,28 +15,44 @@ class Mysql implements IDataBase{
      * 连接数据库操作
      * @author Colin <15070091894@163.com>
      */
-    function connect(){
+    public function connect(){
         $this->_db = mysql_connect(Config('DB_HOST'),Config('DB_USER'),Config('DB_PASS'));
         if(!$this->_db){
             throw new MyError(mysql_error());
         }
-        mysql_select_db(Config('DB_TABS'));
+    }
+
+    /**
+     * 选择数据库方法
+     * @author Colin <15070091894@163.com>
+     */
+    public function select_db($tables){
+        return mysql_select_db($tables);
     }
 
     /**
      * query方法
      * @author Colin <15070091894@163.com>
      */
-    function query($sql){
+    public function query($sql){
         $_result = mysql_query($sql,$this->_db);
         return $_result;
+    }
+
+    /**
+     * 获取结果集方法
+     * @param query 数据库执行后的操作句柄
+     * @author Colin <15070091894@163.com>
+     */
+    public function fetch_array($query = null){
+        return mysql_fetch_array($query);
     }
 
     /**
      * close方法
      * @author Colin <15070091894@163.com>
      */
-    function close(){
+    public function close(){
         mysql_close($this->_db);
     }
 }

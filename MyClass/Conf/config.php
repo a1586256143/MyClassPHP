@@ -29,7 +29,7 @@ return array(
     'DEFAULT_CONTROLLER'=>	'Index', 				//默认控制器
     'DEFAULT_MODULE'	=>	'Home', 				//默认模块
     'DEFAULT_ACTION'	=>	'index', 				//默认方法
-    'DEFAULT_CONTROLLER_SUFFIX'	=>	'Controller', 	//默认控制器后缀
+    'DEFAULT_CONTROLLER_SUFFIX' =>	'Controller', 	//默认控制器后缀
     'DEFAULT_MODEL_SUFFIX'		=>	'Model', 		//默认模型器后缀
     'DEFAULT_CLASS_SUFFIX'		=>	'.class.php', 	//默认类文件后缀
     

@@ -35,50 +35,51 @@ class MyClass{
 	 * @param ClassName 类名
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function autoload($classname){
-		$name = MyClass.'\\'.$classname;
-		$array = array_unique(explode('\\',$name));
-		if(file_exists($name)){
-			$name = implode('\\', $array);
-			require_once $name.Config('DEFAULT_CLASS_SUFFIX');
-		}else{
-			$name = APP_PATH;
-			dump($name);
-			require_once $name.Config('DEFAULT_CLASS_SUFFIX');
-		}
-	}
-	// public static function autoload($ClassName){
- //        $patten = "/\//";
- //        $patten2 = "/\\\\/";
- //        if(preg_match_all($patten2 , $ClassName , $match)){
- //            $ClassName = preg_replace($patten2 , '/' , $ClassName);
- //        }
-	// 	if(substr($ClassName , -5) == 'Model'){
-	// 		if(preg_match_all($patten , $ClassName)){
-	// 			//匹配到了\号  就从libs下加载文件
-	// 			require_once $ClassName.'.class.php';
-	// 		}else{
-	// 			$_name = substr($ClassName , 0 , -5);
-	// 			//没有匹配到，判断是否为空 为空则是libs下的model  否则是 APP_PATH下的Model
-	// 			empty($_name) ? require_once $ClassName.'.class.php': require_once APP_PATH.'/Model/'.$ClassName.'.class.php';
-	// 		}
-	// 	}else if(substr($ClassName , -10) == 'Controller'){
-	// 		//判断截取后的字符是否为空，如果为空就是libs\下的controller
-	// 		//判断是否有/  如果有那么代表是命名空间
-	// 		if(preg_match_all($patten , $ClassName)){
-	// 			//匹配到了\号  就从libs下加载文件
-	// 			require_once $ClassName.'.class.php';
-	// 		}else{
-	// 			$_name = substr($ClassName , 0 , -10);
-	// 			//没有匹配到，判断是否为空 为空则是libs下的controller  否则是 APP_PATH下的controller
-	// 			empty($_name) ? require_once $ClassName.'.class.php': require_once APP_PATH.'/Controller/'.$ClassName.'.class.php';
-	// 		}
-
+	// public static function autoload($classname){
+	// 	$name = MyClass.'\\'.$classname;
+	// 	$array = array_unique(explode('\\',$name));
+	// 	$name = implode('\\', $array);
+	// 	$class_suffix = Config('DEFAULT_CLASS_SUFFIX');
+	// 	$module = Config('DEFAULT_MODULE');
+	// 	if(preg_match("/($module)/" , $name , $match)){
+	// 		//require_once APP_PATH;
+	// 		require_once APP_PATH.'/'.$classname.$class_suffix;
 	// 	}else{
-	// 		//如果$_classname不满足以上两个条件，那么加载libs下的文件
- //            require_once $ClassName.'.class.php';
+	// 		require_once $name.$class_suffix;
 	// 	}
 	// }
+	public static function autoload($ClassName){
+        $patten = "/\//";
+        $patten2 = "/\\\\/";
+        if(preg_match_all($patten2 , $ClassName , $match)){
+            $ClassName = preg_replace($patten2 , '/' , $ClassName);
+        }
+		if(substr($ClassName , -5) == 'Model'){
+			if(preg_match_all($patten , $ClassName)){
+				//匹配到了\号  就从libs下加载文件
+				require_once $ClassName.'.class.php';
+			}else{
+				$_name = substr($ClassName , 0 , -5);
+				//没有匹配到，判断是否为空 为空则是libs下的model  否则是 APP_PATH下的Model
+				empty($_name) ? require_once $ClassName.'.class.php': require_once APP_PATH.'/Model/'.$ClassName.'.class.php';
+			}
+		}else if(substr($ClassName , -10) == 'Controller'){
+			//判断截取后的字符是否为空，如果为空就是libs\下的controller
+			//判断是否有/  如果有那么代表是命名空间
+			if(preg_match_all($patten , $ClassName)){
+				//匹配到了\号  就从libs下加载文件
+				require_once $ClassName.'.class.php';
+			}else{
+				$_name = substr($ClassName , 0 , -10);
+				//没有匹配到，判断是否为空 为空则是libs下的controller  否则是 APP_PATH下的controller
+				empty($_name) ? require_once $ClassName.'.class.php': require_once APP_PATH.'/Controller/'.$ClassName.'.class.php';
+			}
+
+		}else{
+			//如果$_classname不满足以上两个条件，那么加载libs下的文件
+            require_once $ClassName.'.class.php';
+		}
+	}
 
 	/**
 	 * URL模式

@@ -46,7 +46,7 @@ class ObjFactory{
      * @param name 控制器名称
      * @author Colin <15070091894@163.com>
      */
-   public static function CreateController($name){
+    public static function CreateController($name){
         $_obj = $name.Config('DEFAULT_CONTROLLER_SUFFIX');
         return new $_obj();
     }

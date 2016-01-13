@@ -22,10 +22,11 @@ class Url{
      * @author Colin <15070091894@163.com>
      */
     public static function urlmodel1(){
-        $controller = value('get' , 'c');
-        $method = value('get' , 'a');
+        $module = values('get' , 'm');
+        $controller = values('get' , 'c');
+        $method = values('get' , 'a');
         if(empty($controller)){
-            C('Index' , $method);
+            C('Home/Index' , $method);
             exit;
         }
         C($controller , $method);
@@ -44,11 +45,9 @@ class Url{
         $patten = '/\./';
         //匹配是否是index.php
         if(preg_match($patten,$parse_path[1],$match)){
-            $controller = $parse_path[2];
-            $method = @$parse_path[3];
+            @list(, , $controller , $method) = $parse_path;
         }else{
-            $controller = $parse_path[1];
-            $method = @$parse_path[2];
+            @list(, $controller , $method) = $parse_path;
         }
         C($controller , $method);
     }
@@ -71,12 +70,8 @@ class Url{
         }else{
             $parse_path = array_filter(explode('/', $parse_url['path']));
         }
-        if($is_return_current_url){
-            return $current_url;
-        }
-        if($is_return_array){
-            return $parse_url;
-        }
+        if($is_return_current_url) return $current_url;
+        if($is_return_array) return $parse_url;
         return $parse_path;
     }
 }

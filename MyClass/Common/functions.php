@@ -19,7 +19,7 @@
 					<dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">
 						MyClass提示信息
 					</dt>
-					<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">
+					<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0;word-break:break-all;">
 					'.$_message.'
 					</dd>
 					<dd style="padding:0px;margin:0px;">
@@ -44,18 +44,17 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function C($name , $method = null){
-		$noValue = \MyClass\libs\ObjFactory::CreateController('MyClass\\libs\\Controller\\NoValue');
-		if(!file_exists(APP_PATH.'/Controller/'.$name.'Controller.class.php')){
-			$noValue->_showError($name.'控制器不存在！' , 'controller');
+		$filepath = APP_PATH.'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		if(!file_exists($filepath)){
+			throw new \MyClass\libs\MyError($filepath.'控制器不存在！');
 		}
 		if(empty($method)){
 			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
 			$_controller->index();
 		}else{
 			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
-
 			if(!method_exists($_controller,$method)){
-				$noValue->_showError($method.'这个方法不存在' , 'method');
+				throw new \MyClass\libs\MyError($method.'()这个方法不存在');
 			}
 			return $_controller->$method();
 		}
@@ -134,25 +133,17 @@
 			//session名称为空 返回所有
 			if($name == ''){
 				return $_SESSION;
-			}
-			//清空session
-			if($name == 'null'){
+			}else if($name == 'null'){					//清空session
 				return session_destroy();
-			}
-			//session值为空
-			if(!empty($name) && $value == ''){
+			}else if(!empty($name) && $value == ''){	//session值为空
 				return $_SESSION["$name"];
-			}
-			//session名称和值都不为空
-			if(!empty($name) && !empty($value)){
+			}else if(!empty($name) && !empty($value)){	//session名称和值都不为空
 				$_SESSION["$name"] = $value;
-			}
-			if(!empty($name) && $value == 'null'){
-
+			}else if(!empty($name) && $value == 'null'){
 				unset($_SESSION["$name"]);
 			}
 		}else{
-			throw new MyError('session未打开！请进入config.php打开');
+			throw new \MyClass\libs\MyError('session未打开！请进入config.php打开');
 		}
 	}
 
@@ -163,23 +154,23 @@
 	 * @param function 要使用的函数
 	 * @author Colin <15070091894@163.com>
 	 */
-	function value($type , $formname = null , $function = 'trim'){
+	function values($type , $formname = null , $function = 'trim'){
 
 		switch ($type) {
 			case 'get':
-				$string = $_GET[$formname];
+				$string = isset($_GET[$formname]) ? $_GET[$formname] : '';
 				break;
 			case 'get.':
 				$string = $_GET;
 				break;
 			case 'post':
-				$string = $_POST[$formname];
+				$string = isset($_POST[$formname]) ? $_POST[$formname] : '';
 				break;
 			case 'post.':
 				$string = $_POST;
 				break;
 			case 'files':
-				$string = $_FILES[$formname];
+				$string = isset($_FILES[$formname]) ? $_FILES[$formname] : '';
 				break;
 			case 'files.':
 				$string = $_FILES;
@@ -197,7 +188,7 @@
 				}
 				$processing[$key] = $value;
 			}
-		}elseif(is_string($string)){
+		}else if(is_string($string)){
 			foreach ($function as $key => $value) {
 				$processing = $value($string);
 			}
@@ -216,13 +207,13 @@
 		$cache = \MyClass\libs\ObjFactory::CreateCache();
 		if($name == 'null'){
 			$cache->clearCache();
-		}elseif(!empty($name) && $value == 'null'){
+		}else if(!empty($name) && $value == 'null'){
 			//移除缓存
 			$cache->removeCache($name);
-		}elseif(!empty($name) && !empty($value)){
+		}else if(!empty($name) && !empty($value)){
 			//生成缓存
 			$cache->outputFileName($name , $value);
-		}elseif(!empty($name) && empty($value)){
+		}else if(!empty($name) && empty($value)){
 			//读取缓存
 			$cache->readCache($name);
 		}
@@ -238,13 +229,12 @@
 		static $config = array();
 		if(empty($name)){
 			return $config;
-		}
-		if(is_array($name)){
+		}else if(is_array($name)){
 			//设置
 			$config = $name;
-		}elseif(is_string($name) && $value == ''){
+		}else if(is_string($name) && $value == ''){
 			return $config[$name];
-		}elseif(is_string($name) && !empty($value)){
+		}else if(is_string($name) && !empty($value)){
 			$config[$name] = $value;
 		}
 	}

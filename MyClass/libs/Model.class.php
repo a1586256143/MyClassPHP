@@ -9,7 +9,7 @@ namespace MyClass\libs;
 
 class Model{
 	//数据库句柄
-	protected $_db = '';
+	protected $db = '';
 	//获取数据表前缀
 	protected $db_prefix = '';
 	//获取数据库名
@@ -54,7 +54,7 @@ class Model{
 			return $this;
 		}
 		//获取数据库对象
-		$this->_db = ObjFactory::CreateDateBase()->GetDB();	
+		$this->db = ObjFactory::CreateDateBase()->GetDB();	
 		//执行判断表方法
 		$this->TablesType($tables);
 		//确认表是否存在
@@ -115,10 +115,10 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function ADUP(){
-		if(!$this->_db->query($this->_Sql)){
+		if(!$this->db->query($this->_Sql)){
 			throw new MyError('SQL语句执行错误'.$this->_Sql);
 		}
-		return $this->_db->affected_rows;
+		return $this->db->affected_rows;
 	}
 	
 	/**
@@ -126,7 +126,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function Getonedata(){
-		$_result = $this->_db->query($this->_Sql);
+		$_result = $this->db->query($this->_Sql);
 		if(!$_result)throw new MyError('Sql语句错误'.$this->_Sql);
 		$_array = array();
 		while ($_rows = $_result->fetch_object()){
@@ -140,7 +140,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function GetAllFuild(){
-		$_result = $this->_db->query($this->_Sql);
+		$_result = $this->db->query($this->_Sql);
 		$_array = array();
 		$_obj = new \stdClass();
 		while ($_rows = $_result->fetch_field()){
@@ -155,7 +155,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function GetNum(){
-		$_result = $this->_db->query($this->_Sql);
+		$_result = $this->db->query($this->_Sql);
 		return $_result->num_rows;
 	}
 
@@ -418,8 +418,8 @@ class Model{
      * @author Colin <15070091894@163.com>
      */
 	public function execute($sql){
-		$query = $this->_db->query($sql);
-        $result = $this->_db->fetch_array($query);
+		$query = $this->db->query($sql);
+        $result = $this->db->fetch_array($query);
         return $result;
 	}
 

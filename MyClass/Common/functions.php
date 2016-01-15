@@ -175,6 +175,9 @@
 			case 'files.':
 				$string = $_FILES;
 				break;
+			case 'request':
+				$string = $_REQUEST[$formname];
+				break;
 		}
 		if($function == null){
 			return $string;

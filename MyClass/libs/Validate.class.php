@@ -7,25 +7,17 @@
 */
 namespace MyClass\libs;
 class Validate {
-	public $string = '';		//要处理的字符串
-	public $require = 0;		//是否必填
-	public $parstring = array();//处理后的字符串
-	public $maxlength = '';		//最大长度
-	public $minlength = '';		//最小长度
-	public $info = '';			//提示消息
-	public $charset = 'utf-8';	//长度判断编码
+	protected $string = '';		//要处理的字符串
+	protected $require = 0;		//是否必填
+	protected $parstring = array();//处理后的字符串
+	protected $config = array();	//配置信息
+	protected $maxlength = '';		//最大长度
+	protected $minlength = '';		//最小长度
+	protected $info = '';			//提示消息
+	protected $charset = 'utf-8';	//长度判断编码
 
 	public function __construct($config = null){
-		$this->setConfig($config);
-	}
-
-	/**
-	 * 设置配置
-	 * @param config 自定义配置
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function setConfig($config){
-		self::_parseRules($config);
+		$this->config = $config;
 	}
 
 	/**
@@ -36,33 +28,24 @@ class Validate {
 	 */
 	public function Validate($string = null , $config = null) {
 		$this->string = $string;
-		//$this->setConfig($config);
-		if(empty($string)){
-			$this->string = values('post.');
-		}
-		//$this->parString();
+		//系统配置 为空
+		$config = !empty($this->config) ? $this->config : $config;
+		//遍历
 		foreach ($config as $key => $value) {
-			$this->setConfig($value);
-			$stringValue = values('request' , $value['string']);
-			$this->name = $value['string'];
-			$this->_parsefunction($value , $stringValue);
-			//$this->CheckRules($stringValue);
+			//解析配置信息
+			$this->_parseConfig($value);
+			//解析字符串
+			$this->_parstring(@$value['string']);
+			//解析函数。开始验证
+			$this->_parsefunction($value);
 		}
-		// if(is_array($this->parstring)){
-		// 	foreach ($this->parstring as $key => $value) {
-		// 		$this->name = $key;
-		// 		$this->CheckRules($value);
-		// 	}
-		// }else if(is_string($this->parstring)){
-		// 	$this->CheckRules($string , null);
-		// }
 	}
 
 	/**
 	 * 解析函数体内的方法
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function _parsefunction($name , $value){
+	protected function _parsefunction($name , $string = null){
 		foreach ($name as $key => $value) {
 			switch ($key) {
 				case 'require':
@@ -76,22 +59,33 @@ class Validate {
 					break;
 			}
 		}
+		$string = empty($string) ? $this->string : $string;
 		if(method_exists($this, $method)){
-			$this->$method($value);
+			$this->$method($this->string);
 		}
 	}
 
 	/**
-	 * 解析规则
+	 * 解析配置信息
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function _parseRules($config){
+	protected function _parseConfig($config , $name = null , $savevalue = null){
 		if(!empty($config)){
-			foreach ($config as $key => $value) {
-				if(isset($this->$key)){
-					$this->$key = $value;
+			if(is_array($config)){
+				foreach ($config as $key => $value) {
+					$this->setKey($key , $value);
 				}
 			}
+		}
+	}
+
+	/**
+	 * 设置值
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function setKey($key = null , $value = null){
+		if(isset($this->$key)){
+			$this->$key = $value;
 		}
 	}
 
@@ -107,16 +101,17 @@ class Validate {
 	
 	/**
 	 * 解析字符串
+	 * @param  string 要处理的值
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function parString() {
-		if (is_array($this->string)) {
-			foreach ($this->string as $key => $value) {
-				$this->parstring[$key] = trim($value);
-			}
-		}else if(is_string($this->string)){
-			$this->parstring = $this->string;
+	protected function _parstring($string) {
+		if(empty($string)){
+			$string = $this->string;
 		}
+		//获取值
+		$this->string = values('request' , $string);
+		//设置name
+		$this->name = $string;
 	}
 	
 	/**
@@ -124,10 +119,11 @@ class Validate {
 	 * @param  string 要处理的值
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function required($string) {
+	public function required($string , $name = null) {
+		$name = empty($name) ? $this->name : $name;
 		if($this->require){
 			if(empty($string) && strlen($string) == 0){
-				$this->_showInfo($this->name . '不能为空！');
+				$this->_showInfo($name . '不能为空！');
 				showMessage($this->info);
 			}
 		}
@@ -138,9 +134,11 @@ class Validate {
 	 * @param  string 要处理的值
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function maxlength($string) {
-		if (mb_strlen($string, $this->charset) > $this->maxlength) {
-			$this->_showInfo($this->name . '的长度超过'.$this->maxlength.'位');
+	public function maxlength($string , $maxlength = null , $name = null) {
+		$maxlength = empty($maxlength) ? $this->maxlength : $maxlength;
+		$name = empty($name) ? $this->name : $name;
+		if (mb_strlen($string, $this->charset) > $maxlength) {
+			$this->_showInfo($name . '的长度超过'.$maxlength.'位');
 			showMessage($this->info);
 		}
 	}
@@ -150,23 +148,13 @@ class Validate {
 	 * @param  string 要处理的值
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function minlength($string) {
-		if (mb_strlen($string, $this->charset) < $this->minlength) {
-			$this->_showInfo($this->name . '的长度不能低于'.$this->minlength.'位');
+	public function minlength($string , $minlength = null , $name = null) {
+		$minlength = empty($minlength) ? $this->minlength : $minlength;
+		$name = empty($name) ? $this->name : $name;
+		if (mb_strlen($string, $this->charset) < $minlength) {
+			$this->_showInfo($name . '的长度不能低于'.$minlength.'位');
 			showMessage($this->info);
 		}
-	}
-
-	/**
-	 * 验证规则
-	 * @param  string 要处理的值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function CheckRules($string){
-		var_dump($string);
-		$this->require($string);
-		if(!empty($this->minlength)) $this->minlength($string);
-		if(!empty($this->maxlength)) $this->maxlength($string);
 	}
 
 	/**

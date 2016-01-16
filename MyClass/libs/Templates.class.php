@@ -62,25 +62,26 @@
          * @author Colin <15070091894@163.com>
          */
 		public function display($file , $data = null){
-			$array = Url::getCurrentUrl();
+			@list($controller , $method) = Url::getCurrentUrl();
 
 			//注入核心变量
 			$this->assignCoreVar();
 			$default_controller = Config('DEFAULT_CONTROLLER');
-			$default_action = Config('DEFAULT_ACTION');
+			$default_action = Config('DEFAULT_METHOD');
 			//检查默认控制器是否存在
 			if(!file_exists(APP_PATH.'/Controller/'.$default_controller.'Controller.class.php')){
 			    throw new MyError($default_controller.'控制器不存在！');
 			}
+
+			empty($controller) ? $controller = $default_controller : $controller;
 			
-			//这里会出问题
-			empty($array[2]) ? $array[2] = $default_action : $array[2];
+			empty($method) ? $method = $default_action : $method;
 
 			//如果$_file为空
-			empty($file) ? $file = $array[2].Config('TPL_TYPE') : $file = $file.Config('TPL_TYPE');
+			empty($file) ? $file = $method.Config('TPL_TYPE') : $file = $file.Config('TPL_TYPE');
 			//设置路径
-			$_dirname = APP_PATH.Config('TPL_DIR').$array[1].'/';
-			$_dircname = APP_PATH.Config('TPL_C_DIR').$array[1].'/';
+			$_dirname = APP_PATH.Config('TPL_DIR').$controller.'/';
+			$_dircname = APP_PATH.Config('TPL_C_DIR').$controller.'/';
 			//$_dircache = APP_PATH.Config('CACHE').$array[1].'/';
 
 			//判断方法目录是否存在

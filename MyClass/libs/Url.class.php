@@ -7,16 +7,6 @@
 */
 namespace MyClass\libs;
 class Url{
-    //判断默认控制器和方法是否存在
-    public static function CheckDefaultCA(){
-        if(!DEFAULT_CONTROLLER){
-            throw new MyError('默认控制器不见了！');
-        }
-        if(!DEFAULT_ACTION){
-            throw new MyError('默认方法名不见了！');
-        }
-    }
-
     /**
      * URL模型  1
      * @author Colin <15070091894@163.com>

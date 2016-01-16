@@ -44,20 +44,19 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function C($name , $method = null){
+		//默认控制器
+		if(empty($name)) $name = Config('DEFAULT_CONTROLLER');
+		//默认方法
+		if(empty($method)) $method = Config('DEFAULT_METHOD');
 		$filepath = APP_PATH.'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		if(!file_exists($filepath)){
 			throw new \MyClass\libs\MyError($filepath.'控制器不存在！');
 		}
-		if(empty($method)){
-			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
-			$_controller->index();
-		}else{
-			$_controller = \MyClass\libs\ObjFactory::CreateController($name);
-			if(!method_exists($_controller,$method)){
-				throw new \MyClass\libs\MyError($method.'()这个方法不存在');
-			}
-			return $_controller->$method();
+		$_controller = \MyClass\libs\ObjFactory::CreateController($name);
+		if(!method_exists($_controller,$method)){
+			throw new \MyClass\libs\MyError($method.'()这个方法不存在');
 		}
+		return $_controller->$method();
 	}
 
 	/**

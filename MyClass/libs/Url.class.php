@@ -22,11 +22,10 @@ class Url{
      * @author Colin <15070091894@163.com>
      */
     public static function urlmodel1(){
-        $module = values('get' , 'm');
         $controller = values('get' , 'c');
         $method = values('get' , 'a');
         if(empty($controller)){
-            C('Home/Index' , $method);
+            C('Index' , $method);
             exit;
         }
         C($controller , $method);
@@ -45,10 +44,10 @@ class Url{
         $patten = '/\./';
         //匹配是否是index.php
         if(preg_match($patten,$parse_path[1],$match)){
-            @list(, , $controller , $method) = $parse_path;
-        }else{
-            @list(, $controller , $method) = $parse_path;
+            unset($parse_path[1]);
         }
+        $parse_path = array_merge($parse_path);
+        @list($controller , $method) = $parse_path;
         C($controller , $method);
     }
 
@@ -63,9 +62,9 @@ class Url{
         $current_url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         $parse_url = parse_url($current_url);
         if(Config('URL_MODEL') == 1){
-            $array = array_values(value('get.' , null , 'trim'));
+            $array = array_values(values('get.' , null , 'trim'));
             foreach ($array as $key => $value) {
-               $parse_path[$key + 1] = $value;
+               $parse_path[$key] = $value;
             }
         }else{
             $parse_path = array_filter(explode('/', $parse_url['path']));

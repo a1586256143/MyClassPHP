@@ -156,7 +156,6 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function values($type , $formname = null , $function = 'trim'){
-
 		switch ($type) {
 			case 'get':
 				$string = isset($_GET[$formname]) ? $_GET[$formname] : '';

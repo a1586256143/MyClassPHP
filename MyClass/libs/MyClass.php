@@ -26,7 +26,7 @@ class MyClass{
 			//初始化URL模式
 			self::UrlModel();
 		}catch (MyError $m){
-			throw new MyError($m);
+			echo ($m);
 		}
 	}
 	
@@ -91,7 +91,7 @@ class MyClass{
 	}
 	
 	/**
-	 * 常亮引入方法
+	 * 常量引入方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){

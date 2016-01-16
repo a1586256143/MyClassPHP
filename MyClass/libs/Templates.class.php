@@ -62,7 +62,7 @@
          * @author Colin <15070091894@163.com>
          */
 		public function display($file , $data = null){
-			$_array = Url::getCurrentUrl();
+			$array = Url::getCurrentUrl();
 
 			//注入核心变量
 			$this->assignCoreVar();
@@ -74,15 +74,14 @@
 			}
 			
 			//这里会出问题
-			empty($_array[2]) ? $_array[2] = $default_action : $_array[2];
+			empty($array[2]) ? $array[2] = $default_action : $array[2];
 
 			//如果$_file为空
-			empty($file) ? $file = $_array[2].Config('TPL_TYPE') : $file = $file.Config('TPL_TYPE');
-
+			empty($file) ? $file = $array[2].Config('TPL_TYPE') : $file = $file.Config('TPL_TYPE');
 			//设置路径
-			$_dirname = APP_PATH.Config('TPL_DIR').$_array[1].'/';
-			$_dircname = APP_PATH.Config('TPL_C_DIR').$_array[1].'/';
-			//$_dircache = APP_PATH.Config('CACHE').$_array[1].'/';
+			$_dirname = APP_PATH.Config('TPL_DIR').$array[1].'/';
+			$_dircname = APP_PATH.Config('TPL_C_DIR').$array[1].'/';
+			//$_dircache = APP_PATH.Config('CACHE').$array[1].'/';
 
 			//判断方法目录是否存在
 			if(!is_dir($_dirname)){
@@ -124,15 +123,15 @@
          * @author Colin <15070091894@163.com>
          */
 		public function showdisplay($file){
-			$_array = Url::getCurrentUrl();
+			$array = Url::getCurrentUrl();
 			//载入系统核心变量
 			$this->assignCoreVar();
 			if(!file_exists(TEMPLATES_DIR.SITE_TEMPLATES.$file))E(TEMPLATES_DIR.SITE_TEMPLATES.$file.'模板文件不存在！');
 			//编译文件目录是否存在
-			if(!file_exists(Config('TPL_C_DIR').$_array[1]))E($_array[1].'编译目录文件不存在');
+			if(!file_exists(Config('TPL_C_DIR').$array[1]))E($array[1].'编译目录文件不存在');
 			//判断缓存文件夹是否存在
 			//生成编译文件
-			$_parFile = Config('TPL_C_DIR').$_array[1].'/'.$file.md5($file).$file.'.php';
+			$_parFile = Config('TPL_C_DIR').$array[1].'/'.$file.md5($file).$file.'.php';
 			//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
 			//实例化解析类;
 			$_parser = ObjFactory::CreateTemplatesParse(TEMPLATES_DIR.SITE_TEMPLATES.$file);
@@ -150,8 +149,8 @@
 		public function Layout($file){
 			//是否为空
 			if(empty($file)){
-				$_array = URL::getCurrentUrl();
-				$file = $_array[2];
+				$array = URL::getCurrentUrl();
+				$file = $array[2];
 			}
 
 			//注入系统核心变量

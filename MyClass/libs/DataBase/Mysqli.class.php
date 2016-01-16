@@ -10,6 +10,7 @@ use MyClass\libs\IDataBase;
 
 class Mysqli implements IDataBase{
     protected $_db;
+    public $affected_rows;
     
     /**
      * 连接数据库操作

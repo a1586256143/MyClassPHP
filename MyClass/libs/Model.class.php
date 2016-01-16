@@ -17,7 +17,7 @@ class Model{
 	//多表查询数据库名，必须带数据前缀
 	protected $_Tables;
 	//多表查询字段名
-	protected $_Fields;
+	protected $_Fields = '*';
 	//数据表的真实名字
 	protected $_TrueTables = '';
 	//数据表判断后存放的字段
@@ -50,11 +50,11 @@ class Model{
 		self::setClassMember();
 		//数据库信息是否填写
 		self::CheckConnectInfo();
+		//获取数据库对象
+		$this->db = ObjFactory::CreateDateBase()->GetDB();
 		if(empty($tables)){
 			return $this;
 		}
-		//获取数据库对象
-		$this->db = ObjFactory::CreateDateBase()->GetDB();	
 		//执行判断表方法
 		$this->TablesType($tables);
 		//确认表是否存在
@@ -115,10 +115,11 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function ADUP(){
-		if(!$this->db->query($this->_Sql)){
+		$query = $this->db->query($this->_Sql);
+		if(!$query){
 			throw new MyError('SQL语句执行错误'.$this->_Sql);
 		}
-		return $this->db->affected_rows;
+		return $query;
 	}
 	
 	/**
@@ -126,10 +127,10 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function Getonedata(){
-		$_result = $this->db->query($this->_Sql);
-		if(!$_result)throw new MyError('Sql语句错误'.$this->_Sql);
+		$result = $this->db->query($this->_Sql);
+		if(!$result)throw new MyError('Sql语句错误'.$this->_Sql);
 		$_array = array();
-		while ($_rows = $_result->fetch_object()){
+		while ($_rows = $result->fetch_assoc()){
 			$_array[] = $_rows;
 		}
 		return $_array;
@@ -140,10 +141,10 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function GetAllFuild(){
-		$_result = $this->db->query($this->_Sql);
+		$result = $this->db->query($this->_Sql);
 		$_array = array();
 		$_obj = new \stdClass();
-		while ($_rows = $_result->fetch_field()){
+		while ($_rows = $result->fetch_field()){
 		    $_name = $_rows->name;
 			$_obj->$_name = $_rows->name;
 		}
@@ -155,8 +156,8 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function GetNum(){
-		$_result = $this->db->query($this->_Sql);
-		return $_result->num_rows;
+		$result = $this->db->query($this->_Sql);
+		return $result->num_rows;
 	}
 
 	/**
@@ -222,7 +223,7 @@ class Model{
 	    if($this->_Tables != null){
 	        $this->_Sql = "SELECT $this->_Fields FROM ".$this->_Tables.' '.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
 	    }else {
-	        $this->_Sql = "SELECT * FROM ".$this->_TablesName.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
+	        $this->_Sql = "SELECT $this->_Fields FROM ".$this->_TablesName.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
 	    }
 		return $this->Getonedata();
 	}
@@ -297,7 +298,7 @@ class Model{
 			}else if(is_numeric($wherevalue)){
 				$_a .= "=".$wherevalue;
 			}
-			$this->_Where = " WHERE ".$_fuild;
+			$this->_Where = " WHERE ".$field;
 			$this->_Value = $_a;
 		}	
 		return $this;
@@ -323,7 +324,7 @@ class Model{
 	 * @param uniqid 唯一标示符
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Del($field = 'id' , $value){
+	public function Del($value , $field = 'id' ){
 		$this->_Sql = "DELETE FROM ".$this->_TablesName." WHERE ".$field."=".$value;
 		return $this->ADUP($this->_Sql);
 	}
@@ -407,7 +408,7 @@ class Model{
 	 * order
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function order($field , $desc){
+	public function order($field , $desc = null){
 		$this->_Order = " ORDER BY ".$field." ".$desc." ";
 		return $this;
 	}

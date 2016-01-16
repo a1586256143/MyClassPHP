@@ -67,9 +67,9 @@
 	 */
 	function M($name = null){
 		if(empty($name)){
-			return $obj = MyClass\libs\ObjFactory::CreateSystemModel();
+			return MyClass\libs\ObjFactory::CreateSystemModel();
 		}else {
-			return $obj = MyClass\libs\ObjFactory::CreateSystemModel($name);
+			return MyClass\libs\ObjFactory::CreateSystemModel($name);
 		}
 	}
 	
@@ -117,6 +117,7 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function dump($array){
+		header('Content-type:text/html;charset="UTF-8"');
 		echo '<pre>';
 		print_r($array);
 		echo '</pre>';

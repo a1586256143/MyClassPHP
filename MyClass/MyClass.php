@@ -9,31 +9,28 @@
 	//MyClass目录
 	define('MyClass',dirname(__FILE__));
 
-	//基本目录
-	define('PATH' , substr(MyClass , 0 , -8));
-
 	//如果不存在APP_NAME
 	if(!defined('APP_NAME')){
 		define('APP_PATH' , './Application');
 	}
 
 	//APP路径
-	define('APP_PATH' , PATH.APP_NAME);
+	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
 
 	//运行时文件
-	define('RunTime',PATH.APP_PATH.'/RunTime');
+	define('RunTime',APP_PATH.'/RunTime');
 
 	//核心文件
 	define('Core',MyClass.'/libs/');
 	
 	//控制器目录
-	define('ControllerDIR',PATH.APP_PATH.'/Controller');
+	define('ControllerDIR',APP_PATH.'/Controller');
 	
 	//模型目录
-	define('ModelDIR',PATH.APP_PATH.'/Model');
+	define('ModelDIR',APP_PATH.'/Model');
 	
 	//配置文件目录
-	define('ConfDIR',PATH.APP_PATH.'/Conf');
+	define('ConfDIR',APP_PATH.'/Conf');
 	
 	//引入MyClass核心文件
 	require_once './MyClass/libs/MyClass.php';

@@ -17,7 +17,7 @@ class MyClass{
 	 */
 	public static function run(){
 		try {
-			$statr_time = microtime();
+			//$statr_time = microtime();
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
 			//判断文件夹是否存在
@@ -26,8 +26,8 @@ class MyClass{
 			self::View();
 			//初始化URL模式
 			self::UrlModel();
-			$end_time = microtime();
-			dump($end_time - $statr_time);
+			//$end_time = microtime();
+			//dump($end_time - $statr_time);
 		}catch (MyError $m){
 			echo ($m);
 		}

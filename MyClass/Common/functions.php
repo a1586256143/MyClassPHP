@@ -48,15 +48,20 @@
 		if(empty($name)) $name = Config('DEFAULT_CONTROLLER');
 		//默认方法
 		if(empty($method)) $method = Config('DEFAULT_METHOD');
+		//文件路径
 		$filepath = APP_PATH.'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		//如果不存在
 		if(!file_exists($filepath)){
 			throw new \MyClass\libs\MyError($filepath.'控制器不存在！');
 		}
-		$_controller = \MyClass\libs\ObjFactory::CreateController($name);
-		if(!method_exists($_controller,$method)){
+		//引入命名空间以及目录
+		$name = require_module($name , 'CONTROLLER');
+		//创建控制器
+		$controller = \MyClass\libs\ObjFactory::CreateController($name);
+		if(!method_exists($controller , $method)){
 			throw new \MyClass\libs\MyError($method.'()这个方法不存在');
 		}
-		return $_controller->$method();
+		return $controller->$method();
 	}
 
 	/**
@@ -66,8 +71,10 @@
 	 */
 	function M($name = null){
 		if(empty($name)){
+			//创建系统模型   不带表名
 			return MyClass\libs\ObjFactory::CreateSystemModel();
 		}else {
+			//创建系统模型   带表名
 			return MyClass\libs\ObjFactory::CreateSystemModel($name);
 		}
 	}
@@ -79,10 +86,21 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function D($name , $method = null){
+		//引入命名空间以及目录
+		$name = require_module($name , 'MODEL');
 		if(!$name){
 			ShowMessage('D方法必须传递一个值');
 		}
-		$obj = \MyClass\libs\ObjFactory::CreateModel($name);
+		//文件目录
+		$filepath = PATH.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		//文件不存在
+		if(!file_exists($filepath)){
+			//创建系统模型
+			$obj = \MyClass\libs\ObjFactory::CreateSystemModel();
+		}else{
+			//创建模型 带表名
+			$obj = \MyClass\libs\ObjFactory::CreateModel($name);
+		}
 		if(empty($method)){
 			return $obj;
 		}else{
@@ -108,6 +126,18 @@
 		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
 		$newurl = '/'.ltrim($url , '/');
 		return $newurl;
+	}
+
+	/**
+	 * 引入函数
+	 * @param name 模型名称
+	 * @author Colin <15070091894@163.com>
+	 */
+	function require_module($name = null , $type = null){
+		$app_name = ltrim(APP_NAME , './');
+		$layer = Config('DEFAULT_'.$type.'_LAYER');
+		$path = $app_name.'\\'.$layer.'\\'.$name;
+		return $path;
 	}
 
 	/**

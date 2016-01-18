@@ -37,6 +37,7 @@ class Url{
             unset($parse_path[1]);
         }
         $parse_path = array_merge($parse_path);
+
         @list($controller , $method) = $parse_path;
         C($controller , $method);
     }

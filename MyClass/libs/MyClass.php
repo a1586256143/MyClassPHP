@@ -20,6 +20,7 @@ class MyClass{
 			//$statr_time = microtime();
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
+			register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
 			//判断文件夹是否存在
 			self::Dir();
 			//视图初始化
@@ -29,7 +30,7 @@ class MyClass{
 			//$end_time = microtime();
 			//dump($end_time - $statr_time);
 		}catch (MyError $m){
-			echo ($m);
+			echo $m;
 		}
 	}
 	
@@ -83,11 +84,11 @@ class MyClass{
 	 */
 	public static function Dir(){
 		require_once MyClass . '/Common/functions.php';
-		@mkdir(APP_PATH);       	//建立App目录
-		@mkdir(RunTime);            //建立运行目录
-		@mkdir(ControllerDIR);   	//建立控制器目录
-		@mkdir(ModelDIR);        	//建立模型目录
-		@mkdir(ConfDIR);            //建立配置文件目录
+		if(!is_dir(APP_PATH)) mkdir(APP_PATH);       	//建立App目录
+		if(!is_dir(RunTime)) mkdir(RunTime);            //建立运行目录
+		if(!is_dir(ControllerDIR)) mkdir(ControllerDIR);   	//建立控制器目录
+		if(!is_dir(ModelDIR)) mkdir(ModelDIR);        	//建立模型目录
+		if(!is_dir(ConfDIR)) mkdir(ConfDIR);            //建立配置文件目录
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
             @file_put_contents(ConfDIR.'/config.php',@file_get_contents(MyClass.'/tpl/config.php'));
@@ -98,8 +99,8 @@ class MyClass{
 		}
 		//加载常量
 		self::ReqConst();
-		@mkdir(APP_PATH.Config('TPL_DIR'));			//创建视图文件目录
-		@mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
+		if(!is_dir(APP_PATH.Config('TPL_DIR'))) mkdir(APP_PATH.Config('TPL_DIR'));			//创建视图文件目录
+		if(!is_dir(APP_PATH.Config('CACHE_DATA_DIR'))) mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
 	}
 	
 	/**

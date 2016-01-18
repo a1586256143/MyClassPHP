@@ -64,5 +64,15 @@ class Url{
         if($is_return_array) return $parse_url;
         return $parse_path;
     }
+
+    /**
+     * 获取域名
+     * @return array
+     * @author Colin <15070091894@163.com>
+     */
+    public static function getSiteUrl(){
+        $parse_url = self::getCurrentUrl(false , true);
+        return $parse_url['scheme'].'://'.$parse_url['host'];
+    }
 }
 ?>

@@ -97,14 +97,15 @@ class Templates{
 		//if(!is_dir($_dircache))@mkdir($_dircache);
 		//处理传入数据
 		if(!empty($data)){
-			if(is_array($data)){
-				foreach ($data as $key => $value) {
-					$keyname = "$$key = '$value';";
-					eval($keyname);
-				}
-			}elseif(is_string($data)){
-				$data = $data;
-			}
+			// if(is_array($data)){
+			// 	foreach ($data as $key => $value) {
+			// 		echo $key .'=>'. dump($value);	
+			// 	}
+			// }elseif(is_string($data)){
+			// 	$data = $data;
+			// }
+			// 
+			$vars = $data;
 		}
 		include $_tplFile;
 	}

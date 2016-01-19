@@ -24,7 +24,7 @@ class Cache {
 	 */
 	public function CacheDir(){
 		if(!file_exists($this->cache_data_dir)){
-			if(!is_dir(APP_PATH.$this->cache_data_dir, mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
+			if(!is_dir(APP_PATH.$this->cache_data_dir)) mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
 		}
 		//检查是否有可写的权限
 		if(!is_writable($this->cache_data_dir)){
@@ -87,7 +87,7 @@ class Cache {
 	public function readCache($name){
 		$FileName = $this->UrlAndDefaultSuffix($name);
 		$json = $this->file->OpenFile($FileName);
-		dump(json_decode($json));
+		return json_decode($json);
 	}
 
 	/**

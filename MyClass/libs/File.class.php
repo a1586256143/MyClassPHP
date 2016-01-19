@@ -17,7 +17,7 @@ class File {
 	public function OpenFile($filename){
 		$file_resoule = @file_get_contents($filename);
 		if(!$file_resoule){
-			throw new MyError("打开文件出错！".$filename);
+			return null;
 		}
 		return $file_resoule;
 	}

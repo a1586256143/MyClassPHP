@@ -307,7 +307,7 @@ class Model{
 						$_a .= '`'.$_key.'`'."='".$_value."'";
 					}
 				}
-				$this->_Where =  " WHERE `".$_a.'`';
+				$this->_Where =  " WHERE ".$_a;
 			}
 		}else {
 			//如果字段为数组的时候，那么直接使用遍历
@@ -329,7 +329,7 @@ class Model{
 	 * @param array   要插入的数据
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Add($data){
+	public function insert($data){
         if(empty($data)){
             throw new MyError(__METHOD__.'没有传入参数值！');
         }
@@ -344,7 +344,7 @@ class Model{
 	 * @param uniqid 唯一标示符
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Del($value , $field = 'id' ){
+	public function delete($value , $field = 'id' ){
 		$this->_Sql = "DELETE FROM ".$this->_TablesName." WHERE ".$field."=".$value;
 		return $this->ADUP($this->_Sql);
 	}
@@ -355,7 +355,7 @@ class Model{
 	 * @param value	要被修改的值
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Upd($field , $value = null){
+	public function update($field , $value = null){
 		if(is_string($field)){
 			$this->_ParKey = ' SET '.'`'.$field.'`'."='".$value."'";
 		}else if(is_array($field)){
@@ -473,7 +473,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function CheckConnectInfo(){
-		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_PASS') || !Config('DB_TABS')){
+		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_TABS')){
 			throw new MyError('请设置数据库连接信息！');
 		}
 	}

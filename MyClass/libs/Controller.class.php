@@ -65,8 +65,11 @@ class Controller{
      * @author Colin <15070091894@163.com>
 	 */
 	public function redirect($url , $info = '正在跳转.....', $time = 3){
-		echo "<meta http-equiv='refresh' content='$time; url=$url'/>";
-		$this->ShowMessage($info , true);
+		if(!empty($info)){
+			echo "<meta http-equiv='refresh' content='$time; url=$url'/>";
+			$this->ShowMessage($info , true);
+		}
+		header("Location:$url");
 	}
 
 	/**

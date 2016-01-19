@@ -55,10 +55,12 @@ class Url{
         }
         $patten = '/\./';
         //匹配是否是index.php
-        if(preg_match($patten,$parse_path[1],$match)){
-            unset($parse_path[1]);
+        if(!empty($parse_path)){
+            if(preg_match($patten,$parse_path[1],$match)){
+                unset($parse_path[1]);
+            }
+            $parse_path = array_merge($parse_path);
         }
-        $parse_path = array_merge($parse_path);
         if($is_return_current_url) return $current_url;
         if($is_return_array) return $parse_url;
         return $parse_path;

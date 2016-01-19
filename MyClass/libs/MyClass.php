@@ -91,16 +91,16 @@ class MyClass{
 		if(!is_dir(ConfDIR)) mkdir(ConfDIR);            //建立配置文件目录
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
-            @file_put_contents(ConfDIR.'/config.php',@file_get_contents(MyClass.'/tpl/config.php'));
+            @file_put_contents(ConfDIR.'/config.php',View::createConfig());
         }
 		//生成默认的控制器
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
-			@file_put_contents(ControllerDIR.'/IndexController.class.php',@file_get_contents(MyClass.'/tpl/index.php'));
+			@file_put_contents(ControllerDIR.'/IndexController.class.php',View::createIndex());
 		}
 		//加载常量
 		self::ReqConst();
 		if(!is_dir(APP_PATH.Config('TPL_DIR'))) mkdir(APP_PATH.Config('TPL_DIR'));			//创建视图文件目录
-		if(!is_dir(APP_PATH.Config('CACHE_DATA_DIR'))) mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
+		if(!is_dir(APP_PATH.Config('CACHE_DIR'))) mkdir(APP_PATH.Config('CACHE_DIR'));			//创建缓存文件目录
 	}
 	
 	/**

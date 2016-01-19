@@ -24,7 +24,7 @@ class Cache {
 	 */
 	public function CacheDir(){
 		if(!file_exists($this->cache_data_dir)){
-			throw new MyError('缓存目录不存在！请手动创建'.$this->cache_data_dir);
+			if(!is_dir(APP_PATH.$this->cache_data_dir, mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
 		}
 		//检查是否有可写的权限
 		if(!is_writable($this->cache_data_dir)){

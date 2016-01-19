@@ -39,10 +39,6 @@ class MyError extends \Exception
 
     public static function shutdown_function(){   	
 		$e = error_get_last();
-        if (!(error_reporting() & $e['type'])) {
-            // This error code is not included in error_reporting
-            return;
-        }
 		self::customError($e['type'] , $e['message'] , $e['file'] , $e['line']);
     }
 }

@@ -42,6 +42,8 @@
          * @author Colin <15070091894@163.com>
          */
 		private function assignCoreVar(){
+			if(!defined('__PUBLIC__')) define('__PUBLIC__' , Url::getSiteUrl().'/Application/Public');
+			if(!defined('__URL__')) define('__URL__' , Url::getCurrentUrl(true));
 			//地址
 			//$_url = 'http://'.$_SERVER["SERVER_NAME"].':'.$_SERVER["SERVER_PORT"].$_SERVER["SCRIPT_NAME"];
 			//$url = Url::getCurrentUrl(true);
@@ -79,6 +81,7 @@
 
 			//如果$_file为空
 			empty($file) ? $file = $method.Config('TPL_TYPE') : $file = $file.Config('TPL_TYPE');
+
 			//设置路径
 			$_dirname = APP_PATH.Config('TPL_DIR').$controller.'/';
 			$_dircname = APP_PATH.Config('TPL_C_DIR').$controller.'/';
@@ -91,7 +94,6 @@
 
 			//设置模板文件路径
 			$_tplFile = $_dirname.$file;
-
 			//判断模板文件是否存在
 			if(!file_exists($_tplFile)){
 				throw new MyError($_tplFile.'模板文件不存在！');

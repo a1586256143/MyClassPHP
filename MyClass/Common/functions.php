@@ -48,6 +48,7 @@
 		if(empty($name)) $name = Config('DEFAULT_CONTROLLER');
 		//默认方法
 		if(empty($method)) $method = Config('DEFAULT_METHOD');
+
 		//文件路径
 		$filepath = APP_PATH.'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//如果不存在
@@ -92,7 +93,7 @@
 			ShowMessage('D方法必须传递一个值');
 		}
 		//文件目录
-		$filepath = PATH.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		$filepath = $name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//文件不存在
 		if(!file_exists($filepath)){
 			//创建系统模型
@@ -124,7 +125,10 @@
 	 */
 	function U($url){
 		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
-		$newurl = '/'.ltrim($url , '/');
+		$path = explode('/', $subject['path']);
+		array_shift($path);
+		list($oldurl) = $path;
+		$newurl = '/'.$oldurl.'/'.ltrim($url , '/');
 		return $newurl;
 	}
 
@@ -166,7 +170,7 @@
 			}else if($name == 'null'){					//清空session
 				return session_destroy();
 			}else if(!empty($name) && $value == ''){	//session值为空
-				return $_SESSION["$name"];
+				return isset($_SESSION["$name"]) ? $_SESSION["$name"] : '';
 			}else if(!empty($name) && !empty($value)){	//session名称和值都不为空
 				$_SESSION["$name"] = $value;
 			}else if(!empty($name) && $value == 'null'){

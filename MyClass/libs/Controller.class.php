@@ -58,12 +58,27 @@ class Controller{
 	}
 
 	/**
+	 * 重定向
+	 * @param url  跳转地址
+     * @param info  跳转时提示的信息
+     * @param time  跳转时间
+     * @author Colin <15070091894@163.com>
+	 */
+	public function redirect($url , $info = '正在跳转.....', $time = 3){
+		echo "<meta http-equiv='refresh' content='$time; url=$url'/>";
+		$this->ShowMessage($info , true);
+	}
+
+	/**
      * 报错方法
      * @param message  要输出的错误内容
      * @author Colin <15070091894@163.com>
      */
-	protected function ShowMessage($message){
+	protected function ShowMessage($message , $is_diy = false){
 		header('Content-Type:text/html;charset=UTF-8');
+		if($is_diy){
+			die($message);
+		}
 		die('<div style="width:35%;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;"><dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;"><dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt><dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">'.$message.'</dd></dl></div>');
 	}
 
@@ -74,7 +89,7 @@ class Controller{
      * @param url  要跳转的地址。为空则跳转为上一个页面
      * @author Colin <15070091894@163.com>
      */
-	protected function Success($message , $url = null , $time = 3){
+	protected function success($message , $url = null , $time = 3){
 		header('Content-Type:text/html;charset=UTF-8');
 		echo '<div style="width:35%;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;"><dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;"><dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt><dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">'.$message.'</dd></dl></div>';
 		echo empty($url) ? "<meta http-equiv='refresh' content='$time; url={$_SERVER["HTTP_REFERER"]}' />" : "<meta http-equiv='refresh' content='$time; url=$url' />";
@@ -88,10 +103,10 @@ class Controller{
      * @param url  要跳转的地址。为空则跳转为上一个页面
      * @author Colin <15070091894@163.com>
      */
-	protected function Error($message , $url = null , $time = null){
+	protected function error($message , $url = null , $time = null){
 		header('Content-Type:text/html;charset=UTF-8');
 		echo '<div style="width:35%;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;"><dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;"><dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt><dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">'.$message.'</dd></dl></div>';
-		echo empty($url) ? "<meta http-equiv='refresh' content='$time; url={$_SERVER["HTTP_REFERER"]}' />" : "<meta http-equiv='refresh' content='$time; url=$url' />";
+		echo empty($url) ? "<script>window.history.back();</script>" : "<meta http-equiv='refresh' content='$time; url=$url' />";
 		exit;
 	}
 }

@@ -128,7 +128,7 @@ class Model{
 	 */
 	protected function Getonedata(){
 		$result = $this->db->query($this->_Sql);
-		if(!$result)throw new MyError('Sql语句错误'.$this->_Sql);
+		if(!$result) throw new MyError('Sql语句错误'.$this->_Sql);
 		$_array = array();
 		while ($_rows = $result->fetch_assoc()){
 			$_array[] = $_rows;
@@ -220,12 +220,32 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function select(){
-	    if($this->_Tables != null){
+	    $this->getSql();
+		return $this->Getonedata();
+	}
+
+	/**
+	 * 得到查询的sql语句
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function getSql(){
+		if($this->_Tables != null){
 	        $this->_Sql = "SELECT $this->_Fields FROM ".$this->_Tables.' '.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
 	    }else {
 	        $this->_Sql = "SELECT $this->_Fields FROM ".$this->_TablesName.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
 	    }
-		return $this->Getonedata();
+	}
+
+	/**
+	 * 查询一条数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function find(){
+		$this->getSql();
+		if(!$result = $this->query($this->_Sql)){
+			new MyError('sql语句错误'.$this->_Sql);
+		}
+		return $result->fetch_assoc();
 	}
 
 	/**
@@ -287,7 +307,7 @@ class Model{
 						$_a .= '`'.$_key.'`'."='".$_value."'";
 					}
 				}
-				$this->_Where =  " WHERE ".$_a;
+				$this->_Where =  " WHERE `".$_a.'`';
 			}
 		}else {
 			//如果字段为数组的时候，那么直接使用遍历
@@ -298,7 +318,7 @@ class Model{
 			}else if(is_numeric($wherevalue)){
 				$_a .= "=".$wherevalue;
 			}
-			$this->_Where = " WHERE ".$field;
+			$this->_Where = " WHERE `".$field.'`';
 			$this->_Value = $_a;
 		}	
 		return $this;

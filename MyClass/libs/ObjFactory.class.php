@@ -58,7 +58,10 @@ class ObjFactory{
      */
     public static function CreateModel($name){
         $model = $name.Config('DEFAULT_MODEL_SUFFIX');
-        return new $model($model);
+        $modelexplode = explode('\\', $name);
+        //得到最后一个值
+        $modelname = array_pop($modelexplode);
+        return new $model($modelname);
     }
 
     /**

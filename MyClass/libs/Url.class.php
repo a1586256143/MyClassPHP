@@ -30,14 +30,7 @@ class Url{
         if(empty($parse_path)){
             C('Index' , 'index');
             exit;
-        }
-        $patten = '/\./';
-        //匹配是否是index.php
-        if(preg_match($patten,$parse_path[1],$match)){
-            unset($parse_path[1]);
-        }
-        $parse_path = array_merge($parse_path);
-
+        } 
         @list($controller , $method) = $parse_path;
         C($controller , $method);
     }
@@ -60,6 +53,12 @@ class Url{
         }else{
             $parse_path = array_filter(explode('/', $parse_url['path']));
         }
+        $patten = '/\./';
+        //匹配是否是index.php
+        if(preg_match($patten,$parse_path[1],$match)){
+            unset($parse_path[1]);
+        }
+        $parse_path = array_merge($parse_path);
         if($is_return_current_url) return $current_url;
         if($is_return_array) return $parse_url;
         return $parse_path;

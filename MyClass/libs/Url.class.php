@@ -7,6 +7,8 @@
 */
 namespace MyClass\libs;
 class Url{
+    public static $param = array();
+
     /**
      * URL模型  1
      * @author Colin <15070091894@163.com>
@@ -30,9 +32,18 @@ class Url{
         if(empty($parse_path)){
             C('Index' , 'index');
             exit;
-        } 
+        }
+        $count = count(self::$param);
+        if($count > 0){
+            if($count % 2 == 0){
+                for ($i = 0; $i < $count ; $i += 2) { 
+                    $new_pams[self::$param[$i]] = self::$param[$i + 1];
+                    $_GET[self::$param[$i]] = self::$param[$i + 1];
+                }
+            }
+        }
         @list($controller , $method) = $parse_path;
-        C($controller , $method);
+        C($controller , $method , $new_pams);
     }
 
     /**
@@ -64,6 +75,7 @@ class Url{
         if(empty($parse_path)){
             $parse_path = array(Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
         }
+        self::$param = $parse_path;
         if($is_return_current_url) return $current_url;
         if($is_return_array) return $parse_url;
         return $parse_path;

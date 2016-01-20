@@ -17,15 +17,31 @@ class Parser{
 		}
 		$this->_tpl = file_get_contents($tplFile);
 	}
+
+	/**
+     * 解析函数
+     * @author Colin <15070091894@163.com>
+     */
+	private function parFunc(){
+		$patten = "/\{\:([\w]+)\(\'([\w\/]+)\'\,([\w\(\'\'\w\=\>\$\[\]\s)]+)\)\}/i";
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php echo $1('$2' , $3) ?>",$this->_tpl);
+		}
+	}
 	
 	/**
      * 解析普通变量
      * @author Colin <15070091894@163.com>
      */
 	private function parVar(){
-		$patten = '/\{\$([\w]+)\}/';
+		$patten = '/\{\$([\w]+)(\[\'[\w]+\'\])*\}/';
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo \$this->_vars['$1'] ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php echo \$this->_vars['$1']$2 ?>",$this->_tpl);
+		}
+		//解析三元
+		$patten1 = '/\{\$([\w]+)((\[\'[\w]+\'\])*\s\?\s[\'\'\w]+\s\:\s[\'\'\w]+)\}/';
+		if(preg_match($patten1,$this->_tpl,$match)){
+			$this->_tpl = preg_replace($patten1,"<?php echo \$this->_vars['$1']$2 ?>",$this->_tpl);
 		}
 	}
 
@@ -62,13 +78,13 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	public function parForeach(){
-		$patten = '/\{foreach\s+\$([\w]+)\(([\w]+),([\w]+)\)\}/';
+		$patten = '/\{foreach\s+name="([\w]+)"\s+id="([\w]+)"\}/';
 		$_endpatten = '/\{\/foreach\}/';
-		$pattenvar = '/\{@([\w]+)([\w\-\>\+]*)\}/';
+		$pattenvar = '/\{\$([\w]+)([\[\'\'\]\w\-\>\+]*)\}/';
 		if(preg_match($patten,$this->_tpl)){
 			if(preg_match($_endpatten,$this->_tpl)){
-				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->_vars['$1'] as \$$2=>\$$3){ ?>",$this->_tpl);
-				$this->_tpl = preg_replace($_endpatten,"<?php } ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->_vars['$1'] as \$key=>\$$2): ?>",$this->_tpl);
+				$this->_tpl = preg_replace($_endpatten,"<?php endforeach; ?>",$this->_tpl);
 				if(preg_match($pattenvar,$this->_tpl)){
 					$this->_tpl = preg_replace($pattenvar,"<?php echo \$$1$2 ?>",$this->_tpl);
 				}
@@ -173,6 +189,7 @@ class Parser{
 	public function comile($parFile){
 		//解析模板变量
 		$this->parDefault();		//解析模板默认常量
+		$this->parFunc();			//解析模板函数
 		$this->parVar();
 		$this->parIF();
 		$this->parForeach();

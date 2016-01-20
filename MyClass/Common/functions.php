@@ -43,7 +43,7 @@
 	 * @param name 模型名称
 	 * @author Colin <15070091894@163.com>
 	 */
-	function C($name , $method = null){
+	function C($name , $method = null , $param = null){
 		//默认控制器
 		if(empty($name)) $name = Config('DEFAULT_CONTROLLER');
 		//默认方法
@@ -62,7 +62,7 @@
 		if(!method_exists($controller , $method)){
 			throw new \MyClass\libs\MyError($method.'()这个方法不存在');
 		}
-		return $controller->$method();
+		return $controller->$method($param);
 	}
 
 	/**
@@ -123,12 +123,21 @@
 	 * @param url 地址
 	 * @author Colin <15070091894@163.com>
 	 */
-	function U($url){
+	function U($url , $param = null){
 		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
 		$path = explode('/', $subject['path']);
 		array_shift($path);
+		if(!empty($param)){
+			if(is_array($param)){
+				foreach ($param as $key => $value) {
+					$pars .= "/$key/$value";
+				}
+			}else if(is_string($param)){
+				$pars = $param;
+			}
+		}
 		list($oldurl) = $path;
-		$newurl = '/'.$oldurl.'/'.ltrim($url , '/');
+		$newurl = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
 		return $newurl;
 	}
 

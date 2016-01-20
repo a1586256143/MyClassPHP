@@ -80,7 +80,7 @@ class Templates{
 
 		//编译文件夹是否存在
 		if(!is_dir($dircname)) mkdir($dircname);
-		
+
 		//生成编译文件
 		$parFile = $dircname.md5($file).$file.'.php';
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成

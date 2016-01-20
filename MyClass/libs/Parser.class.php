@@ -183,7 +183,7 @@ class Parser{
 		$this->parExit();
 		$this->parPrint();
 		//生成编译文件
-		file_put_contents($parFile , $this->_tpl);
+		file_put_contents($parFile,$this->_tpl);
 	}
 }
 ?>

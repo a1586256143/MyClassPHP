@@ -42,6 +42,7 @@ return array(
 	'TPL_TYPE'			=>	'.html',				//模板类型
     'TPL_DIR'			=>	'/View/',				//模板文件存放目录
     'TPL_C_DIR'			=>	'/RunTime/Template_c/',	//编译文件存放目录
+    'TPL_CACHE'         =>  '/RunTime/Template_cache/',      //编译文件文件目录
 
     //缓存设置
     'CACHE_DATA_DIR'    =>  '/RunTime/Cache/Data/', //S缓存文件存放目录

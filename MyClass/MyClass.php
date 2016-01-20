@@ -22,6 +22,9 @@
 
 	//核心文件
 	define('Core',MyClass.'/libs/');
+
+	//是否开启缓存
+	define('IS_CACHE' , true);
 	
 	//控制器目录
 	define('ControllerDIR',APP_PATH.'/Controller');

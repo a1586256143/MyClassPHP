@@ -61,6 +61,9 @@ class Url{
             }
             $parse_path = array_merge($parse_path);
         }
+        if(empty($parse_path)){
+            $parse_path = array(Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
+        }
         if($is_return_current_url) return $current_url;
         if($is_return_array) return $parse_url;
         return $parse_path;

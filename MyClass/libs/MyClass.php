@@ -64,6 +64,7 @@ class MyClass{
 		$const1 = require_once APP_PATH . '/Conf/config.php';
 		$const3 = array_replace_recursive($const , $const1);
 		Config($const3);
+		require_once MyClass.'/Conf/template.php';
 		//解析常量方法
 		self::ParConst();
 	}

@@ -11,10 +11,11 @@ class Parser{
 	//字段，保存模板内容
 	private $_tpl;
 	//构造方法用于获取模板内容
-	public function __construct($_tplFile){
-		if(!$this->_tpl = file_get_contents($_tplFile)){
+	public function __construct($tplFile){
+		if(!file_exists($tplFile)){
 			throw new MyError('读取模板文件出错！'.$this->_tpl);
 		}
+		$this->_tpl = file_get_contents($tplFile);
 	}
 	
 	/**
@@ -22,9 +23,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parVar(){
-		$_patten = '/\{\$([\w]+)\}/';
-		if(preg_match($_patten,$this->_tpl)){
-			$this->_tpl = preg_replace($_patten,"<?php echo \$this->_vars['$1'] ?>",$this->_tpl);
+		$patten = '/\{\$([\w]+)\}/';
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php echo \$this->_vars['$1'] ?>",$this->_tpl);
 		}
 	}
 
@@ -61,15 +62,15 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	public function parForeach(){
-		$_patten = '/\{foreach\s+\$([\w]+)\(([\w]+),([\w]+)\)\}/';
+		$patten = '/\{foreach\s+\$([\w]+)\(([\w]+),([\w]+)\)\}/';
 		$_endpatten = '/\{\/foreach\}/';
-		$_pattenvar = '/\{@([\w]+)([\w\-\>\+]*)\}/';
-		if(preg_match($_patten,$this->_tpl)){
+		$pattenvar = '/\{@([\w]+)([\w\-\>\+]*)\}/';
+		if(preg_match($patten,$this->_tpl)){
 			if(preg_match($_endpatten,$this->_tpl)){
-				$this->_tpl = preg_replace($_patten,"<?php foreach(\$this->_vars['$1'] as \$$2=>\$$3){ ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->_vars['$1'] as \$$2=>\$$3){ ?>",$this->_tpl);
 				$this->_tpl = preg_replace($_endpatten,"<?php } ?>",$this->_tpl);
-				if(preg_match($_pattenvar,$this->_tpl)){
-					$this->_tpl = preg_replace($_pattenvar,"<?php echo \$$1$2 ?>",$this->_tpl);
+				if(preg_match($pattenvar,$this->_tpl)){
+					$this->_tpl = preg_replace($pattenvar,"<?php echo \$$1$2 ?>",$this->_tpl);
 				}
 			}else {
 				throw new MyError('foreach语句未关闭！'.$this->_tpl);
@@ -82,17 +83,18 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parinclude(){
-		$_patten = '/\{include\s+file=(\"|\')([\w\.\-\/]+)(\"|\')\}/';
-		if(preg_match($_patten,$this->_tpl,$_file)){
-			$_filename = APP_PATH.TPL_DIR.$_file[2].TPL_TYPE;
-			if(!file_exists($_filename) || empty($_file)){
-				throw new MyError($_filename.'包含文件出错！请检查！');
+		$patten = '/\{include\s+file=(\"|\')([\w\.\-\/]+)(\"|\')\}/';
+		if(preg_match($patten,$this->_tpl,$file)){
+			$filename = $file[2];
+			$filepath = APP_PATH.Config('TPL_DIR').$filename.Config('TPL_TYPE');
+			if(!file_exists($filepath) || empty($file)){
+				throw new MyError($filepath.'包含文件出错！请检查！');
 			}
-			$_patten1 = '/Layout/';
-			if(preg_match($_patten1,$_file[2])){
-				$this->_tpl = preg_replace($_patten,"<?php \$this->Layout('$2') ?>",$this->_tpl);
+			$patten1 = '/Layout/';
+			if(preg_match($patten1,$filename)){
+				$this->_tpl = preg_replace($patten,"<?php \$this->Layout('$2') ?>",$this->_tpl);
 			}else{
-				$this->_tpl = preg_replace($_patten,"<?php include TPL_DIR.'$2'.TPL_TYPE ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php include Config('TPL_DIR').'$2'.Config('TPL_TYPE'); ?>",$this->_tpl);
 			}
 		}
 	}
@@ -102,9 +104,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parConfig(){
-		$_patten = '/<!--\{([\w]+)\}-->/';
-		if(preg_match($_patten,$this->_tpl)){
-			$this->_tpl = preg_replace($_patten,"<?php echo \$this->_config['$1']; ?>",$this->_tpl);
+		$patten = '/<!--\{([\w]+)\}-->/';
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php echo \$this->_config['$1']; ?>",$this->_tpl);
 		}
 	}
 	
@@ -113,9 +115,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parCommon(){
-		$_patten = '/\{#\}(.*)\{#\}/';
-		if(preg_match($_patten,$this->_tpl)){
-			$this->_tpl = preg_replace($_patten,"<?php /* $1 */ ?>",$this->_tpl);
+		$patten = '/\{#\}(.*)\{#\}/';
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php /* $1 */ ?>",$this->_tpl);
 		}
 	}
 
@@ -124,9 +126,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parCount(){
-		$_patten = '/\{count\(\$([\w]+)\)\}/';
-		if(preg_match($_patten,$this->_tpl)){
-			$this->_tpl = preg_replace($_patten,"<?php echo count(\$this->_vars['$1']) ?>",$this->_tpl);
+		$patten = '/\{count\(\$([\w]+)\)\}/';
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php echo count(\$this->_vars['$1']) ?>",$this->_tpl);
 		}
 	}
 
@@ -135,9 +137,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	public function parExit(){
-		$_patten = '/\{exit\}/';
-		if(preg_match($_patten,$this->_tpl)){
-			$this->_tpl = preg_replace($_patten,"<?php echo exit; ?>",$this->_tpl);
+		$patten = '/\{exit\}/';
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php echo exit; ?>",$this->_tpl);
 		}
 	}
 
@@ -146,18 +148,31 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parPrint(){
-		$_patten = '/\{print\(\$([\w]+)\)\}/';
-		if(preg_match($_patten,$this->_tpl)){
-			$this->_tpl = preg_replace($_patten,"<?php print_r(\$this->_vars['$1']) ?>",$this->_tpl);
+		$patten = '/\{print\(\$([\w]+)\)\}/';
+		if(preg_match($patten,$this->_tpl)){
+			$this->_tpl = preg_replace($patten,"<?php print_r(\$this->_vars['$1']) ?>",$this->_tpl);
 		}
 	}
+
+	/**
+     * 解析__函数
+     * @author Colin <15070091894@163.com>
+     */
+    private function parDefault(){
+    	require_once MyClass.'/Conf/template.php';
+    	$patten = "/(\_\_[a-zA-z]+\_\_)/";
+    	if(preg_match($patten, $this->_tpl)){
+    		$this->_tpl = preg_replace($patten , "<?php echo $1; ?>" , $this->_tpl);
+    	}
+    }
 	
 	/**
      * 对外公开的方法
      * @author Colin <15070091894@163.com>
      */
-	public function comile($_parFile){
+	public function comile($parFile){
 		//解析模板变量
+		$this->parDefault();		//解析模板默认常量
 		$this->parVar();
 		$this->parIF();
 		$this->parForeach();
@@ -168,7 +183,7 @@ class Parser{
 		$this->parExit();
 		$this->parPrint();
 		//生成编译文件
-		file_put_contents($_parFile,$this->_tpl);
+		file_put_contents($parFile , $this->_tpl);
 	}
 }
 ?>

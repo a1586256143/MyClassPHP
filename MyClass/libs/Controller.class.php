@@ -22,8 +22,8 @@ class Controller{
      * @param $fileName  要被调用的视图文件名
      * @author Colin <15070091894@163.com>
      */
-	protected function display($fileName = null , $data = null){
-		$this->view->display($fileName , $data);
+	protected function display($fileName = null){
+		$this->view->display($fileName);
 	}
 
 	/**

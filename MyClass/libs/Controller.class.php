@@ -73,6 +73,20 @@ class Controller{
 	}
 
 	/**
+	 * 返回json数据
+	 * @param message  输出信息
+     * @param url  跳转地址
+     * @param status  信息状态
+     * @author Colin <15070091894@163.com>
+	 */
+	public function ajaxReturn($message , $url = null, $status = 0){
+		$return['info'] = $message;
+		$return['url'] = $url;
+		$return['status'] = $status;
+		echo json_encode($return);
+	}
+
+	/**
      * 报错方法
      * @param message  要输出的错误内容
      * @author Colin <15070091894@163.com>

@@ -9,6 +9,9 @@
 	//MyClass目录
 	define('MyClass',dirname(__FILE__));
 
+	//根目录
+	define('ROOT_PATH',substr(MyClass , 0 , -7));
+
 	//如果不存在APP_NAME
 	if(!defined('APP_NAME')){
 		define('APP_PATH' , './Application');

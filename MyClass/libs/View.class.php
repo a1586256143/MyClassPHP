@@ -61,7 +61,7 @@ class IndexController extends Controller{
      * 创建config.php 模板
      * @author Colin <15070091894@163.com>
      */
-    public function createConfig(){
+    public static function createConfig(){
     	$string = "<?php
 return array(
 	//配置名 => 配置值

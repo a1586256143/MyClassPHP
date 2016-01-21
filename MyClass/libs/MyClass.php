@@ -41,8 +41,9 @@ class MyClass{
 	 */
 	public static function autoload($ClassName){
 		if(preg_match_all("/\\\\/" , $ClassName , $match)){
-			//是否为命名空间加载			
-			require_once $ClassName.'.class.php';
+			//是否为命名空间加载
+			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
+			require_once ROOT_PATH.$ClassName.'.class.php';
 		}
 	}
 
@@ -92,11 +93,11 @@ class MyClass{
 		if(!is_dir(ConfDIR)) mkdir(ConfDIR);            //建立配置文件目录
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
-            @file_put_contents(ConfDIR.'/config.php',View::createConfig());
+            file_put_contents(ConfDIR.'/config.php',View::createConfig());
         }
 		//生成默认的控制器
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
-			@file_put_contents(ControllerDIR.'/IndexController.class.php',View::createIndex());
+			file_put_contents(ControllerDIR.'/IndexController.class.php',View::createIndex());
 		}
 		//加载常量
 		self::ReqConst();

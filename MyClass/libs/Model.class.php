@@ -330,6 +330,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function insert($data){
+		$data = array_filter($data);
         if(empty($data)){
             throw new MyError(__METHOD__.'没有传入参数值！');
         }
@@ -359,6 +360,7 @@ class Model{
 		if(is_string($field)){
 			$this->_ParKey = ' SET '.'`'.$field.'`'."='".$value."'";
 		}else if(is_array($field)){
+			$field = array_filter($field);
 			$this->ParData('upd',$field);
 		}
 		$this->_Sql = "UPDATE ".$this->_TablesName.$this->_ParKey.$this->_Where.$this->_Value;

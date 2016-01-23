@@ -14,7 +14,7 @@
 
 	//如果不存在APP_NAME
 	if(!defined('APP_NAME')){
-		define('APP_PATH' , './Application');
+		define('APP_NAME' , './Application');
 	}
 
 	//APP路径
@@ -25,9 +25,6 @@
 
 	//核心文件
 	define('Core',MyClass.'/libs/');
-
-	//是否开启缓存
-	define('IS_CACHE' , true);
 	
 	//控制器目录
 	define('ControllerDIR',APP_PATH.'/Controller');
@@ -37,9 +34,12 @@
 	
 	//配置文件目录
 	define('ConfDIR',APP_PATH.'/Conf');
+
+	//公共函数文件目录
+	define('CommonDIR',APP_PATH.'/Common');
 	
 	//引入MyClass核心文件
-	require_once './MyClass/libs/MyClass.php';
+	require_once Core.'MyClass.php';
 
 	MyClass\libs\MyClass::run();
 ?>

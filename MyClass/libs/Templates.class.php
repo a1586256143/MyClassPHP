@@ -52,16 +52,21 @@ class Templates{
 		    throw new MyError($default_controller.'控制器不存在！');
 		}
 
-		empty($controller) ? $controller = $default_controller : $controller;
+		$controller = empty($controller) ? $default_controller : $controller;
 		
-		empty($method) ? $method = $default_action : $method;
+		$method = empty($method) ? $default_action : $method;
 
 		//如果$_file为空
-		empty($file) ? $file = $method.Config('TPL_TYPE') : $file = $file.Config('TPL_TYPE');
+		$file = empty($file) ? $method.Config('TPL_TYPE') : $file.Config('TPL_TYPE');
 
 		//设置路径
 		$dirname = APP_PATH.Config('TPL_DIR').$controller.'/';
+		$tpl_c_dir = APP_PATH.Config('TPL_C_DIR');
 		$dircname = APP_PATH.Config('TPL_C_DIR').$controller.'/';
+
+		//判断编译文件夹和缓存文件夹是否存在
+		$dir = array($tpl_c_dir , $dircname);
+		outdir($dir);
 
 		//判断方法目录是否存在
 		if(!is_dir($dirname)){
@@ -75,12 +80,6 @@ class Templates{
 			throw new MyError($tplFile.'模板文件不存在！');
 		}
 		
-		//判断编译文件夹和缓存文件夹是否存在
-		if(!is_dir(APP_PATH.Config('TPL_C_DIR'))) @mkdir(APP_PATH.Config('TPL_C_DIR'));
-
-		//编译文件夹是否存在
-		if(!is_dir($dircname)) mkdir($dircname);
-
 		//生成编译文件
 		$parFile = $dircname.md5($file).$file.'.php';
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
@@ -91,29 +90,6 @@ class Templates{
 			//调用解析类里面的公共方法
 			$_parser->comile($parFile);
 		}
-		//引入编译文件
-		include $parFile;
-	}
-
-	/**
-     * 载入show文件
-     * @param file 文件名
-     * @author Colin <15070091894@163.com>
-     */
-	public function showdisplay($file){
-		$array = Url::getCurrentUrl();
-
-		if(!file_exists(TEMPLATES_DIR.SITE_TEMPLATES.$file))E(TEMPLATES_DIR.SITE_TEMPLATES.$file.'模板文件不存在！');
-		//编译文件目录是否存在
-		if(!file_exists(Config('TPL_C_DIR').$array[1]))E($array[1].'编译目录文件不存在');
-		//判断缓存文件夹是否存在
-		//生成编译文件
-		$parFile = Config('TPL_C_DIR').$array[1].'/'.$file.md5($file).$file.'.php';
-		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
-		//实例化解析类;
-		$_parser = ObjFactory::CreateTemplatesParse(TEMPLATES_DIR.SITE_TEMPLATES.$file);
-		//调用解析类里面的公共方法
-		$_parser->comile($parFile);
 		//引入编译文件
 		include $parFile;
 	}

@@ -187,18 +187,17 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	public function comile($parFile){
-		//解析模板变量
 		$this->parDefault();		//解析模板默认常量
 		$this->parFunc();			//解析模板函数
-		$this->parVar();
-		$this->parIF();
+		$this->parIF();				
 		$this->parForeach();
 		$this->parinclude();
 		$this->parConfig();
 		$this->parCommon();
 		$this->parCount();
 		$this->parExit();
-		$this->parPrint();
+		$this->parPrint();			
+		$this->parVar();			//解析模板变量
 		//生成编译文件
 		file_put_contents($parFile,$this->_tpl);
 	}

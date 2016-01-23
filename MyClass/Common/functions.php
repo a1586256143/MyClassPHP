@@ -127,6 +127,7 @@
 		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
 		$path = explode('/', $subject['path']);
 		array_shift($path);
+		$pars = '';
 		if(!empty($param)){
 			if(is_array($param)){
 				foreach ($param as $key => $value) {
@@ -142,7 +143,7 @@
 	}
 
 	/**
-	 * 引入函数
+	 * 获取模块名生成模块路径
 	 * @param name 模型名称
 	 * @author Colin <15070091894@163.com>
 	 */
@@ -151,6 +152,57 @@
 		$layer = Config('DEFAULT_'.$type.'_LAYER');
 		$path = $app_name.'\\'.$layer.'\\'.$name;
 		return $path;
+	}
+
+	/**
+	 * 引入常规文件    没有返回值
+	 * @param path 文件路径
+	 * @author Colin <15070091894@163.com>
+	 */
+	function require_file($path){
+		if(is_array($path)){
+			foreach ($path as $key => $value) {
+				if(file_exists($value)){
+					$content[] = require_once $value;
+				}
+			}
+			return $content;
+		}else if(is_string($path)){
+			if(file_exists($path)){
+				return require_once $path;
+			}
+		}
+	}
+
+	/**
+	 * 引入常规文件   有返回值
+	 * @param param 文件路径数组
+	 * @author Colin <15070091894@163.com>
+	 */
+	function replace_recursive_params($name1 , $name2){
+		$var1 = require_file($name1);
+		$var2 = require_file($name2);
+		if(empty($var2)){
+			return $var1;
+		}
+		return array_replace_recursive($var1 , $var2);
+	}
+
+	/**
+	 * 创建文件夹 支持批量创建
+	 * @param param 文件夹数组
+	 * @author Colin <15070091894@163.com>
+	 */
+	function outdir($param){
+		if(is_array($param)){
+			foreach ($param as $key => $value) {
+				if(!is_dir($value)){
+					mkdir($value);
+				}
+			}
+		}else if(is_string($param)){
+			if(!is_dir($param)) mkdir($param);
+		}
 	}
 
 	/**

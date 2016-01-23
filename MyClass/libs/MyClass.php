@@ -17,7 +17,6 @@ class MyClass{
 	 */
 	public static function run(){
 		try {
-			//$statr_time = microtime();
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
 			//register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
@@ -27,8 +26,6 @@ class MyClass{
 			self::View();
 			//初始化URL模式
 			self::UrlModel();
-			//$end_time = microtime();
-			//dump($end_time - $statr_time);
 		}catch (MyError $m){
 			echo $m;
 		}
@@ -43,7 +40,7 @@ class MyClass{
 		if(preg_match_all("/\\\\/" , $ClassName , $match)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
-			require_once ROOT_PATH.$ClassName.'.class.php';
+			require_file(ROOT_PATH.$ClassName.'.class.php');
 		}
 	}
 
@@ -57,15 +54,33 @@ class MyClass{
 	}
 	
 	/**
+	 * 目录结构方法
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function Dir(){
+		require_once MyClass . '/Common/functions.php';
+		//加载常量
+		self::ReqConst();
+		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , APP_PATH.Config('CACHE_DIR'));
+		foreach ($dir as $key => $value) {
+			//创建文件夹
+			outdir($value);
+		}
+		//生成默认的文件
+		self::outDefaultFile();
+		//加载默认的文件
+		self::ReqDefault();
+	}
+
+	/**
 	 * 常量引入方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){
-		$const = require_once MyClass . '/Conf/config.php';
-		$const1 = require_once APP_PATH . '/Conf/config.php';
-		$const3 = array_replace_recursive($const , $const1);
-		Config($const3);
-		require_once MyClass.'/Conf/template.php';
+		//合并config文件内容
+		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , APP_PATH . '/Conf/config.php');
+		//加入配置文件
+		Config($merge);
 		//解析常量方法
 		self::ParConst();
 	}
@@ -79,18 +94,12 @@ class MyClass{
 	        session_start();
 	    }
 	}
-	
+
 	/**
-	 * 目录结构方法
+	 * 生成默认的配置文件、控制器
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function Dir(){
-		require_once MyClass . '/Common/functions.php';
-		if(!is_dir(APP_PATH)) mkdir(APP_PATH);       	//建立App目录
-		if(!is_dir(RunTime)) mkdir(RunTime);            //建立运行目录
-		if(!is_dir(ControllerDIR)) mkdir(ControllerDIR);   	//建立控制器目录
-		if(!is_dir(ModelDIR)) mkdir(ModelDIR);        	//建立模型目录
-		if(!is_dir(ConfDIR)) mkdir(ConfDIR);            //建立配置文件目录
+	public static function outDefaultFile(){
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
             file_put_contents(ConfDIR.'/config.php',View::createConfig());
@@ -99,12 +108,19 @@ class MyClass{
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
 			file_put_contents(ControllerDIR.'/IndexController.class.php',View::createIndex());
 		}
-		//加载常量
-		self::ReqConst();
-		if(!is_dir(APP_PATH.Config('TPL_DIR'))) mkdir(APP_PATH.Config('TPL_DIR'));			//创建视图文件目录
-		if(!is_dir(APP_PATH.Config('CACHE_DIR'))) mkdir(APP_PATH.Config('CACHE_DIR'));			//创建缓存文件目录
 	}
-	
+
+	/**
+	 * 加载默认的文件
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function ReqDefault(){
+		//默认文件的引入
+		$default = array(MyClass.'/Conf/template.php' , CommonDIR.'/functions.php');
+		//引入默认文件
+		require_file($default);
+	}
+
 	/**
 	 * 视图初始化
 	 * @author Colin <15070091894@163.com>

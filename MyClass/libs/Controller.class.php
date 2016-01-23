@@ -84,6 +84,7 @@ class Controller{
 		$return['url'] = $url;
 		$return['status'] = $status;
 		echo json_encode($return);
+		exit;
 	}
 
 	/**

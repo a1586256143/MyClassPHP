@@ -45,7 +45,9 @@ class Mysql implements IDataBase{
      * @author Colin <15070091894@163.com>
      */
     public function fetch_array($query = null){
-        return mysql_fetch_array($query);
+        $fetch = mysql_fetch_array($query);
+        mysql_free_result($fetch);
+        return $fetch;
     }
 
     /**

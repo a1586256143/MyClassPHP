@@ -157,13 +157,14 @@
 	/**
 	 * 引入常规文件    没有返回值
 	 * @param path 文件路径
+	 * @param modules 加载的模块
 	 * @author Colin <15070091894@163.com>
 	 */
-	function require_file($path){
+	function require_file($path , $modules = ''){
 		if(is_array($path)){
 			foreach ($path as $key => $value) {
-				if(file_exists($value)){
-					$content[] = require_once $value;
+				if(file_exists($modules.$value)){
+					$content[] = require_once $modules.$value;
 				}
 			}
 			return $content;

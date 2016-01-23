@@ -175,7 +175,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
     private function parDefault(){
-    	require_once MyClass.'/Conf/template.php';
+    	if(file_exists(MyClass.'/Conf/template.php')){
+    		require_once MyClass.'/Conf/template.php';
+    	}
     	$patten = "/(\_\_[a-zA-z]+\_\_)/";
     	if(preg_match($patten, $this->_tpl)){
     		$this->_tpl = preg_replace($patten , "<?php echo $1; ?>" , $this->_tpl);

@@ -68,8 +68,6 @@ class MyClass{
 		}
 		//生成默认的文件
 		self::outDefaultFile();
-		//加载默认的文件
-		self::ReqDefault();
 	}
 
 	/**
@@ -90,8 +88,19 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ParConst(){
+		//解析session
 	    if(Config('SESSION_START')){
 	        session_start();
+	    }
+	    //解析自动引入
+	    if(Config('AUTO_REQUIRE')){
+	    	//自动引入
+	    	$auto_require_file = Config('AUTO_REQUIRE_FILE');
+	    	if(empty($auto_require_file)){
+	    		return;
+	    	}
+	    	$dir = explode(',',Config('AUTO_REQUIRE_FILE'));
+	    	require_file($dir , APP_PATH);
 	    }
 	}
 
@@ -108,17 +117,6 @@ class MyClass{
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
 			file_put_contents(ControllerDIR.'/IndexController.class.php',View::createIndex());
 		}
-	}
-
-	/**
-	 * 加载默认的文件
-	 * @author Colin <15070091894@163.com>
-	 */
-	public static function ReqDefault(){
-		//默认文件的引入
-		$default = array(MyClass.'/Conf/template.php' , CommonDIR.'/functions.php');
-		//引入默认文件
-		require_file($default);
 	}
 
 	/**

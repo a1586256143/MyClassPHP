@@ -83,12 +83,13 @@ class Url{
 
     /**
      * 获取域名
+     * @param  scheme 是否返回域名
      * @return array
      * @author Colin <15070091894@163.com>
      */
-    public static function getSiteUrl(){
+    public static function getSiteUrl($scheme = false){
         $parse_url = self::getCurrentUrl(false , true);
-        return $parse_url['scheme'].'://'.$parse_url['host'];
+        return $scheme ? $parse_url['scheme'].'://'.$parse_url['host'] : '';
     }
 }
 ?>

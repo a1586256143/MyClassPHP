@@ -14,6 +14,10 @@ return array(
 	'DB_TABS'			=>	'',						//数据库名称
 	'DB_PREFIX'			=>	'',						//数据表前缀
 	'DB_CODE'			=>	'UTF8',					//数据库编码
+
+    //自动引入(Noice 自动引入会很消耗资源，请谨慎使用)
+    'AUTO_REQUIRE'      => false,                   //自动引入
+    'AUTO_REQUIRE_FILE' => '',                      //自动引入文件,号分割多个文件 例如 /Conf/template.php
 	
     //URL设置
 	'URL_MODEL'			=>	2,						//URL模式

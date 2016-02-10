@@ -5,9 +5,6 @@
 	FileType : 
 	FileName : 
 */
-//设置错误级别
-//error_reporting(0);
-
 //定义一个APP路径
 define('APP_NAME','./Application');
 

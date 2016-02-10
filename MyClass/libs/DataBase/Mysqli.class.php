@@ -19,7 +19,7 @@ class Mysqli implements IDataBase{
     public function connect(){
         $this->_db = new \mysqli(Config('DB_HOST'),Config('DB_USER'),Config('DB_PASS'));
         if(mysqli_connect_errno()){
-            throw new MyError(mysqli_connect_error());
+            throw new \MyClass\libs\MyError(mysqli_connect_error());
         }
     }
 

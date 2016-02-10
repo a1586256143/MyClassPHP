@@ -87,7 +87,7 @@ class Cache {
 	public function readCache($name){
 		$FileName = $this->UrlAndDefaultSuffix($name);
 		$json = $this->file->OpenFile($FileName);
-		return json_decode($json);
+		return json_decode($json , true);
 	}
 
 	/**

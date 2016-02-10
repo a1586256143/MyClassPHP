@@ -13,33 +13,35 @@ class Model{
 	//获取数据表前缀
 	protected $db_prefix = '';
 	//获取数据库名
-	protected $_DataName = '';
+	protected $DataName = '';
 	//多表查询数据库名，必须带数据前缀
-	protected $_Tables;
+	protected $Tables;
+	//From表名
+	protected $From;
 	//多表查询字段名
-	protected $_Fields = '*';
+	protected $Fields = '*';
 	//数据表的真实名字
-	protected $_TrueTables = '';
+	protected $TrueTables = '';
 	//数据表判断后存放的字段
-	protected $_DataNameName = '';
+	protected $DataNameName = '';
 	//where字段
-	protected $_Where = '';
+	protected $Where = '';
 	//where value 
-	protected $_Value = '';
+	protected $value = '';
 	//where 条件的 OR and
-	protected $_WhereOR = "AND";
+	protected $WhereOR = "AND";
 	//sql语句
-	protected $_Sql = '';
+	protected $Sql = '';
 	//解析后存放的字段
-	protected $_ParKey = '';
+	protected $ParKey = '';
 	//解析后存放的字段
-	protected $_ParValue = '';
+	protected $Parvalue = '';
 	//字符别名
-	protected $_Alias = '';
+	protected $Alias = '';
 	//limit
-	protected $_Limit = '';
+	protected $Limit = '';
 	//order
-	protected $_Order = '';
+	protected $Order = '';
 	
 	/**
 	 * 构造方法
@@ -51,7 +53,7 @@ class Model{
 		//数据库信息是否填写
 		self::CheckConnectInfo();
 		//获取数据库对象
-		$this->db = ObjFactory::CreateDateBase()->GetDB();
+		$this->db = ObjFactory::getIns();
 		if(empty($tables)){
 			return $this;
 		}
@@ -68,12 +70,13 @@ class Model{
 	protected function TablesType($tables){
 		$tables = $this->parTableName($tables);
 		//转小写
-		$this->_DataName = strtolower($tables);	
-		if(empty($this->_TrueTables)){
-			$this->_TablesName = '`'.$this->db_prefix.$this->_DataName.'`';
+		$this->DataName = strtolower($tables);	
+		if(empty($this->TrueTables)){
+			$this->TablesName = $this->db_tabs.'.`'.$this->db_prefix.$this->DataName.'`';
 		}else {
-			$this->_TablesName = '`'.$this->_TrueTables.'`';
+			$this->TablesName = $this->db_tabs.'.`'.$this->TrueTables.'`';
 		}
+		$this->from($this->TablesName);
 	}
 
 	/**
@@ -87,68 +90,40 @@ class Model{
 	}
 	
 	/**
-	 * 多表查询-tables方法
-	 * @param tables 表名
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function Tables($tables = null){
-	    $this->_Tables = $tables;
-	    return $this;
-	}
-	
-	/**
-	 * 多表查询-field方法
+	 * field方法
 	 * @param field 字段名
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Field($field){
+	public function field($field){
 	    if(empty($field)){
 	        throw new MyError(__METHOD__.'请设置字段！');
 	    }else {
-	        $this->_Fields = $field;
+	        $this->Fields = $field;
 	    }
 	    return $this;
 	}
 
 	/**
-	 * 插入数据函数
+	 * From函数
+	 * @param  tables 表名
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function ADUP(){
-		$query = $this->db->query($this->_Sql);
-		if(!$query){
-			throw new MyError('SQL语句执行错误'.$this->_Sql);
-		}
-		return $query;
-	}
-	
-	/**
-	 * 获取一条数据
-	 * @author Colin <15070091894@163.com>
-	 */
-	protected function Getonedata(){
-		$result = $this->db->query($this->_Sql);
-		if(!$result) throw new MyError('Sql语句错误'.$this->_Sql);
-		$_array = array();
-		while ($_rows = $result->fetch_assoc()){
-			$_array[] = $_rows;
-		}
-		return $_array;
+	public function from($tables = null){
+		$tables = $tables === null ? $this->TablesName : $tables;
+		$this->From = ' FROM ' . $tables;
+		return $this;
 	}
 
 	/**
-	 * 获取所有字段方法
+	 * 执行sql语句函数
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function GetAllFuild(){
-		$result = $this->db->query($this->_Sql);
-		$_array = array();
-		$_obj = new \stdClass();
-		while ($_rows = $result->fetch_field()){
-		    $_name = $_rows->name;
-			$_obj->$_name = $_rows->name;
+	protected function ADUP(){
+		$query = $this->db->query($this->Sql);
+		if(!$query){
+			throw new MyError('SQL语句执行错误'.$this->Sql);
 		}
-		return $_obj;
+		return $query;
 	}
 
 	/**
@@ -156,7 +131,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function GetNum(){
-		$result = $this->db->query($this->_Sql);
+		$result = $this->query();
 		return $result->num_rows;
 	}
 
@@ -171,33 +146,127 @@ class Model{
 		$_c = '';
 		if($type == 'ist'){
 			if(is_array($array)){
-				foreach ($array as $_key => $_value) {
-					$_b .= '`'.$_key.'`' . ',';
-					$_c .= "'" . $_value . "',";
+				foreach ($array as $key => $value) {
+					$_b .= '`'.$key.'`' . ',';
+					$_c .= "'" . $value . "',";
 				}
-				$this->_ParKey = substr($_b, 0, -1);
-				$this->_ParValue = substr($_c, 0, -1);
+				$this->ParKey = substr($_b, 0, -1);
+				$this->Parvalue = substr($_c, 0, -1);
 			}else if(is_string($array)){
-				throw new MyError('解析insert sql 字段失败!'.$this->_Sql);
+				throw new MyError('解析insert sql 字段失败!'.$this->Sql);
 			}
 
 		}else if($type == 'upd'){
-			foreach ($array as $_key => $_value){
-				$_b .= '`'.$_key.'`'. '=' ."'". $_value."'" . ',';
+			foreach ($array as $key => $value){
+				$_b .= '`'.$key.'`'. '=' ."'". $value."'" . ',';
 			}
-			$this->_ParKey = ' SET '.substr($_b, 0, -1);
+			$this->ParKey = ' SET '.substr($_b, 0, -1);
 		}
 	}
 
 	/**
-	 * 获取数据库所有字段
+	 * 条件
+	 * @param fuild 字段名称
+	 * @param wherevalue 字段值
+	 * @param whereor OR和AND
+	 * @param sub 操作符号 可以为 =,!=,in,not in,between,not between 
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function AllFuild(){
-		//$this->_Sql = "SHOW Full COLUMNS FROM ".$this->_TablesName;
-		///$this->_Sql = "SHOW FIELDS FROM $this->_TablesName";
-		$this->_Sql = "SELECT * FROM $this->_TablesName";
-		return $this->GetAllFuild();
+	public function where($field , $wherevalue = null , $whereor = null , $sub = '='){
+		$_a = '';
+		$fieldlen = count($field);
+		$i = 0;
+		if($whereor !== null) $this->WhereOR = $whereor;
+		//遍历字段
+		if(is_array($field)){
+			//判断是否为多条数据
+			if(count($field) > 1){
+				//遍历字段
+				foreach ($field as $key => $value){
+					$i ++ ;
+					//判断是否为数字或字符串
+					if(is_string($value)){
+						//判断是否为最后一个
+						if($i != $fieldlen){
+							$_a .= "`$key` $sub '$value' $this->WhereOR ";
+						}else {
+							$_a .= "`$key` $sub '$value'";
+						}
+					//判断是否为数字
+					}else if(is_numeric($value)){
+						if($i != $fieldlen){
+							$_a .= "`$key` $sub $value $this->WhereOR ";
+						}else {
+							$_a .= "`$key` $sub $value";
+						}
+					}else if(strpos($key , '.') !== false){
+						$_a .= $key.$sub.$value;
+					}
+					$this->Where = " WHERE ".$_a;
+					$this->value = '';
+				}
+			}else {
+				//如果字段的长度不大于1条 执行下面
+				foreach ($field as $key => $value){
+					if(is_string($value)){
+						$_a .= "`$key` $sub '$value'";
+					//判断是否为数字
+					}else if(is_numeric($value)){
+						$_a .= "`$key` $sub $value";
+					}else if(strpos($key , '.') !== false){
+						$_a .= $key.$sub.$value;
+					}
+				}
+				$this->Where =  " WHERE ".$_a;
+			}
+		}else {
+			//如果字段为数组的时候，那么直接使用遍历
+			//判断是否为数字或字符串
+			if(is_string($wherevalue)){
+				$_a .= "$sub '$wherevalue'";
+				//查找value中带了()的值 则不加''号
+				if(strpos($wherevalue , '(') !== false || strpos($wherevalue , '.') !== false || strpos($field , '.') !== false){
+					$_a = $sub.$wherevalue;
+				}
+			//判断是否为数字
+			}else if(is_numeric($wherevalue)){
+				$_a .= $sub.$wherevalue;
+			}
+			$this->Where = strpos($field , '.') !== false ? " WHERE $field " :" WHERE `$field` ";	
+			$this->value = $_a;
+		}
+		return $this;
+	}
+
+	/**
+	 * 获取主键
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function getpk(){
+		$map['TABLE_SCHEMA'] = $this->db_tabs;
+		$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
+		$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
+		return $rows['COLUMN_NAME'];
+	}
+
+	/**
+	 * 获取结果集
+	 * @param sql sql语句
+	 * @param is_more 是否为获取多条数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function getResult($sql = null , $is_more = false){
+		$sql = $sql === null ? $this->Sql : $sql;
+		$result = $this->ADUP($sql);
+		$data = array();
+		if($is_more){
+			while ($rows = $result->fetch_assoc()){
+				$data[] = $rows;
+			}
+		}else{
+			$data = $result->fetch_assoc();
+		}
+		return $data;
 	}
 
 
@@ -206,13 +275,9 @@ class Model{
 	 * @param sql sql语句
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function query($sql=null){
-		if(empty($sql)){
-			return $this->ADUP();
-		}else{
-			$this->_Sql = $sql;
-			return $this->ADUP();
-		}
+	public function query($sql = null){
+		$sql = $sql === null ? $this->Sql : $sql;
+		return $this->ADUP($sql);
 	}
 
 	/**
@@ -221,7 +286,7 @@ class Model{
 	 */
 	public function select(){
 	    $this->getSql();
-		return $this->Getonedata();
+		return $this->getResult(null , true);
 	}
 
 	/**
@@ -229,11 +294,19 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function getSql(){
-		if($this->_Tables != null){
-	        $this->_Sql = "SELECT $this->_Fields FROM ".$this->_Tables.' '.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
+		if($this->Tables != null){
+	        $this->Sql = "SELECT $this->Fields FROM ".$this->Tables.' '.$this->Where.$this->value.$this->Order.$this->Limit;
 	    }else {
-	        $this->_Sql = "SELECT $this->_Fields FROM ".$this->_TablesName.$this->_Where.$this->_Value.$this->_Order.$this->_Limit;
+	        $this->Sql = "SELECT $this->Fields ".$this->From.$this->Where.$this->value.$this->Order.$this->Limit;
 	    }
+	}
+
+	/**
+	 * 获取最后执行的sql语句
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function getLastSql(){
+		return $this->Sql;
 	}
 
 	/**
@@ -242,10 +315,74 @@ class Model{
 	 */
 	public function find(){
 		$this->getSql();
-		if(!$result = $this->query($this->_Sql)){
-			new MyError('sql语句错误'.$this->_Sql);
-		}
-		return $result->fetch_assoc();
+		return $this->getResult();
+	}
+
+	/**
+	 * in
+	 * @param field 字段
+	 * @param values 值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function in($field , $values){
+		$this->where($field , '('.$values.')' , null , 'in ');
+		return $this;
+	}
+
+	/**
+	 * not in
+	 * @param field 字段
+	 * @param values 值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function notin($field , $values){
+		$this->where($field , '('.$values.')' , null , 'not in ');
+		return $this;
+	}
+
+	/**
+	 * like
+	 * @param field 要被like的字段名
+	 * @param value like的值 必须包含%%
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function like($field , $value){
+		return $this->where($field , $value , null , 'LIKE ');
+	}
+
+	/**
+	 * between
+	 * @param field 要被between的字段名
+	 * @param between between的值 格式为 1,2
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function between($field , $between){
+		$this->between_common($field , $between , 'BETWEEN');
+		return $this;
+	}
+
+	/**
+	 * between
+	 * @param field 要被between的字段名
+	 * @param between between的值 格式为 1,2
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function notbetween($field , $between){
+		$this->between_common($field , $between , 'NOT BETWEEN');
+		return $this;
+	}
+
+	/**
+	 * between公共模块
+	 * @param field 要被between的字段名
+	 * @param between between的值 格式为 1,2
+	 * @param keyword 关键词 BETWEEN 或者 NOT BETWEEN 
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function between_common($field , $between , $keyword){
+		$this->Where = " WHERE `$field` $keyword ";
+		list($betweenleft , $betweenright) = explode( ',' , $between);
+		$this->value = $betweenleft . ' AND ' . $betweenright;
 	}
 
 	/**
@@ -253,80 +390,14 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function selectNum(){
-		$this->_Sql = "SELECT id FROM ".$this->_TablesName.$this->_Where.$this->_Value;
+		$pk = $this->getpk();
+		$this->field($pk)->find();
 		return $this->GetNum();
 	}
 	
 	/**
-	 * 条件
-	 * @param fuild 字段名称
-	 * @param wherevalue 字段值
-	 * @param whereor OR和AND
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function where($field , $wherevalue = null , $whereor = null){
-		$_a = '';
-		$fieldlen = count($field);
-		$i = 0;
-		if($whereor != null){
-			$this->_WhereOR = $whereor;
-		}
-		//遍历字段
-		if(is_array($field)){
-			//判断是否为多条数据
-			if(count($field) > 1){
-				//遍历字段
-				foreach ($field as $_key => $_value){
-					$i ++ ;
-					//判断是否为数字或字符串
-					if(is_string($_value)){
-						//判断是否为最后一个
-						if($i != $fieldlen){
-							$_a .= '`'.$_key.'`'."='".$_value."' ".$this->_WhereOR." ";
-						}else {
-							$_a .= '`'.$_key.'`'."='".$_value."'";
-						}
-					//判断是否为数字
-					}else if(is_numeric($_value)){
-						if($i != $fieldlen){
-							$_a .= '`'.$_key.'`'."=".$_value." ".$this->_WhereOR." ";
-						}else {
-							$_a .= '`'.$_key.'`'."='".$_value."'";
-						}
-					}
-					$this->_Where =  " WHERE ".$_a;
-					$this->_Value = '';
-				}
-			}else {
-				//如果不是字段的长度不大于1条 执行下面
-				foreach ($field as $_key => $_value){
-					if(is_string($_value)){
-					    $_a .= '`'.$_key.'`'."='".$_value."'";
-					//判断是否为数字
-					}else if(is_numeric($_value)){
-						$_a .= '`'.$_key.'`'."='".$_value."'";
-					}
-				}
-				$this->_Where =  " WHERE ".$_a;
-			}
-		}else {
-			//如果字段为数组的时候，那么直接使用遍历
-			//判断是否为数字或字符串
-			if(is_string($wherevalue)){
-				$_a .= "='".$wherevalue."'";
-			//判断是否为数字
-			}else if(is_numeric($wherevalue)){
-				$_a .= "=".$wherevalue;
-			}
-			$this->_Where = " WHERE `".$field.'`';
-			$this->_Value = $_a;
-		}	
-		return $this;
-	}
-	
-	/**
 	 * 插入数据
-	 * @param array   要插入的数据
+	 * @param values   要插入的数据
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function insert($data){
@@ -334,20 +405,26 @@ class Model{
         if(empty($data)){
             throw new MyError(__METHOD__.'没有传入参数值！');
         }
+		foreach ($values as $key => $value) {
+			if($value != ''){
+				$data[$key] = $value;
+			}
+		}
 		$this->ParData('ist',$data);
-		$this->_Sql = "INSERT INTO ".$this->_TablesName."(".$this->_ParKey.") VALUES (".$this->_ParValue.")";
-		return $this->ADUP($this->_Sql);
+		$this->Sql = "INSERT INTO ".$this->TablesName."(".$this->ParKey.") VALUES (".$this->Parvalue.")";
+		return $this->ADUP();
 	}
 	
 	/**
 	 * 删除函数
 	 * @param field 被删除的字段
-	 * @param uniqid 唯一标示符
+	 * @param value 唯一标示符
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function delete($value , $field = 'id' ){
-		$this->_Sql = "DELETE FROM ".$this->_TablesName." WHERE ".$field."=".$value;
-		return $this->ADUP($this->_Sql);
+	public function delete($value , $field = null){
+		$field = $field === null ? $this->getpk() : $field;
+		$this->Sql = "DELETE FROM ".$this->TablesName." WHERE ".$field."=".$value;
+		return $this->ADUP();
 	}
 	
 	/**
@@ -358,12 +435,12 @@ class Model{
 	 */
 	public function update($field , $value = null){
 		if(is_string($field)){
-			$this->_ParKey = ' SET '.'`'.$field.'`'."='".$value."'";
+			$this->ParKey = ' SET '.'`'.$field.'`'."='".$value."'";
 		}else if(is_array($field)){
 			$field = array_filter($field);
 			$this->ParData('upd',$field);
 		}
-		$this->_Sql = "UPDATE ".$this->_TablesName.$this->_ParKey.$this->_Where.$this->_Value;
+		$this->Sql = "UPDATE ".$this->TablesName.$this->ParKey.$this->Where.$this->value;
 		return $this->ADUP();
 	}
 	
@@ -372,8 +449,8 @@ class Model{
 	 * @param as 新的别名
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Alias($as){
-		$this->_Alias = ' AS '.$as;
+	public function alias($as = 'alias'){
+		$this->Alias = ' AS '.$as;
 		return $this;
 	}
 	
@@ -383,8 +460,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function max($field){
-		$this->_Sql = "SELECT MAX($field)$this->_Alias FROM ".$this->_TablesName;
-		return $this->Getonedata();
+		return $this->field("MAX($field)$this->Alias")->find();
 	}
 	
 	/**
@@ -393,8 +469,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function min($field){
-		$this->_Sql = "SELECT MIN($field)$this->_Alias FROM ".$this->_TablesName;
-		return $this->Getonedata();
+		return $this->field("MIN($field)$this->Alias")->find();
 	}
 	
 	/**
@@ -403,26 +478,25 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function sum($field){
-		$this->_Sql = "SELECT SUM($field)$this->_Alias FROM ".$this->_TablesName;
-		return $this->Getonedata();
+		return $this->field("SUM($field)$this->Alias")->find();
 	}
 	
 	/**
 	 * 求平均值
-	 * @param strinng $field
+	 * @param field 平均值的字段
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function Avg($field){
-	    $this->_Sql = "SELECT AVG($field)$this->_Alias FROM ".$this->_TablesName;
-	    return $this->Getonedata();
+	public function avg($field){
+		return $this->field("AVG($field)$this->Alias")->find();
 	}
 	
 	/**
 	 * limt
+	 * @param num 查询结果集的数量 0,10
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function limit($num){
-		$this->_Limit = "LIMIT ".$num;
+		$this->Limit = "LIMIT ".$num;
 		return $this;
 	}
 
@@ -431,7 +505,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function order($field , $desc = null){
-		$this->_Order = " ORDER BY ".$field." ".$desc." ";
+		$this->Order = " ORDER BY ".$field." ".$desc." ";
 		return $this;
 	}
 
@@ -503,7 +577,7 @@ class Model{
      */
     public function CheckTables($tables = null){
     	if($tables == null){
-    		$tables = $this->db_prefix.$this->_DataName;
+    		$tables = $this->db_prefix.$this->DataName;
     	}
         $result = $this->execute("SHOW TABLES LIKE '%$tables%'");
        	if(empty($result)){

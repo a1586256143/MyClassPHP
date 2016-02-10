@@ -31,7 +31,7 @@ class Templates{
 	public function assign($var , $value){
 		if(isset($var) && !empty($var)){
 			//相当于 $this->_vars['name'] = 'Colin';
-			$this->_vars[$var] = $value;
+			$this->$var = $value;
 		}else{
 			throw new MyError('请设置模板变量名！');
 		}
@@ -91,7 +91,7 @@ class Templates{
 			$_parser->comile($parFile);
 		}
 		//引入编译文件
-		include $parFile;
+		require $parFile;
 	}
 
 	/**

@@ -37,6 +37,9 @@
 
 	//公共函数文件目录
 	define('CommonDIR',APP_PATH.'/Common');
+
+	//公共文件目录
+	define('Common','./Common');
 	
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

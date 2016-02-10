@@ -17,9 +17,10 @@ class MyClass{
 	 */
 	public static function run(){
 		try {
+			error_reporting ( E_ALL  ^  E_NOTICE );
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
-			//register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
+			register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
 			//判断文件夹是否存在
 			self::Dir();
 			//视图初始化
@@ -27,7 +28,7 @@ class MyClass{
 			//初始化URL模式
 			self::UrlModel();
 		}catch (MyError $m){
-			echo $m;
+			die($m);
 		}
 	}
 	
@@ -37,6 +38,7 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function autoload($ClassName){
+		require_once MyClass . '/Common/functions.php';
 		if(preg_match_all("/\\\\/" , $ClassName , $match)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
@@ -58,7 +60,7 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
-		require_once MyClass . '/Common/functions.php';
+		self::loadFunction();
 		//加载常量
 		self::ReqConst();
 		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , APP_PATH.Config('CACHE_DIR'));
@@ -71,12 +73,23 @@ class MyClass{
 	}
 
 	/**
+	 * 加载函数库
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function loadFunction(){
+		$app = APP_PATH.'/Common/functions.php';
+		if(file_exists($app)){
+			require_file($app);
+		}
+	}
+
+	/**
 	 * 常量引入方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){
 		//合并config文件内容
-		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , APP_PATH . '/Conf/config.php');
+		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , APP_PATH . '/Conf/config.php' , Common . '/Conf/config.php');
 		//加入配置文件
 		Config($merge);
 		//解析常量方法

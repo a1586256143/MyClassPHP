@@ -15,26 +15,26 @@ interface IDataBase{
     function close();
 }
 class Db{
-    protected $_db;
+    protected static $db;
     /**
      * 获取数据库类
      * @author Colin <15070091894@163.com>
      */
-    public function GetDB(){
-        if($this->_db){
-            return $this->_db;
+    public static function getIns(){
+        if(self::$db){
+            return self::$db;
         }else{
             if(strtolower(Config('DB_TYPE')) == 'mysqli'){
-                $this->_db = new \MyClass\libs\DataBase\Mysqli();
+                self::$db = new \MyClass\libs\DataBase\Mysqli();
             }else if(strtolower(Config('DB_TYPE')) == 'mysql'){
-                $this->_db = new \MyClass\libs\DataBase\Mysql();
+                self::$db = new \MyClass\libs\DataBase\Mysql();
             }else if(strtolower(Config('DB_TYPE')) == 'pdo'){
-                $this->_db = new \MyClass\libs\DataBase\PDO();
+                self::$db = new \MyClass\libs\DataBase\PDO();
             }
-            $this->_db->connect();
-            $this->CheckDatabase();
-            $this->_db->query('SET NAMES '.Config('DB_CODE'));
-            return $this->_db;
+            self::$db->connect();
+            self::CheckDatabase();
+            self::$db->query('SET NAMES '.Config('DB_CODE'));
+            return self::$db;
         }
     }
 
@@ -42,9 +42,9 @@ class Db{
      * 确认数据库是否存在
      * @author Colin <15070091894@163.com>
      */
-    public function CheckDatabase(){
+    public static function CheckDatabase(){
         $database = Config('DB_TABS');
-        $result = $this->_db->select_db($database);
+        $result = self::$db->select_db($database);
         if(!$result){
             throw new MyError('数据库不存在或数据库名不正确！'.$database);
         }
@@ -54,9 +54,8 @@ class Db{
      * 关闭数据库方法
      * @author Colin <15070091894@163.com>
      */
-    public function CloseDB()
-    {
-        $this->_db->close();
+    public static function CloseDB(){
+        self::$db->close();
     }
 }
 ?>

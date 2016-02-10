@@ -34,6 +34,7 @@ class Url{
             exit;
         }
         $count = count(self::$param);
+        $new_pams = '';
         if($count > 0){
             if($count % 2 == 0){
                 for ($i = 0; $i < $count ; $i += 2) { 

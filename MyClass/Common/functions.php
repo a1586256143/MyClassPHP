@@ -87,6 +87,7 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function D($name , $method = null){
+		$tables = $name;
 		//引入命名空间以及目录
 		$name = require_module($name , 'MODEL');
 		if(!$name){
@@ -95,9 +96,10 @@
 		//文件目录
 		$filepath = $name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//文件不存在
+		
 		if(!file_exists($filepath)){
 			//创建系统模型
-			$obj = \MyClass\libs\ObjFactory::CreateSystemModel();
+			$obj = \MyClass\libs\ObjFactory::CreateSystemModel($tables);
 		}else{
 			//创建模型 带表名
 			$obj = \MyClass\libs\ObjFactory::CreateModel($name);
@@ -138,7 +140,10 @@
 			}
 		}
 		list($oldurl) = $path;
-		$newurl = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
+		$pars = $pars ? $pars : '';
+		$text = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
+		$filter = implode('/' , array_filter(array_unique(explode('/',$text))));
+		$newurl = $oldurl ? $filter : ltrim($url , '/').$pars;
 		return $newurl;
 	}
 
@@ -180,13 +185,18 @@
 	 * @param param 文件路径数组
 	 * @author Colin <15070091894@163.com>
 	 */
-	function replace_recursive_params($name1 , $name2){
+	function replace_recursive_params($name1 , $name2 , $name3 = null){
 		$var1 = require_file($name1);
 		$var2 = require_file($name2);
-		if(empty($var2)){
+		$var3 = require_file($name3);
+		if(empty($var3)){
+			return array_replace_recursive($var1 , $var2);
+		}else if(!empty($var3)){
+			$merge = array_replace_recursive($var1 , $var3);
+			return array_replace_recursive($merge , $var2);
+		}else{
 			return $var1;
 		}
-		return array_replace_recursive($var1 , $var2);
 	}
 
 	/**
@@ -313,7 +323,7 @@
 			$cache->outputFileName($name , $value);
 		}else if(!empty($name) && empty($value)){
 			//读取缓存
-			$cache->readCache($name);
+			return $cache->readCache($name);
 		}
 	}
 
@@ -343,5 +353,23 @@
 	 */
 	function getCurrentUrl(){
 		return \MyClass\libs\Url::getCurrentUrl(true);
+	}
+
+	/**
+	 * 获取站点地址
+	 * @author Colin <15070091894@163.com>
+	 */
+	function getSiteUrl($scame = true){
+		return \MyClass\libs\Url::getSiteUrl($scame);
+	}
+
+
+	/**
+	 * 设置Public地址
+	 * @param  public public目录的相对地址 可以直接填写Public
+	 * @author Colin <15070091894@163.com>
+	 */
+	function setPublicUrl($public){
+		return getSiteUrl().$public;
 	}
 ?>

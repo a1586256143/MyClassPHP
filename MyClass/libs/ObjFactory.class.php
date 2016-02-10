@@ -12,8 +12,8 @@ class ObjFactory{
      * 创建数据库对象
      * @author Colin <15070091894@163.com>
      */
-    public static function CreateDateBase(){
-        return new Db();
+    public static function getIns(){
+        return Db::getIns();
     }
 
     /**

@@ -23,9 +23,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parFunc(){
-		$patten = "/\{\:([\w]+)\(\'([\w\/]+)\'\,([\w\(\'\'\w\=\>\$\[\]\s)]+)\)\}/i";
+		$patten = "/\{\:([\w]+)\(\'([\w\/]+)\'(\.[\w\$]+(\['[\w]+'\])*)\)\}/i";
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo $1('$2' , $3) ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php echo $1('$2'$3) ?>",$this->_tpl);
 		}
 	}
 	
@@ -36,12 +36,12 @@ class Parser{
 	private function parVar(){
 		$patten = '/\{\$([\w]+)(\[\'[\w]+\'\])*\}/';
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo \$this->_vars['$1']$2 ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php if(isset(\$this->$1$2)): echo \$this->$1$2;endif; ?>",$this->_tpl);
 		}
 		//解析三元
 		$patten1 = '/\{\$([\w]+)((\[\'[\w]+\'\])*\s\?\s[\'\'\w]+\s\:\s[\'\'\w]+)\}/';
 		if(preg_match($patten1,$this->_tpl,$match)){
-			$this->_tpl = preg_replace($patten1,"<?php echo \$this->_vars['$1']$2 ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten1,"<?php echo \$this->$1$2; ?>",$this->_tpl);
 		}
 	}
 
@@ -51,7 +51,7 @@ class Parser{
      */
 	private function parIF(){
 		//if语句开头的正则
-		$_ifpatten = '/\{if\s+\$([\w]+)*\s(=*|>=|<=|>|<|>)\s([\w])?\}/';
+		$_ifpatten = '/\{if\s+\$([\w]+)*\s(=*|>=|<=|>|<|>)*\s([\w])?\}/';
 		//endif语句的结束
 		$_endifpatten = '/\{\/if\}/';
 		//else语句查询
@@ -61,7 +61,7 @@ class Parser{
 			//查找是否关闭IF
 			if(preg_match($_endifpatten,$this->_tpl)){
 				//替换
-				$this->_tpl = preg_replace($_ifpatten,"<?php if(\$this->_vars['$1'] $2 '$3'){ ?>",$this->_tpl);
+				$this->_tpl = preg_replace($_ifpatten,"<?php if(\$this->$1 $2 '$3'){ ?>",$this->_tpl);
 				$this->_tpl = preg_replace($_endifpatten,"<?php } ?>",$this->_tpl);
 				//有else就替换了
 				if(preg_match($_elsepatten,$this->_tpl)){
@@ -83,7 +83,7 @@ class Parser{
 		$pattenvar = '/\{\$([\w]+)([\[\'\'\]\w\-\>\+]*)\}/';
 		if(preg_match($patten,$this->_tpl)){
 			if(preg_match($_endpatten,$this->_tpl)){
-				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->_vars['$1'] as \$key=>\$$2): ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->$1 as \$key=>\$$2): ?>",$this->_tpl);
 				$this->_tpl = preg_replace($_endpatten,"<?php endforeach; ?>",$this->_tpl);
 				if(preg_match($pattenvar,$this->_tpl)){
 					$this->_tpl = preg_replace($pattenvar,"<?php echo \$$1$2 ?>",$this->_tpl);
@@ -144,7 +144,7 @@ class Parser{
 	private function parCount(){
 		$patten = '/\{count\(\$([\w]+)\)\}/';
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo count(\$this->_vars['$1']) ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php echo count(\$this->$1) ?>",$this->_tpl);
 		}
 	}
 
@@ -166,7 +166,7 @@ class Parser{
 	private function parPrint(){
 		$patten = '/\{print\(\$([\w]+)\)\}/';
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php print_r(\$this->_vars['$1']) ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php print_r(\$this->$1) ?>",$this->_tpl);
 		}
 	}
 
@@ -175,8 +175,11 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
     private function parDefault(){
-    	if(file_exists(MyClass.'/Conf/template.php')){
-    		require_once MyClass.'/Conf/template.php';
+    	if(file_exists(APP_PATH.'/Conf/template.php')){
+    		require_once APP_PATH.'/Conf/template.php';
+    	}else{
+    		//加载模板常量库
+			require_file(MyClass.'/Conf/template.php');	
     	}
     	$patten = "/(\_\_[a-zA-z]+\_\_)/";
     	if(preg_match($patten, $this->_tpl)){

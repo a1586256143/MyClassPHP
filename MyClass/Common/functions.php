@@ -86,13 +86,13 @@
 	 * @param method 模型方法
 	 * @author Colin <15070091894@163.com>
 	 */
-	function D($name , $method = null){
+	function D($name = null , $method = null){
 		$tables = $name;
-		//引入命名空间以及目录
-		$name = require_module($name , 'MODEL');
-		if(!$name){
+		if(empty($name)){
 			ShowMessage('D方法必须传递一个值');
 		}
+		//引入命名空间以及目录
+		$name = require_module($name , 'MODEL');
 		//文件目录
 		$filepath = $name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//文件不存在

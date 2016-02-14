@@ -36,6 +36,12 @@ class PDO implements IDataBase{
     public function select_db(){}
 
     /**
+     * 取得上一步 INSERT 操作产生的 ID 
+     * @author Colin <15070091894@163.com>
+     */
+    public function insert_id(){}
+
+    /**
      * close方法
      * @author Colin <15070091894@163.com>
      */

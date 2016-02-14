@@ -12,6 +12,8 @@ interface IDataBase{
     function query($sql);
     function select_db($tables);
     function fetch_array($query);
+    function insert_id();
+    function affected_rows();
     function close();
 }
 class Db{

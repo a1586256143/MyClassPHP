@@ -15,11 +15,15 @@ class Upload{
 	public $errorNum = 0;				//错误号
 	public $errorMess;					//错误报告消息
 
+	/**
+	 * 初始化
+	 * @param file 上传名称 例如 values('files' , 'img')
+	 */
 	public function __construct($file){
 		$this->path = Config('UPLOAD_DIR');
 		$this->allowtype = explode(',',Config('UPLOAD_TYPE'));
 		$this->maxsize = Config('UPLOAD_MAXSIZE'); 
-		$this->israndname = Config('UPLOAD_ISRANDNAME');
+		$this->israndname = Config('UPLOAD_RANDNAME');
 		//检查上传目录是否存在
 		$this->checkFilePath();
 		//初始化文件信息
@@ -31,15 +35,15 @@ class Upload{
 	 * @author Major <1450494434@qq.com>
 	 */
 	public function upload(){
-		if(empty($this->file)){
-			throw new MyError($this->UploadError(-5));
+		if(empty($this->file['tmp_name'])){
+			return $this->UploadError(-5);
 		}
 		//检测文件类型是否正确
 		if(!$this->checkFileType()){
-			throw new MyError($this->UploadError(-1));
+			return $this->UploadError(-1);
 		}
 		if(!$this->checkSize()){
-			throw new MyError($this->UploadError(-2));
+			return $this->UploadError(-2);
 		}
 		$this->proRandName();
 		return $this->start_upload();
@@ -98,12 +102,12 @@ class Upload{
 	 */
 	public function start_upload(){
 		if(!is_uploaded_file($this->file['tmp_name'])){
-			throw new MyError($this->UploadError(-3));
+			return $this->UploadError(-3);
 		}
 		if(move_uploaded_file($this->file['tmp_name'] , $this->newFileName)){
-			return $this->file;
+			return $this->UploadError(1 , $this->file);;
 		}else{
-			throw new MyError($this->UploadError(-4));
+			return $this->UploadError(-4);
 		}
 	}
 
@@ -111,8 +115,11 @@ class Upload{
 	 * 输出上传错误信息
 	 * @author Major <1450494434@qq.com>
 	 */
-	public function UploadError($code){
+	public function UploadError($code , $info = array()){
 		switch ($code) {
+			case 1 :
+				$message = '上传成功！';
+				break;
 			case -1:
 				$message = '上传类型不正确！';
 				break;
@@ -129,6 +136,6 @@ class Upload{
 				$message = '没有文件被上传！';
 				break;
 		}
-		return $message;
+		return array('msg' => $message , 'info' => $info);
 	}
 }

@@ -12,15 +12,19 @@ class Code {
 	private $codelen = 4;					//验证码长度
 	private $width = 130;					//宽度
 	private $height = 50;					//高度
-	private $img;								//图形资源句柄
-	private $font;								//指定的字体
-	private $fontsize = 20;				//指定字体大小
+	private $img;							//图形资源句柄
+	private $font;							//指定的字体
+	private $fontsize = 20;					//指定字体大小
 	private $fontcolor;						//指定字体颜色
 	
 	//构造方法初始化
-	
 	public function __construct() {
-		$this->font = MyClass.'/libs/include/elephant.ttf';
+		$this->charset = Config('CODE_CHARSET');
+		$this->codelen = Config('CODE_LENGTH');
+		$this->width = Config('CODE_WIDTH');
+		$this->height = Config('CODE_HEIGHT');
+		$this->fontsize = Config('CODE_FONTSIZE');
+		$this->font = Config('CODE_FONTPATH');
 	}
 	
 	//生成随机码

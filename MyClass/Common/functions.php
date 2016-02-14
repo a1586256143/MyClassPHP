@@ -321,6 +321,7 @@
 		}else if(!empty($name) && !empty($value)){
 			//生成缓存
 			$cache->outputFileName($name , $value);
+			return $value;
 		}else if(!empty($name) && empty($value)){
 			//读取缓存
 			return $cache->readCache($name);

@@ -93,12 +93,13 @@ class Auth{
 		//根据权限组查找组权限
 		$auth_group = D('AuthGroup')->where('id' , $auth_users['gid'])->find();
 		//根据权限规则查找对应的权限
-		$auths = D('Auth')->field('url')->In('id' , $auth_group['auths'])->select();
+		$auths = D('Auth')->field('url')->in('id' , $auth_group['auths'])->select();
 		return $auths;
 	}
 
 	/**
 	 * 获取所有权限列表
+	 * @author Colin <15070091894@163.com>
 	 */
 	protected function getAuths(){
 		return D('Auth')->select();

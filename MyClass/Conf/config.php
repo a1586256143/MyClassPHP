@@ -48,8 +48,8 @@ return array(
 	'TPL_CACHE'         =>  '/RunTime/Template_cache/',      //编译文件文件目录
 
 	//缓存设置
+	'CACHE_DIR'     	=>	'/RunTime/Cache/', //缓存文件夹
 	'CACHE_DATA_DIR'    =>  '/RunTime/Cache/Data/', //S缓存文件存放目录
-	'CACHE_DIR'     	=>	'/RunTime/Cache/', //缓存文件
 	'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
 	'CACHE_OUT_SUFFIX'	=>	'.json',   				//缓存存储后缀
 
@@ -57,7 +57,18 @@ return array(
 	'UPLOAD_DIR'		=>	'./Upload',				//上传文件的目录
 	'UPLOAD_TYPE'       =>  'image/jpg,image/jpeg,image/png,image/gif',			//上传文件类型
 	'UPLOAD_MAXSIZE'    =>  2097152,                   //上传文件大小
-	'UPLOAD_ISRANDNAME' =>  1,                   	//设置是否随机文件名
+	'UPLOAD_RANDNAME'	=>  true,                   	//设置是否随机文件名
+
+	//验证码配置
+	'CODE_CHARSET'		=> 'abcdefghkmnprstuvwxyz23456789',//验证码随机因子
+	'CODE_LENGTH'		=> 4,								//验证码长度
+	'CODE_WIDTH'		=> 130,								//验证码宽度
+	'CODE_HEIGHT'		=> 50,								//验证码高度
+	'CODE_FONTSIZE'		=> 20,								//验证码字体大小
+	'CODE_FONTPATH'		=> MyClass.'/libs/include/elephant.ttf',//验证码字体文件存放路径
+
+	//时间配置
+	'DATE_DEFAULT_TIMEZONE' => 'PRC',				//默认时区
 
 	//权限配置
 	'AUTH_OTHER'        => false,                   //是否验证其他不在规则表方法

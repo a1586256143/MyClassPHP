@@ -49,6 +49,22 @@ class Mysqli implements IDataBase{
     }
 
     /**
+     * 取得上一步 INSERT 操作产生的 ID 
+     * @author Colin <15070091894@163.com>
+     */
+    public function insert_id(){
+        return $this->_db->insert_id;
+    }
+
+    /**
+     *  MySQL 操作所影响的记录行数 
+     * @author Colin <15070091894@163.com>
+     */
+    public function affected_rows(){
+        return $this->_db->affected_rows;
+    }
+
+    /**
      * close方法
      * @author Colin <15070091894@163.com>
      */

@@ -13,14 +13,13 @@ class Date{
 	 * @return int
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function GetDate($timezone){
+	public static function getDate($timezone = 'PRC'){
 		if($timezone == null){
-			date_default_timezone_set('PRC');
-			return time();
+			date_default_timezone_set(Config('DATE_DEFAULT_TIMEZONE'));
 		}else{
 			date_default_timezone_set($timezone);
-			return time();
 		}
+		return time();
 	}
 	
 	/**
@@ -30,8 +29,8 @@ class Date{
 	 * @return string
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function SetDate($model , $timestamp){
-		date_default_timezone_set('PRC');
+	public static function setDate($model , $timestamp){
+		date_default_timezone_set(Config('DATE_DEFAULT_TIMEZONE'));
 		if($model == null){
 			return date('Y-m-d H:i:s' , $timestamp);
 		}elseif($timestamp == null){

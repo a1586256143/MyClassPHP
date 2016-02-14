@@ -15,7 +15,7 @@ class File {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function OpenFile($filename){
-		$file_resoule = @file_get_contents($filename);
+		$file_resoule = file_get_contents($filename);
 		if(!$file_resoule){
 			return null;
 		}

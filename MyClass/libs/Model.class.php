@@ -6,7 +6,6 @@
 	FileName : 
 */
 namespace MyClass\libs;
-
 class Model{
 	//数据库句柄
 	protected $db = '';
@@ -25,9 +24,9 @@ class Model{
 	//数据表判断后存放的字段
 	protected $DataNameName = '';
 	//where字段
-	protected $Where = '';
+	protected $Where = null;
 	//where value 
-	protected $value = '';
+	protected $value = null;
 	//where 条件的 OR and
 	protected $WhereOR = "AND";
 	//sql语句
@@ -83,7 +82,7 @@ class Model{
 	 * 解析表名的大写
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function parTableName($tables){
+	protected function parTableName($tables){
 		$tablename = array_filter(preg_split('/(?=[A-Z])/', $tables));
 		$tablename = implode('_', $tablename);
 		return $tablename;
@@ -95,9 +94,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function field($field){
-	    if(empty($field)){
-	        throw new MyError(__METHOD__.'请设置字段！');
-	    }else {
+	    if(!empty($field)){
 	        $this->Fields = $field;
 	    }
 	    return $this;
@@ -118,10 +115,16 @@ class Model{
 	 * 执行sql语句函数
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function ADUP(){
+	protected function ADUP($sql = null , $ist = null){
+		$sql = $sql === null ? $this->Sql : $sql;
 		$query = $this->db->query($this->Sql);
 		if(!$query){
 			throw new MyError('SQL语句执行错误'.$this->Sql);
+		}
+		if($ist == 'ist'){
+			return $this->db->insert_id();
+		}else if($ist == 'upd'){
+			return $this->db->affected_rows();
 		}
 		return $query;
 	}
@@ -155,10 +158,17 @@ class Model{
 			}else if(is_string($array)){
 				throw new MyError('解析insert sql 字段失败!'.$this->Sql);
 			}
-
 		}else if($type == 'upd'){
+			$pk = $this->getpk();
 			foreach ($array as $key => $value){
+				if($key == $pk){
+					continue;
+				}
 				$_b .= '`'.$key.'`'. '=' ."'". $value."'" . ',';
+			}
+			//解析主键
+			if($this->Where === null || $this->value === null){
+				$this->where($pk , $array[$pk]);
 			}
 			$this->ParKey = ' SET '.substr($_b, 0, -1);
 		}
@@ -243,10 +253,16 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function getpk(){
-		$map['TABLE_SCHEMA'] = $this->db_tabs;
-		$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
-		$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
-		return $rows['COLUMN_NAME'];
+		$pk = S('TABLE_PK_FOR_'.$this->DataName);
+		if(empty($pk)){
+			$map['TABLE_SCHEMA'] = $this->db_tabs;
+			$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
+			$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
+			$this->Where = null;
+			$pk = S('TABLE_PK_FOR_'.$this->DataName , $rows);
+			return $pk['COLUMN_NAME'];
+		}
+		return $pk['COLUMN_NAME'];
 	}
 
 	/**
@@ -261,7 +277,7 @@ class Model{
 		$data = array();
 		if($is_more){
 			while ($rows = $result->fetch_assoc()){
-				$data[] = $rows;
+				$data[] = array_filter($rows);
 			}
 		}else{
 			$data = $result->fetch_assoc();
@@ -343,11 +359,11 @@ class Model{
 	/**
 	 * like
 	 * @param field 要被like的字段名
-	 * @param value like的值 必须包含%%
+	 * @param value like的值
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function like($field , $value){
-		return $this->where($field , $value , null , 'LIKE ');
+		return $this->where($field , "%$value%" , null , 'LIKE ');
 	}
 
 	/**
@@ -379,7 +395,7 @@ class Model{
 	 * @param keyword 关键词 BETWEEN 或者 NOT BETWEEN 
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function between_common($field , $between , $keyword){
+	protected function between_common($field , $between , $keyword){
 		$this->Where = " WHERE `$field` $keyword ";
 		list($betweenleft , $betweenright) = explode( ',' , $between);
 		$this->value = $betweenleft . ' AND ' . $betweenright;
@@ -400,9 +416,9 @@ class Model{
 	 * @param values   要插入的数据
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function insert($data){
-		$data = array_filter($data);
-        if(empty($data)){
+	public function insert($values){
+		$values = array_filter($values);
+        if(empty($values)){
             throw new MyError(__METHOD__.'没有传入参数值！');
         }
 		foreach ($values as $key => $value) {
@@ -412,7 +428,7 @@ class Model{
 		}
 		$this->ParData('ist',$data);
 		$this->Sql = "INSERT INTO ".$this->TablesName."(".$this->ParKey.") VALUES (".$this->Parvalue.")";
-		return $this->ADUP();
+		return $this->ADUP($this->Sql , 'ist');
 	}
 	
 	/**
@@ -423,7 +439,11 @@ class Model{
 	 */
 	public function delete($value , $field = null){
 		$field = $field === null ? $this->getpk() : $field;
-		$this->Sql = "DELETE FROM ".$this->TablesName." WHERE ".$field."=".$value;
+		if($this->Where === null || $this->value === null){
+			$this->where($field , $value);
+		}
+		$this->Sql = "DELETE FROM ".$this->TablesName.$this->Where.$this->value;
+		dump($this->Sql);exit;
 		return $this->ADUP();
 	}
 	
@@ -441,7 +461,7 @@ class Model{
 			$this->ParData('upd',$field);
 		}
 		$this->Sql = "UPDATE ".$this->TablesName.$this->ParKey.$this->Where.$this->value;
-		return $this->ADUP();
+		return $this->ADUP($this->Sql , 'upd');
 	}
 	
 	/**
@@ -548,7 +568,7 @@ class Model{
 	 * 验证数据库信息是否填写
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function CheckConnectInfo(){
+	protected static function CheckConnectInfo(){
 		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_TABS')){
 			throw new MyError('请设置数据库连接信息！');
 		}

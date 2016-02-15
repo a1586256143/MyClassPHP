@@ -20,7 +20,7 @@ class MyClass{
 			error_reporting ( E_ERROR  |  E_PARSE );
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
-			register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
+			//register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
 			//判断文件夹是否存在
 			self::Dir();
 			//视图初始化
@@ -61,6 +61,7 @@ class MyClass{
 	 */
 	public static function Dir(){
 		self::loadFunction();
+
 		//加载常量
 		self::ReqConst();
 		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , APP_PATH.Config('CACHE_DIR'));
@@ -68,6 +69,7 @@ class MyClass{
 			//创建文件夹
 			outdir($value);
 		}
+
 		//生成默认的文件
 		self::outDefaultFile();
 	}
@@ -77,10 +79,9 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function loadFunction(){
+		require_once MyClass . '/Common/functions.php';
 		$app = APP_PATH.'/Common/functions.php';
-		if(file_exists($app)){
-			require_file($app);
-		}
+		require_file($app);
 	}
 
 	/**
@@ -92,6 +93,12 @@ class MyClass{
 		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , APP_PATH . '/Conf/config.php' , Common . '/Conf/config.php');
 		//加入配置文件
 		Config($merge);
+		if(file_exists(APP_PATH.'/Conf/template.php')){
+    		require_once APP_PATH.'/Conf/template.php';
+    	}else{
+    		//加载模板常量库
+			require_file(MyClass.'/Conf/template.php');	
+    	}
 		//解析常量方法
 		self::ParConst();
 	}

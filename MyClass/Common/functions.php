@@ -142,7 +142,7 @@
 		list($oldurl) = $path;
 		$pars = $pars ? $pars : '';
 		$text = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
-		$filter = implode('/' , array_filter(array_unique(explode('/',$text))));
+		$filter = '/'.implode('/' , array_filter(array_unique(explode('/',$text))));
 		$newurl = $oldurl ? $filter : ltrim($url , '/').$pars;
 		return $newurl;
 	}

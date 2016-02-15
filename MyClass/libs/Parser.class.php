@@ -23,9 +23,9 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parFunc(){
-		$patten = "/\{\:([\w]+)\(\'([\w\/]+)\'(\.[\w\$]+(\['[\w]+'\])*)\)\}/i";
+		$patten = "/\{\:([\w]+)\(([\'\w\/\$\']+)*([\.\-\>\w\$]+\['[\w]+'\])*\)\}/i";
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo $1('$2'$3) ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php echo $1($2$3) ?>",$this->_tpl);
 		}
 	}
 	
@@ -52,7 +52,7 @@ class Parser{
      */
 	private function parIF(){
 		//if语句开头的正则
-		$_ifpatten = '/\{if\s+[\$]([\w]+)\s(==|>=|<=|>|<|!=|===)*\s([\w\'\']+)?\}/u';
+		$_ifpatten = '/\{if\s+[\$]([\w\[\]\'\']+)\s(==|>=|<=|>|<|!=|===)*\s([\w\'\']+)?\}/u';
 		//endif语句的结束
 		$_endifpatten = '/\{\/if\}/';
 		//else语句查询
@@ -84,10 +84,10 @@ class Parser{
 		$pattenvar = '/\{\$([\w]+)([\[\'\'\]\w\-\>\+]*)\}/';
 		if(preg_match($patten,$this->_tpl)){
 			if(preg_match($_endpatten,$this->_tpl)){
-				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->$1 as \$key=>\$$2): ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->$1 as \$key=>\$this->$2): ?>",$this->_tpl);
 				$this->_tpl = preg_replace($_endpatten,"<?php endforeach; ?>",$this->_tpl);
 				if(preg_match($pattenvar,$this->_tpl)){
-					$this->_tpl = preg_replace($pattenvar,"<?php echo \$$1$2 ?>",$this->_tpl);
+					$this->_tpl = preg_replace($pattenvar,"<?php echo \$this->$1$2 ?>",$this->_tpl);
 				}
 			}else {
 				throw new MyError('foreach语句未关闭！'.$this->_tpl);
@@ -176,12 +176,6 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
     private function parDefault(){
-    	if(file_exists(APP_PATH.'/Conf/template.php')){
-    		require_once APP_PATH.'/Conf/template.php';
-    	}else{
-    		//加载模板常量库
-			require_file(MyClass.'/Conf/template.php');	
-    	}
     	$patten = "/(\_\_[a-zA-z]+\_\_)/";
     	if(preg_match($patten, $this->_tpl)){
     		$this->_tpl = preg_replace($patten , "<?php echo $1; ?>" , $this->_tpl);

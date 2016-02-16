@@ -87,12 +87,20 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function D($name = null , $method = null){
-		$tables = $name;
 		if(empty($name)){
 			ShowMessage('D方法必须传递一个值');
 		}
-		//引入命名空间以及目录
-		$name = require_module($name , 'MODEL');
+		//查找分组
+		$explode = explode('/', $name);
+		if(isset($explode[1]) && !empty($explode[1])){
+			//引入命名空间以及目录
+			$tables = $explode[1];
+			$name = require_module($explode[1] , 'MODEL' , $explode[0]);
+		}else{
+			$tables = $name;
+			//引入命名空间以及目录
+			$name = require_module($name , 'MODEL');
+		}
 		//文件目录
 		$filepath = $name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//文件不存在
@@ -128,23 +136,27 @@
 	function U($url , $param = null){
 		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
 		$path = explode('/', $subject['path']);
-		array_shift($path);
-		$pars = '';
-		if(!empty($param)){
-			if(is_array($param)){
-				foreach ($param as $key => $value) {
-					$pars .= "/$key/$value";
-				}
-			}else if(is_string($param)){
-				$pars = $param;
-			}
-		}
-		list($oldurl) = $path;
-		$pars = $pars ? $pars : '';
-		$text = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
-		$filter = '/'.implode('/' , array_filter(array_unique(explode('/',$text))));
-		$newurl = $oldurl ? $filter : ltrim($url , '/').$pars;
-		return $newurl;
+		$is_index = array_filter($path);
+		$oldurl = empty($is_index) ? '/index.php' : '/'.$is_index[1];
+		//array_shift($path);
+		// $pars = '';
+		// if(!empty($param)){
+		// 	if(is_array($param)){
+		// 		foreach ($param as $key => $value) {
+		// 			$pars .= "/$key/$value";
+		// 		}
+		// 	}else if(is_string($param)){
+		// 		$pars = $param;
+		// 	}
+		// }
+		//list($oldurl) = $path;
+		//$pars = $pars ? $pars : '';
+		//$text = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
+		//$text = '/'.ltrim($url , '/').$pars;
+		//dump(array_filter(array_unique(explode('/',$text))));
+		$filter = $oldurl.'/'.implode('/' , array_unique(explode('/',ltrim($url , '/'))));
+		//return $filter.$pars;
+		return $filter;
 	}
 
 	/**
@@ -152,8 +164,8 @@
 	 * @param name 模型名称
 	 * @author Colin <15070091894@163.com>
 	 */
-	function require_module($name = null , $type = null){
-		$app_name = ltrim(APP_NAME , './');
+	function require_module($name = null , $type = null , $path = null){
+		$app_name = empty($path) ? ltrim(APP_NAME , './') : $path;
 		$layer = Config('DEFAULT_'.$type.'_LAYER');
 		$path = $app_name.'\\'.$layer.'\\'.$name;
 		return $path;
@@ -372,5 +384,14 @@
 	 */
 	function setPublicUrl($public){
 		return getSiteUrl().$public;
+	}
+
+	/**
+	 * 设置URL地址
+	 * @param  url url目录的相对地址
+	 * @author Colin <15070091894@163.com>
+	 */
+	function setUrl($url){
+		return setPublicUrl($url);
 	}
 ?>

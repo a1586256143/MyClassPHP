@@ -23,7 +23,7 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	private function parFunc(){
-		$patten = "/\{\:([\w]+)\(([\'\w\/\$\']+)*([\.\-\>\w\$]+\['[\w]+'\])*\)\}/i";
+		$patten = "/\{\:([\w]+)\(([\'\w\/\$\']+)*([\.\-\>\w\$\[\'\w\'\]\/]+)*\)\}/i";
 		if(preg_match($patten,$this->_tpl)){
 			$this->_tpl = preg_replace($patten,"<?php echo $1($2$3) ?>",$this->_tpl);
 		}
@@ -52,21 +52,27 @@ class Parser{
      */
 	private function parIF(){
 		//if语句开头的正则
-		$_ifpatten = '/\{if\s+[\$]([\w\[\]\'\']+)\s(==|>=|<=|>|<|!=|===)*\s([\w\'\']+)?\}/u';
+		$_ifpatten = '/\{if\s+[\$]([\w\[\]\'\']+)\s(==|>=|<=|>|<|!=|===)*\s([\w\'\'\$\-\>\[\]]+)?\}/u';
 		//endif语句的结束
 		$_endifpatten = '/\{\/if\}/';
 		//else语句查询
 		$_elsepatten = '/\{else\}/';
+		//elseif语句
+		$elseifpatten = '/\{elseif\s+[\$]([\w\[\]\'\']+)\s(==|>=|<=|>|<|!=|===)*\s([\w\'\'\$\-\>\[\]]+)?\}/u';
 		//匹配查找
 		if(preg_match($_ifpatten,$this->_tpl)){
 			//查找是否关闭IF
 			if(preg_match($_endifpatten,$this->_tpl)){
 				//替换
-				$this->_tpl = preg_replace($_ifpatten,"<?php if(\$this->$1 $2 $3){ ?>",$this->_tpl);
-				$this->_tpl = preg_replace($_endifpatten,"<?php } ?>",$this->_tpl);
+				$this->_tpl = preg_replace($_ifpatten,"<?php if(\$this->$1 $2 $3): ?>",$this->_tpl);
+				$this->_tpl = preg_replace($_endifpatten,"<?php endif; ?>",$this->_tpl);
 				//有else就替换了
 				if(preg_match($_elsepatten,$this->_tpl)){
-					$this->_tpl = preg_replace($_elsepatten,"<?php }else{ ?>",$this->_tpl);
+					$this->_tpl = preg_replace($_elsepatten,"<?php else: ?>",$this->_tpl);
+				}
+				//有elseif就替换了
+				if(preg_match($elseifpatten,$this->_tpl)){
+					$this->_tpl = preg_replace($elseifpatten,"<?php elseif(\$this->$1 $2 $3): ?>",$this->_tpl);
 				}
 			}else{
 				throw new MyError('if语句未关闭！'.$this->_tpl);
@@ -84,7 +90,7 @@ class Parser{
 		$pattenvar = '/\{\$([\w]+)([\[\'\'\]\w\-\>\+]*)\}/';
 		if(preg_match($patten,$this->_tpl)){
 			if(preg_match($_endpatten,$this->_tpl)){
-				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->$1 as \$key=>\$this->$2): ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php foreach(\$this->$1 as \$this->key => \$this->$2): ?>",$this->_tpl);
 				$this->_tpl = preg_replace($_endpatten,"<?php endforeach; ?>",$this->_tpl);
 				if(preg_match($pattenvar,$this->_tpl)){
 					$this->_tpl = preg_replace($pattenvar,"<?php echo \$this->$1$2 ?>",$this->_tpl);

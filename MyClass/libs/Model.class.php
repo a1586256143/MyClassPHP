@@ -277,7 +277,7 @@ class Model{
 		$data = array();
 		if($is_more){
 			while ($rows = $result->fetch_assoc()){
-				$data[] = array_filter($rows);
+				$data[] = $rows;
 			}
 		}else{
 			$data = $result->fetch_assoc();
@@ -457,8 +457,13 @@ class Model{
 		if(is_string($field)){
 			$this->ParKey = ' SET '.'`'.$field.'`'."='".$value."'";
 		}else if(is_array($field)){
-			$field = array_filter($field);
-			$this->ParData('upd',$field);
+			foreach ($field as $key => $value) {
+				if($value === ''){
+					continue;
+				}
+				$data[$key] = $value;
+			}
+			$this->ParData('upd',$data);
 		}
 		$this->Sql = "UPDATE ".$this->TablesName.$this->ParKey.$this->Where.$this->value;
 		return $this->ADUP($this->Sql , 'upd');

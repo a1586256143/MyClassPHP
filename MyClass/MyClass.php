@@ -21,7 +21,7 @@
 	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
 
 	//运行时文件
-	define('RunTime',APP_PATH.'/RunTime');
+	define('RunTime','./RunTime');
 
 	//核心文件
 	define('Core',MyClass.'/libs/');

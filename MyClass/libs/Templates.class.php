@@ -61,11 +61,10 @@ class Templates{
 
 		//设置路径
 		$dirname = APP_PATH.Config('TPL_DIR').$controller.'/';
-		$tpl_c_dir = APP_PATH.Config('TPL_C_DIR');
-		$dircname = APP_PATH.Config('TPL_C_DIR').$controller.'/';
-
+		$tpl_c_dir = Config('TPL_C_DIR');
+		$dircname = $tpl_c_dir.ltrim(APP_NAME , './').'/'.$controller.'/';
 		//判断编译文件夹和缓存文件夹是否存在
-		$dir = array($tpl_c_dir , $dircname);
+		$dir = array($tpl_c_dir , $tpl_c_dir.ltrim(APP_NAME , './') , $dircname);
 		outdir($dir);
 
 		//判断方法目录是否存在
@@ -117,7 +116,7 @@ class Templates{
 		}
 
 		//设置路径
-		$dircname = APP_PATH.Config('TPL_C_DIR').$controller.'/';
+		$dircname = Config('TPL_C_DIR').ltrim(APP_NAME , './').'/'.$controller.'/';
 
 		//判断模板文件是否存在
 		if(!file_exists($tplFile)){

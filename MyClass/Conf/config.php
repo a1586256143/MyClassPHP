@@ -14,6 +14,7 @@ return array(
 	'DB_TABS'			=>	'',						//数据库名称
 	'DB_PREFIX'			=>	'',						//数据表前缀
 	'DB_CODE'			=>	'UTF8',					//数据库编码
+
 	//自动引入(Noice 自动引入会很消耗资源，请谨慎使用)
 	'AUTO_REQUIRE'      => false,                   //自动引入
 	'AUTO_REQUIRE_FILE' => '',                      //自动引入文件,号分割多个文件 例如 /Conf/template.php
@@ -44,12 +45,12 @@ return array(
 	'TPL_MODEL'			=>	'tpl',					//模板引擎
 	'TPL_TYPE'			=>	'.html',				//模板类型
 	'TPL_DIR'			=>	'/View/',				//模板文件存放目录
-	'TPL_C_DIR'			=>	'/RunTime/Template_c/',	//编译文件存放目录
-	'TPL_CACHE'         =>  '/RunTime/Template_cache/',      //编译文件文件目录
+	'TPL_C_DIR'			=>	RunTime.'/Template_c/',	//编译文件存放目录
+	'TPL_CACHE'         =>  RunTime.'/Template_cache/',      //编译文件文件目录
 
 	//缓存设置
-	'CACHE_DIR'     	=>	'/RunTime/Cache/', //缓存文件夹
-	'CACHE_DATA_DIR'    =>  '/RunTime/Cache/Data/', //S缓存文件存放目录
+	'CACHE_DIR'     	=>	RunTime.'/Cache/', //缓存文件夹
+	'CACHE_DATA_DIR'    =>  RunTime.'/Cache/Data/', //S缓存文件存放目录
 	'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
 	'CACHE_OUT_SUFFIX'	=>	'.json',   				//缓存存储后缀
 

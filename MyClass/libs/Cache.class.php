@@ -11,7 +11,7 @@ class Cache {
 		$this->file = new File();
 		$this->cache_out_suffix = Config('CACHE_OUT_SUFFIX');
 		$this->cache_out_prefix = Config('CACHE_OUT_PREFIX');
-		$this->cache_data_dir = APP_PATH.Config('CACHE_DATA_DIR');
+		$this->cache_data_dir = Config('CACHE_DATA_DIR');
 		//检查目录的状态和权限
 		$this->CacheDir();
 	}
@@ -24,7 +24,7 @@ class Cache {
 	 */
 	public function CacheDir(){
 		if(!file_exists($this->cache_data_dir)){
-			if(!is_dir(APP_PATH.$this->cache_data_dir)) mkdir(APP_PATH.Config('CACHE_DATA_DIR'));	//创建缓存文件目录
+			if(!is_dir($this->cache_data_dir)) mkdir($this->cache_data_dir , 777);	//创建缓存文件目录
 		}
 		//检查是否有可写的权限
 		if(!is_writable($this->cache_data_dir)){

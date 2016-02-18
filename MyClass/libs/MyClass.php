@@ -64,7 +64,7 @@ class MyClass{
 
 		//加载常量
 		self::ReqConst();
-		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , APP_PATH.Config('CACHE_DIR'));
+		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , Config('CACHE_DIR'));
 		foreach ($dir as $key => $value) {
 			//创建文件夹
 			outdir($value);

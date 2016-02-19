@@ -21,7 +21,7 @@
 	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
 
 	//运行时文件
-	define('RunTime','./RunTime');
+	define('RunTime',ROOT_PATH.'RunTime');
 
 	//核心文件
 	define('Core',MyClass.'/libs/');
@@ -39,7 +39,7 @@
 	define('CommonDIR',APP_PATH.'/Common');
 
 	//公共文件目录
-	define('Common','./Common');
+	define('Common',ROOT_PATH.'Common');
 	
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

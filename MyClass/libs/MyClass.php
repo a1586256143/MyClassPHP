@@ -80,7 +80,7 @@ class MyClass{
 	 */
 	public static function loadFunction(){
 		require_once MyClass . '/Common/functions.php';
-		$app = array(CommonDIR.'/Common/functions.php' , Common.'/Common/functions.php');
+		$app = array(CommonDIR.'/functions.php' , Common.'/Common/functions.php');
 		require_file($app);
 	}
 

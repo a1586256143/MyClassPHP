@@ -63,7 +63,7 @@
 		$filepath = APP_PATH.'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//如果不存在
 		if(!file_exists($filepath)){
-			throw new \MyClass\libs\MyError($filepath.'控制器不存在！');
+			throw new \MyClass\libs\MyError($name.'控制器不存在！');
 		}
 		//引入命名空间以及目录
 		$name = require_module($name , 'CONTROLLER');

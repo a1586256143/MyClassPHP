@@ -13,7 +13,7 @@ class Date{
 	 * @return int
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function getDate($timezone = 'PRC'){
+	public static function getDate($timezone = null){
 		if($timezone == null){
 			date_default_timezone_set(Config('DATE_DEFAULT_TIMEZONE'));
 		}else{

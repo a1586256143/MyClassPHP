@@ -443,7 +443,6 @@ class Model{
 			$this->where($field , $value);
 		}
 		$this->Sql = "DELETE FROM ".$this->TablesName.$this->Where.$this->value;
-		dump($this->Sql);exit;
 		return $this->ADUP();
 	}
 	

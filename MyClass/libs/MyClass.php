@@ -80,7 +80,7 @@ class MyClass{
 	 */
 	public static function loadFunction(){
 		require_once MyClass . '/Common/functions.php';
-		$app = APP_PATH.'/Common/functions.php';
+		$app = array(CommonDIR.'/Common/functions.php' , Common.'/Common/functions.php');
 		require_file($app);
 	}
 
@@ -94,7 +94,7 @@ class MyClass{
 		//加入配置文件
 		Config($merge);
 		if(file_exists(APP_PATH.'/Conf/template.php')){
-    		require_once APP_PATH.'/Conf/template.php';
+    		require_file(APP_PATH.'/Conf/template.php');
     	}else{
     		//加载模板常量库
 			require_file(MyClass.'/Conf/template.php');	

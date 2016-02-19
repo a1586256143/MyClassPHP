@@ -39,6 +39,16 @@
 	}
 
 	/**
+	 * 返回json数据
+	 * @param array 要返回的数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	function ajaxReturn($array = null){
+		echo json_encode($array);
+		exit;
+	}
+
+	/**
 	 * C方法实例化控制器
 	 * @param name 模型名称
 	 * @author Colin <15070091894@163.com>

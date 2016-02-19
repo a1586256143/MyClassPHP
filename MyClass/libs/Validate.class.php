@@ -15,9 +15,15 @@ class Validate {
 	protected $minlength = '';		//最小长度
 	protected $info = '';			//提示消息
 	protected $charset = 'utf-8';	//长度判断编码
+	protected $validate_patten = '';//验证正则
+	protected $type = 'showMessage';//提示使用的函数
+	protected $returnValue = '';	//返回值
 
-	public function __construct($config = null){
+	public function __construct($config = null , $type = null){
 		$this->config = $config;
+		if(!empty($type)){
+			$this->type = $type;
+		}
 	}
 
 	/**
@@ -39,6 +45,7 @@ class Validate {
 			//解析函数。开始验证
 			$this->_parsefunction($value);
 		}
+		return $this->returnValue();
 	}
 
 	/**
@@ -57,13 +64,37 @@ class Validate {
 				case 'maxlength':
 					$method = 'maxlength';
 					break;
+				case 'validate':
+					$method = $value;
+					break;
+				case 'validate_patten':
+					$this->validate_patten = $value;
+					break;
 			}
 		}
 		$string = empty($string) ? $this->string : $string;
 		if(method_exists($this, $method)){
-			$this->$method($this->string);
+			$this->$method($string);
+		}else{
+			throw new MyClass\libs\MyError('此方法不存在！');
 		}
 	}
+
+	/**
+	 * 内置函数 email
+	 * @param  str 验证字符串
+	 * @param  patten 验证规则
+	 */
+	public function email($str = null){
+		if(empty($this->validate_patten)){
+			$this->validate_patten = '/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/';
+		}
+		if(!preg_match($this->validate_patten, $str)){
+			$this->error($this->info);
+		}
+		$this->setreturnValue($this->name , $str);
+	}
+	
 
 	/**
 	 * 解析配置信息
@@ -123,10 +154,10 @@ class Validate {
 		$name = empty($name) ? $this->name : $name;
 		if($this->require){
 			if(empty($string) && strlen($string) == 0){
-				$this->_showInfo($name . '不能为空！');
-				showMessage($this->info);
+				$this->error($name . '不能为空！');
 			}
 		}
+		$this->setreturnValue($this->name , $string);
 	}
 	
 	/**
@@ -138,9 +169,9 @@ class Validate {
 		$maxlength = empty($maxlength) ? $this->maxlength : $maxlength;
 		$name = empty($name) ? $this->name : $name;
 		if (mb_strlen($string, $this->charset) > $maxlength) {
-			$this->_showInfo($name . '的长度超过'.$maxlength.'位');
-			showMessage($this->info);
+			$this->error($name . '的长度超过'.$maxlength.'位');
 		}
+		$this->setreturnValue($this->name , $string);
 	}
 	
 	/**
@@ -152,19 +183,43 @@ class Validate {
 		$minlength = empty($minlength) ? $this->minlength : $minlength;
 		$name = empty($name) ? $this->name : $name;
 		if (mb_strlen($string, $this->charset) < $minlength) {
-			$this->_showInfo($name . '的长度不能低于'.$minlength.'位');
-			showMessage($this->info);
+			$this->error($name . '的长度不能低于'.$minlength.'位');
 		}
+		$this->setreturnValue($this->name , $string);
 	}
 
 	/**
-	 * 显示信息
+	 * 返回值设置
+	 */
+	public function setreturnValue($name , $string = null){
+		$this->returnValue[$name] = htmlspecialchars(trim($string));
+	}
+
+	/**
+	 * 返回值
+	 */
+	public function returnValue(){
+		return $this->returnValue;
+	}
+
+	/**
+	 * 错误信息
 	 * @param  info 要显示的消息
+	 * @param  type 类型
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function _showInfo($info = null){
-		if(empty($this->info)){
-			$this->info = $info;
+	public function error($info = null , $type){
+		$this->info = $info;
+		switch ($this->type) {
+			case 'showMessage':
+				showMessage($this->info);
+				break;
+			case 'ajaxReturn':
+				ajaxReturn(array('info' => $this->info , 'url' => null , 'status' => 0));
+				break;
+			default : 
+				$this->type($this->info);
+				break;
 		}
 	}
 }

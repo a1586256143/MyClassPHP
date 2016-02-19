@@ -44,6 +44,8 @@ class Url{
             }
         }
         @list($controller , $method) = $parse_path;
+        define('CONTROLLER_NAME' , $controller);
+        define('METHOD_NAME' , $method);
         C($controller , $method , $new_pams);
     }
 

@@ -83,7 +83,7 @@ class Controller{
 		$return['info'] = $message;
 		$return['url'] = $url;
 		$return['status'] = $status;
-		echo json_encode($return);
+		ajaxReturn($return);
 		exit;
 	}
 

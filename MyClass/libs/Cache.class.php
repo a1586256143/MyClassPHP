@@ -24,7 +24,7 @@ class Cache {
 	 */
 	public function CacheDir(){
 		if(!file_exists($this->cache_data_dir)){
-			if(!is_dir($this->cache_data_dir)) mkdir($this->cache_data_dir , 777);	//创建缓存文件目录
+			if(!is_dir($this->cache_data_dir)) mkdir($this->cache_data_dir , 0777);	//创建缓存文件目录
 		}
 		//检查是否有可写的权限
 		if(!is_writable($this->cache_data_dir)){

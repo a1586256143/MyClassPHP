@@ -112,10 +112,9 @@
 			$name = require_module($name , 'MODEL');
 		}
 		//文件目录
-		$filepath = $name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		$filepath = ROOT_PATH.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//文件不存在
-		
-		if(!file_exists($filepath)){
+		if(!file_exists(str_replace('\\', '/', $filepath))){
 			//创建系统模型
 			$obj = \MyClass\libs\ObjFactory::CreateSystemModel($tables);
 		}else{
@@ -230,7 +229,7 @@
 		if(is_array($param)){
 			foreach ($param as $key => $value) {
 				if(!is_dir($value)){
-					mkdir($value);
+					mkdir($value , 0777);
 				}
 			}
 		}else if(is_string($param)){
@@ -264,7 +263,7 @@
 			}else if($name == 'null'){					//清空session
 				return session_destroy();
 			}else if(!empty($name) && $value == ''){	//session值为空
-				return isset($_SESSION["$name"]) ? $_SESSION["$name"] : null;
+				return $_SESSION["$name"] !== 'null' ? $_SESSION["$name"] : null;
 			}else if(!empty($name) && !empty($value)){	//session名称和值都不为空
 				$_SESSION["$name"] = $value;
 			}else if(!empty($name) && $value == 'null'){

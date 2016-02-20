@@ -264,7 +264,7 @@
 			}else if($name == 'null'){					//清空session
 				return session_destroy();
 			}else if(!empty($name) && $value == ''){	//session值为空
-				return isset($_SESSION["$name"]) ? $_SESSION["$name"] : '';
+				return isset($_SESSION["$name"]) ? $_SESSION["$name"] : null;
 			}else if(!empty($name) && !empty($value)){	//session名称和值都不为空
 				$_SESSION["$name"] = $value;
 			}else if(!empty($name) && $value == 'null'){
@@ -403,5 +403,14 @@
 	 */
 	function setUrl($url){
 		return setPublicUrl($url);
+	}
+
+	/**
+	 * 获取当前时间
+	 * @param prc 时间区域
+	 * @author Colin <15070091894@163.com>
+	 */
+	function getTime($prc = null){
+		return \MyClass\libs\Date::getDate($prc);
 	}
 ?>

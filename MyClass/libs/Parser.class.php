@@ -85,7 +85,7 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	public function parForeach(){
-		$patten = '/\{foreach\s+name="([\w]+)"\s+id="([\w]+)"\}/';
+		$patten = '/\{foreach\s+name="([\w\[\]\'\']+)"\s+id="([\w]+)"\}/';
 		$_endpatten = '/\{\/foreach\}/';
 		$pattenvar = '/\{\$([\w]+)([\[\'\'\]\w\-\>\+]*)\}/';
 		if(preg_match($patten,$this->_tpl)){

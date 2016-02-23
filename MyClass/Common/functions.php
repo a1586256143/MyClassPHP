@@ -11,7 +11,7 @@
 	 * @param message 信息内容
 	 * @author Colin <15070091894@163.com>
 	 */
-	function ShowMessage($_message){
+	function ShowMessage($message){
 		header('Content-Type:text/html;charset=UTF-8');
 		die('
 			<div style="width:400px;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;">
@@ -20,7 +20,7 @@
 						MyClass提示信息
 					</dt>
 					<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0;word-break:break-all;">
-					'.$_message.'
+					'.$message.'
 					</dd>
 					<dd style="padding:0px;margin:0px;">
 						<a href="javascript:void(0);" style="font-size:15px;color:#181884;width:100%;text-align:center;display:block;" id="back">
@@ -202,8 +202,10 @@
 	}
 
 	/**
-	 * 引入常规文件   有返回值
-	 * @param param 文件路径数组
+	 * 合并配置值
+	 * @param name1 第一个需合并的数组
+	 * @param name2 第二个需合并的数组
+	 * @param name3 第三个需合并的数组
 	 * @author Colin <15070091894@163.com>
 	 */
 	function replace_recursive_params($name1 , $name2 , $name3 = null){

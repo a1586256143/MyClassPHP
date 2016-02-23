@@ -520,7 +520,9 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function limit($start , $end = null){
-		$start = ($start-1) * $end;
+		if(!empty($start)){
+			$start = ($start-1) * $end;
+		}
 		$this->Limit = "LIMIT ".$start.','.$end;
 		return $this;
 	}

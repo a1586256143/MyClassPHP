@@ -91,13 +91,13 @@ class Page{
 		for($i=$this->bothnum;$i>=1;$i--){
 			$_page = $this->page-$i;
 			if($_page < 1) continue;
-			$_pagelist .= '<a href="'.$this->url.'&page='.$_page.'">'.$_page.'</a>';
+			$_pagelist .= '<li><a href="'.$this->url.'&page='.$_page.'">'.$_page.'</a></li>';
 		}
-		$_pagelist .= '<span class="me">'.$this->page.'</span>';
+		$_pagelist .= '<li class="active"><span class="me">'.$this->page.'</span></li>';
 		for($i=1;$i<=$this->bothnum;$i++){
 			$_page = $this->page+$i;
 			if($_page > $this->pagenum) break;
-			$_pagelist .= '<a href="'.$this->url.'&page='.$_page.'">'.$_page.'</a>';
+			$_pagelist .= '<li><a href="'.$this->url.'&page='.$_page.'">'.$_page.'</a></li>';
 		}
 		return $_pagelist;
 	}
@@ -151,12 +151,13 @@ class Page{
      * @author Colin <15070091894@163.com>
      */
 	public function showpage(){
-		$_page = '';
-		$_page .= $this->first();
+		$_page = '<ul class="pagination">';
+		// $_page .= $this->first();
 		$_page .= $this->pageList();
-		$_page .= $this->last();
-		$_page .= $this->prev();
-		$_page .= $this->next();
+		// $_page .= $this->last();
+		// $_page .= $this->prev();
+		// $_page .= $this->next();
+		$_page .= '</ul>';
 		return $_page;
 	}
 }

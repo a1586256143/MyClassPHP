@@ -519,8 +519,9 @@ class Model{
 	 * @param num 查询结果集的数量 0,10
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function limit($num){
-		$this->Limit = "LIMIT ".$num;
+	public function limit($start , $end = null){
+		$start = ($start-1) * $end;
+		$this->Limit = "LIMIT ".$start.','.$end;
 		return $this;
 	}
 

@@ -548,6 +548,26 @@ class Model{
 	}
 
 	/**
+	 * 获取下一条数据
+	 * @param  id 获取下一条数据的ID
+	 * @param  field 查询字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function next($id , $field = '*'){
+		return $this->field($field)->where('id' , $id , null , '>')->find();
+	}
+
+	/**
+	 * 获取上一条数据
+	 * @param  id 获取下一条数据的ID
+	 * @param  field 查询字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function prev($id , $field = '*'){
+		return $this->field($field)->where('id' , $id , null , '<')->find();
+	}
+
+	/**
 	 * 容错处理机制
 	 * @author Colin <15070091894@163.com>
 	 */

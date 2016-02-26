@@ -16,10 +16,7 @@ class View {
      * @author Colin <15070091894@163.com>
      */
 	public static function init($type){
-		if($type == 'tpl'){
-			//require_once MyClass.'/libs/MyClassPHP/Templates.class.php';
-			self::$view = ObjFactory::CreateTemplates();
-		}
+		self::$view = ObjFactory::CreateTemplates($type);
 	}
 	
 	/**

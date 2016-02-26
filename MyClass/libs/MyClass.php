@@ -145,9 +145,7 @@ class MyClass{
 	 */
 	public static function View(){
 		//初始化视图工厂
-		if(Config('TPL_MODEL') == 'tpl'){
-			View::init('tpl');
-		}
+		View::init(Config('TPL_MODEL'));
 	}
 }
 ?>

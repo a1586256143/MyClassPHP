@@ -28,8 +28,12 @@ class ObjFactory{
      * 创建模板类对象
      * @author Colin <15070091894@163.com>
      */
-    public static function CreateTemplates(){
-        return new Templates();
+    public static function CreateTemplates($type = null){
+        if($type == 'tpl'){
+            return new Templates();
+        }else{
+            //实例化第三方模板类
+        }
     }
 
     /**

@@ -5,7 +5,10 @@
 	FileType :模板类
 	FileName :Templets.class.php
 */
-namespace MyClass\libs;
+namespace MyClass\libs\Templates\MyTemplate;
+use MyClass\libs\MyError;
+use MyClass\libs\ObjFactory;
+use MyClass\libs\Url;
 class Templates{
 	//创建一数组来保存注入的变量
 	private $_vars = array();
@@ -85,7 +88,7 @@ class Templates{
 		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($tplFile))){
 			//编译文件的修改时间<tpl模板文件的修改时间
 			//实例化解析类
-			$_parser = ObjFactory::CreateTemplatesParse($tplFile);
+			$_parser = ObjFactory::CreateTemplatesParse('tpl' , $tplFile);
 			//调用解析类里面的公共方法
 			$_parser->comile($parFile);
 		}
@@ -130,7 +133,7 @@ class Templates{
 		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($tplFile))){
 			//编译文件的修改时间<tpl模板文件的修改时间
 			//实例化解析类
-			$parser = ObjFactory::CreateTemplatesParse($tplFile);
+			$parser = ObjFactory::CreateTemplatesParse('tpl' , $tplFile);
 			//调用解析类里面的公共方法
 			$parser->comile($parFile);
 		}

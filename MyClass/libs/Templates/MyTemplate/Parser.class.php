@@ -5,8 +5,8 @@
 	FileType :模板解析类
 	FileName :Parser.class.php
 */
-namespace MyClass\libs;
-
+namespace MyClass\libs\Templates\MyTemplate;
+use MyClass\libs\MyError;
 class Parser{
 	//字段，保存模板内容
 	private $_tpl;

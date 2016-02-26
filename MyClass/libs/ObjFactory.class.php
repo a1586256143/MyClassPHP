@@ -30,7 +30,7 @@ class ObjFactory{
      */
     public static function CreateTemplates($type = null){
         if($type == 'tpl'){
-            return new Templates();
+            return new \MyClass\libs\Templates\MyTemplate\Templates();
         }else{
             //实例化第三方模板类
         }
@@ -41,8 +41,12 @@ class ObjFactory{
      * @param tplFile 解析的文件名
      * @author Colin <15070091894@163.com>
      */
-    public static function CreateTemplatesParse($tplFile){
-        return new Parser($tplFile);
+    public static function CreateTemplatesParse($type = null , $tplFile){
+        if($type == 'tpl'){
+            return new \MyClass\libs\Templates\MyTemplate\Parser($tplFile);
+        }else{
+            //实例化第三方解析类
+        }
     }
 
     /**

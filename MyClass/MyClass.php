@@ -7,10 +7,10 @@
 	*/
 
 	//MyClass目录
-	define('MyClass',dirname(__FILE__));
+	define('MyClass' , str_replace('\\' , '/' , dirname(__FILE__)));
 
 	//根目录
-	define('ROOT_PATH',substr(MyClass , 0 , -7));
+	define('ROOT_PATH' , substr(MyClass , 0 , -7));
 
 	//如果不存在APP_NAME
 	if(!defined('APP_NAME')){
@@ -21,25 +21,28 @@
 	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
 
 	//运行时文件
-	define('RunTime',ROOT_PATH.'RunTime');
+	define('RunTime' , ROOT_PATH.'RunTime');
 
 	//核心文件
-	define('Core',MyClass.'/libs/');
+	define('Core' , MyClass.'/libs/');
+
+	//第三方类库文件目录
+	define('LIBRARY' , MyClass.'/library');
 	
 	//控制器目录
-	define('ControllerDIR',APP_PATH.'/Controller');
+	define('ControllerDIR' , APP_PATH.'/Controller');
 	
 	//模型目录
-	define('ModelDIR',APP_PATH.'/Model');
+	define('ModelDIR' , APP_PATH.'/Model');
 	
 	//配置文件目录
-	define('ConfDIR',APP_PATH.'/Conf');
+	define('ConfDIR' , APP_PATH.'/Conf');
 
 	//公共函数文件目录
-	define('CommonDIR',APP_PATH.'/Common');
+	define('CommonDIR' , APP_PATH.'/Common');
 
 	//公共文件目录
-	define('Common',ROOT_PATH.'Common');
+	define('Common' , ROOT_PATH.'Common');
 	
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

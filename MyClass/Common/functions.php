@@ -414,4 +414,20 @@
 	function getTime($prc = null){
 		return \MyClass\libs\Date::getDate($prc);
 	}
+
+	/**
+	 * 第三方类库调用
+	 * @param name 第三方类库名称
+	 * @author Colin <15070091894@163.com>
+	 */
+	function library($name = null){
+		list($filedir , $filename) = explode('/' , $name);
+		//把@替换成.
+		$filename = str_replace('@' , '.' , $filename);
+		$path = LIBRARY.'/'.$filedir.'/'.$filename.'.php';
+		if(!file_exists($path)){
+			E('文件不存在'.$name);	
+		}
+		require_file($path);
+	}
 ?>

@@ -17,7 +17,7 @@ class MyClass{
 	 */
 	public static function run(){
 		try {
-			error_reporting ( E_ERROR  |  E_PARSE );
+			error_reporting (0);
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
 			//register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');

@@ -23,6 +23,7 @@ class Controller{
      * @author Colin <15070091894@163.com>
      */
 	protected function display($fileName = null){
+		$fileName = $this->getFilenameOrPath($fileName);
 		$this->view->display($fileName);
 	}
 
@@ -32,7 +33,19 @@ class Controller{
      * @author Colin <15070091894@163.com>
      */
 	protected function Layout($fileName = null){
+		$fileName = $this->getFilenameOrPath($fileName);
 		$this->view->Layout($fileName);
+	}
+
+	/**
+	 * 获取文件名以及路径
+	 */
+	protected function getFilenameOrPath($FileName){
+		if(empty($FileName)){
+			$FileName = METHOD_NAME;
+		}
+		$path = $this->view->template_dir.CONTROLLER_NAME.'/'.$FileName.Config('TPL_TYPE');
+		return $path;
 	}
 
 	/**
@@ -83,6 +96,7 @@ class Controller{
 		$return['info'] = $message;
 		$return['url'] = $url;
 		$return['status'] = $status;
+		dump($return);exit;
 		ajaxReturn($return);
 		exit;
 	}

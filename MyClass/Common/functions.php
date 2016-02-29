@@ -187,6 +187,7 @@
 	 * @author Colin <15070091894@163.com>
 	 */
 	function require_file($path , $modules = ''){
+		$content = '';
 		if(is_array($path)){
 			foreach ($path as $key => $value) {
 				if(file_exists($modules.$value)){

@@ -107,17 +107,19 @@ class Parser{
      */
 	private function parinclude(){
 		$patten = '/\{include\s+file=(\"|\')([\w\.\-\/]+)(\"|\')\}/';
+
 		if(preg_match($patten,$this->_tpl,$file)){
 			$filename = $file[2];
-			$filepath = APP_PATH.Config('TPL_DIR').$filename.Config('TPL_TYPE');
+			$filepath = Config('TPL_DIR').$filename.Config('TPL_TYPE');
 			if(!file_exists($filepath) || empty($file)){
 				throw new MyError($filepath.'包含文件出错！请检查！');
 			}
 			$patten1 = '/Layout/';
+			$prefix = Config('TPL_TYPE');
 			if(preg_match($patten1,$filename)){
-				$this->_tpl = preg_replace($patten,"<?php \$this->Layout('$2') ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php \$this->Layout('$2$prefix') ?>",$this->_tpl);
 			}else{
-				$this->_tpl = preg_replace($patten,"<?php include APP_PATH.Config('TPL_DIR').'$2'.Config('TPL_TYPE'); ?>",$this->_tpl);
+				$this->_tpl = preg_replace($patten,"<?php include Config('TPL_DIR').'$2'.Config('TPL_TYPE'); ?>",$this->_tpl);
 			}
 		}
 	}

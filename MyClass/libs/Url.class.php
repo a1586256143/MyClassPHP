@@ -65,7 +65,7 @@ class Url{
                $parse_path[$key] = $value;
             }
         }else{
-            $parse_path = array_filter(explode('/', substr($parse_url['path'] , 0 , 1)));
+            $parse_path = array_filter(explode('/', $parse_url['path']));
         }
         $patten = '/\./';
         //匹配是否是index.php

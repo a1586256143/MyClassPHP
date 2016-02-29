@@ -15,16 +15,16 @@ class View {
      * @param type 类型
      * @author Colin <15070091894@163.com>
      */
-	public static function init($type){
-		self::$view = ObjFactory::CreateTemplates($type);
+	public static function init($type , $config = array()){
+		self::$view = ObjFactory::CreateTemplates($type , $config);
 	}
 	
 	/**
      * display方法
      * @author Colin <15070091894@163.com>
      */
-	public static function display($FileName){
-		return self::$view->display($FileName);
+	public static function display($filename){
+		return self::$view->display($filename);
 	}
 	
 	/**

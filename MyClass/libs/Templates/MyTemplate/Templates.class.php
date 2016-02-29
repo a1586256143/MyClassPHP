@@ -14,17 +14,11 @@ class Templates{
 	private $_vars = array();
 	//保存系统变量
 	private $_config = array();
-	
-	/**
-     * 创建构造方法  来验证各个目录是否存在
-     * @author Colin <15070091894@163.com>
-     */
-	public function __construct(){
-		if(!is_dir(APP_PATH.Config('TPL_DIR'))){
-			throw new MyError('请正确设置模板文件目录');
-		}
-	}
-	
+	//模板目录
+	public $template_dir;
+	public $compile_dir;
+	public $cache_dir;
+
 	/**
      * assign()方法  用于注入变量
      * @param var 模板中的变量名
@@ -46,8 +40,11 @@ class Templates{
      * @author Colin <15070091894@163.com>
      */
 	public function display($file){
+		//获取模板名
+		$filename = $this->getTemplateName($file);
 		@list($controller , $method) = Url::getCurrentUrl();
 
+		//默认控制器和默认方法
 		$default_controller = Config('DEFAULT_CONTROLLER');
 		$default_action = Config('DEFAULT_METHOD');
 		//检查默认控制器是否存在
@@ -56,44 +53,50 @@ class Templates{
 		}
 
 		$controller = empty($controller) ? $default_controller : $controller;
-		
-		$method = empty($method) ? $default_action : $method;
-
-		//如果$_file为空
-		$file = empty($file) ? $method.Config('TPL_TYPE') : $file.Config('TPL_TYPE');
-
+	
 		//设置路径
-		$dirname = APP_PATH.Config('TPL_DIR').$controller.'/';
-		$tpl_c_dir = Config('TPL_C_DIR');
-		$dircname = $tpl_c_dir.ltrim(APP_NAME , './').'/'.$controller.'/';
+		$dirname = $this->template_dir.$controller.'/';
+		
+		//编译文件目录
+		$dircname = $this->compile_dir.ltrim(APP_NAME , './').'/'.$controller.'/';
+
 		//判断编译文件夹和缓存文件夹是否存在
-		$dir = array($tpl_c_dir , $tpl_c_dir.ltrim(APP_NAME , './') , $dircname);
+		$dir = array($this->compile_dir , $this->compile_dir.ltrim(APP_NAME , './') , $dircname);
+
+		//生成文件夹
 		outdir($dir);
 
 		//判断方法目录是否存在
 		if(!is_dir($dirname)){
 			throw new MyError($dirname.'目录不存在');
 		}
-
-		//设置模板文件路径
-		$tplFile = $dirname.$file;
 		//判断模板文件是否存在
-		if(!file_exists($tplFile)){
-			throw new MyError($tplFile.'模板文件不存在！');
+		if(!file_exists($file)){
+			throw new MyError($file.'模板文件不存在！');
 		}
 		
 		//生成编译文件
-		$parFile = $dircname.md5($file).$file.'.php';
+		$parFile = $dircname.md5($filename).$filename.'.php';
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
-		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($tplFile))){
+		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($file))){
 			//编译文件的修改时间<tpl模板文件的修改时间
 			//实例化解析类
-			$_parser = ObjFactory::CreateTemplatesParse('tpl' , $tplFile);
+			$_parser = ObjFactory::CreateTemplatesParse('tpl' , $file);
 			//调用解析类里面的公共方法
 			$_parser->comile($parFile);
 		}
 		//引入编译文件
 		require $parFile;
+	}
+
+	/**
+	 * 获取模板名
+	 */
+	protected function getTemplateName($path = null){
+		$explode = explode('/' , $path);
+		$filearray = array_pop($explode);
+		$filename = explode('.' , $filearray);
+		return $filename[0];
 	}
 
 	/**
@@ -103,21 +106,14 @@ class Templates{
      */
 	public function Layout($file){
 		list($controller , $method) = URL::getCurrentUrl();
-		//是否为空
-		if(empty($file)){
-			$file = $method;
-		}
 
-		$tplFile = APP_PATH.Config('TPL_DIR').$file;
-
+		$tplFile = $file;
 		//判断是否写了目录名支持持一级
 		$_patten = '/(.*)\/(.*)/';
-		if(preg_match($_patten,$file,$_match)){
-			$tplFile = APP_PATH.Config('LAYOUT_DIR').'/'.$_match[2].Config('TPL_TYPE');
-		}else{
-			$tplFile = APP_PATH.Config('LAYOUT_DIR').'/'.$file.Config('TPL_TYPE');
+		if(preg_match($_patten , $file , $_match)){
+			$tplFile = Config('LAYOUT_DIR').'/'.$_match[2];
 		}
-
+		
 		//设置路径
 		$dircname = Config('TPL_C_DIR').ltrim(APP_NAME , './').'/'.$controller.'/';
 
@@ -125,9 +121,10 @@ class Templates{
 		if(!file_exists($tplFile)){
 			throw new MyError($tplFile.'视图文件不存在！');
 		}
-		$file = str_replace('/', '_', $file);
+		$name = $this->getTemplateName($file);
+		$name = str_replace('/', '_', $name);
 		//生成编译文件
-		$parFile = $dircname.md5($file).$file.'.php';
+		$parFile = $dircname.md5($name).$name.'.php';
 		
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
 		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($tplFile))){

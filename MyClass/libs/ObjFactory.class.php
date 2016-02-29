@@ -28,12 +28,21 @@ class ObjFactory{
      * 创建模板类对象
      * @author Colin <15070091894@163.com>
      */
-    public static function CreateTemplates($type = null){
+    public static function CreateTemplates($type = null , $config = array()){
         if($type == 'tpl'){
-            return new \MyClass\libs\Templates\MyTemplate\Templates();
+            $templateobject = new \MyClass\libs\Templates\MyTemplate\Templates();
         }else{
             //实例化第三方模板类
+            $template = ucfirst($type);
+            $name = '\MyClass\libs\Templates\\'.$template.'\\'.$template;
+            $templateobject = new $name();
         }
+        if(!empty($templateobject)){
+            foreach ($config as $key => $value) {
+               $templateobject->$key = Config(strtoupper($value));
+            }
+        }
+        return $templateobject;
     }
 
     /**
@@ -86,8 +95,8 @@ class ObjFactory{
      * @param name 为视图文件名称
      * @author Colin <15070091894@163.com>
      */
-    public static function CreateView($name){
-        $obj = $name.'View';
+    public static function CreateView(){
+        $obj = '\\MyClass\\libs\\View';
         return new $obj();
     }
 

@@ -67,11 +67,23 @@ class Url{
         }else{
             $parse_path = array_filter(explode('/', $parse_url['path']));
         }
+        $path_array = explode('/' , ROOT_PATH);
         $patten = '/\./';
+        foreach ($parse_path as $key => $value) {
+            //处理根目录
+            if(in_array($value , $path_array)){
+                unset($parse_path[$key]);
+                $parse_path = array_merge($parse_path);
+            }
+        }
         //匹配是否是index.php
         if(!empty($parse_path)){
-            if(preg_match($patten,$parse_path[1],$match)){
-                unset($parse_path[1]);
+            if(preg_match($patten,$parse_path[0],$match)){
+                //确认文件是否存在
+                if(!file_exists(ROOT_PATH.$parse_path[0])){
+                    E('无效的入口文件'.$parse_path[0]);
+                }
+                unset($parse_path[0]);
             }
             $parse_path = array_merge($parse_path);
         }

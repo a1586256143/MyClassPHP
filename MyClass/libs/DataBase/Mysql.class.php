@@ -6,9 +6,9 @@
     FileName : Mysql.php
 */
 namespace MyClass\libs\DataBase;
-use MyClass\libs\IDataBase;
+use MyClass\libs\Db;
 
-class Mysql implements IDataBase{
+class Mysql extends Db{
     protected $_db;
 
     /**
@@ -80,6 +80,16 @@ class Mysql implements IDataBase{
      */
     public function showerror(){
         return mysql_error();
+    }
+
+    /**
+     * 获取表所有字段
+     * @author Colin <15070091894@163.com>
+     */
+    public function getFields($table){
+        $prefix = Config('DB_PREFIX');
+        dump($prefix);
+        //select COLUMN_NAME from information_schema.COLUMNS where table_name = 'your_table_name';
     }
 }
 ?>

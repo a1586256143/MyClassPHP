@@ -6,19 +6,9 @@
     FileName : Db.class.php
 */
 namespace MyClass\libs;
-//适配器接口
-interface IDataBase{
-    function connect();
-    function query($sql);
-    function select_db($tables);
-    function fetch_array($query);
-    function insert_id();
-    function affected_rows();
-    function close();
-    function showerror();
-}
-class Db{
+abstract class Db{
     protected static $db;
+
     /**
      * 获取数据库类
      * @author Colin <15070091894@163.com>
@@ -42,6 +32,64 @@ class Db{
     }
 
     /**
+     * 连接数据库
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function connect();
+
+    /**
+     * query
+     * @param  [string] $sql [要执行的sql语句]
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function query($sql);
+
+    /**
+     * 选择数据库方法
+     * @param  [string] $tables [数据库名]
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function select_db($tables);
+
+    /**
+     * 获取结果集 以数组格式获取
+     * @param  [string] $query [query后的结果集]
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function fetch_array($query);
+
+    /**
+     * 获取新增的ID
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function insert_id();
+
+    /**
+     * 获取执行影响的记录数
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function affected_rows();
+
+    /**
+     * 关闭数据库
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function close();
+
+    /**
+     * 返回最近的一条sql语句错误信息
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function showerror();
+
+    /**
+     * 获取数据库所有字段信息
+     * @param  [string] $table [表名]
+     * @author Colin <15070091894@163.com>
+     */
+    abstract public function getFields($table);
+
+    /**
      * 确认数据库是否存在
      * @author Colin <15070091894@163.com>
      */
@@ -51,6 +99,19 @@ class Db{
         if(!$result){
             throw new MyError('数据库不存在或数据库名不正确！'.$database);
         }
+    }
+
+    /**
+     * 获取结果集
+     * @param  [string] $query [query执行后结果]
+     * @author Colin <15070091894@163.com>
+     */
+    protected function getResult($query){
+        $data = array();
+        while ($rows = $this->fetch_array($query)){
+            $data[] = $rows;
+        }
+        return $data;
     }
 
     /**

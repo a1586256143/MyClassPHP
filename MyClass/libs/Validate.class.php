@@ -53,6 +53,7 @@ class Validate {
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function _parsefunction($name , $string = null){
+		$method = '';
 		foreach ($name as $key => $value) {
 			switch ($key) {
 				case 'require':
@@ -76,7 +77,7 @@ class Validate {
 		if(method_exists($this, $method)){
 			$this->$method($string);
 		}else{
-			throw new MyClass\libs\MyError('此方法不存在！');
+			throw new \MyClass\libs\MyError('此方法不存在！');
 		}
 	}
 
@@ -205,10 +206,9 @@ class Validate {
 	/**
 	 * 错误信息
 	 * @param  info 要显示的消息
-	 * @param  type 类型
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function error($info = null , $type){
+	public function error($info = null){
 		$this->info = $info;
 		switch ($this->type) {
 			case 'showMessage':

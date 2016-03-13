@@ -73,8 +73,8 @@ class Url{
             //处理根目录
             if(in_array($value , $path_array)){
                 unset($parse_path[$key]);
-                $parse_path = array_merge($parse_path);
             }
+            $parse_path = array_merge($parse_path);
         }
         //匹配是否是index.php
         if(!empty($parse_path)){
@@ -83,6 +83,7 @@ class Url{
                 if(!file_exists(ROOT_PATH.$parse_path[0])){
                     E('无效的入口文件'.$parse_path[0]);
                 }
+
                 unset($parse_path[0]);
             }
             $parse_path = array_merge($parse_path);

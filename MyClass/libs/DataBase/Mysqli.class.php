@@ -6,9 +6,9 @@
     FileName : Mysqli.php
 */
 namespace MyClass\libs\DataBase;
-use MyClass\libs\IDataBase;
+use MyClass\libs\Db;
 
-class Mysqli implements IDataBase{
+class Mysqli extends Db{
     protected $_db;
     public $affected_rows;
     
@@ -45,7 +45,7 @@ class Mysqli implements IDataBase{
      * @author Colin <15070091894@163.com>
      */
     public function fetch_array($query = null){
-        return $query->fetch_array();
+        return $query->fetch_assoc();
     }
 
     /**
@@ -78,6 +78,23 @@ class Mysqli implements IDataBase{
      */
     public function showerror(){
         return $this->_db->error;
+    }
+
+    /**
+     * 获取表所有字段
+     * @param string $table [表名]
+     * @author Colin <15070091894@163.com>
+     */
+    public function getFields($table){
+        $prefix = Config('DB_PREFIX').$table;
+        //$query = $this->_db->query("SHOW FULL COLUMNS FROM $prefix");
+        $query = $this->_db->query("select COLUMN_NAME from information_schema.COLUMNS where table_name = '$prefix'");
+        $result = $this->getResult($query);
+        foreach ($result as $key => $value) {
+            $fields[] = $value['COLUMN_NAME'];
+        }
+        $result = array_values($fields);
+        return $result;
     }
 }
 ?>

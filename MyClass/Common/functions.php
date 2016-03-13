@@ -238,7 +238,7 @@
 				}
 			}
 		}else if(is_string($param)){
-			if(!is_dir($param)) mkdir($param);
+			if(!is_dir($param)) mkdir($param , 0777);
 		}
 	}
 

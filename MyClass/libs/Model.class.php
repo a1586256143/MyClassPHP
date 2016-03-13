@@ -41,6 +41,20 @@ class Model{
 	protected $Limit = '';
 	//order
 	protected $Order = '';
+	//自动完成
+	protected $auto = array();
+	//自动验证
+	protected $validate = array();
+	//保存数据
+	protected $data = array();
+	//回调时使用的操作句柄
+	protected $callback = '';
+	//新增时操作
+	const MODEL_INSERT = 1;
+	//修改时操作
+	const MODEL_UPDATE = 2;
+	//所有操作
+	const MODEL_BOTH = 3;
 	
 	/**
 	 * 构造方法
@@ -60,6 +74,8 @@ class Model{
 		$this->TablesType($tables);
 		//确认表是否存在
 		$this->CheckTables();
+		//初始化回调函数的句柄
+		$this->callback = $tables;
 	}
 	
 	/**
@@ -98,6 +114,100 @@ class Model{
 	        $this->Fields = $field;
 	    }
 	    return $this;
+	}
+
+	/**
+	 * 获取所有字段
+	 * @param  tables 表名
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function getFields($tables = null){
+		if(empty($tables)){
+			$tables = $this->DataName;
+		}
+		return $this->db->getFields($tables);
+	}
+
+	/**
+	 * create方法
+	 * @param  data 创建对象的数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function create($data = array()){
+		if(empty($data)){
+			$data = values('post.');
+		}
+		//获取表所有字段
+		$fields = $this->getFields();
+		foreach ($fields as $key => $value) {
+			if(isset($data[$value])){
+				$fieldData[$value] = $data[$value];
+			}
+		}
+		//去除空值
+		$result = array_filter($fieldData);
+		//自动完成
+		if(!empty($this->auto)){
+			$this->_parse_auto();
+			//合并自动完成数据
+			$result = array_merge($this->data['auto'] , $result);
+		}
+		if(!empty($this->validate)){
+			$this->_parse_validate();
+			//合并自动验证数据
+			$result = array_merge($this->data['validate'] , $result);
+		}
+		return $result;
+	}
+
+	/**
+	 * 解析auto参数
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function _parse_auto(){
+		$fields = $this->getFields();
+		//遍历自动完成属性
+		foreach ($this->auto as $key => $value) {
+			//查找是否符合字段需求
+			if(in_array($value[0], $fields)){
+				//解析类型
+				if(!empty($value[3])){
+					switch ($value[3]) {
+						case 'function':
+							//函数方法调用
+							$value[1] = $value[1]();
+							break;
+						case 'callback':
+							//回调当前模型的一个方法
+							$value[1] = D($this->callback)->$value[1]();
+							break;
+						default:
+							//默认做字符串处理
+							$value[1] = $value[1];
+							break;
+					}
+				}
+				//保存自动完成属性
+				$this->data['auto'][$value[0]] = $value[1];
+			}
+		}
+	}
+
+	/**
+	 * 解析validate参数
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function _parse_validate(){
+		$validate = new Validate();
+		foreach ($this->validate as $key => $value) {
+			switch ($value[3]) {
+				case 'validate':
+					$string = $validate->Validate($value[0] , array(array('string' => $value[0] , $value[4] => $value[1] , 'info' => $value[2])));
+					break;
+			}
+			//保存自动验证属性
+			$this->data['validate'][$value[0]] = $string;
+		}
 	}
 
 	/**

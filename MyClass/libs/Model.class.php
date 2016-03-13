@@ -119,7 +119,7 @@ class Model{
 		$sql = $sql === null ? $this->Sql : $sql;
 		$query = $this->db->query($this->Sql);
 		if(!$query){
-			throw new MyError('SQL语句执行错误'.$this->Sql);
+			throw new MyError('SQL语句执行错误'.$this->db->showerror());
 		}
 		if($ist == 'ist'){
 			return $this->db->insert_id();

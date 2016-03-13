@@ -43,6 +43,12 @@
 
 	//公共文件目录
 	define('Common' , ROOT_PATH.'Common');
+
+	//定义版本信息
+	define('VERSION' , '1.2');
+
+	//定义上一页地址		
+	//define('prev_url', @$_SERVER["HTTP_REFERER"]);
 	
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

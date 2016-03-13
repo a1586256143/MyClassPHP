@@ -71,5 +71,13 @@ class Mysqli implements IDataBase{
     public function close(){
         $this->_db->close($this->_db);
     }
+
+    /**
+     * 返回上一个操作所产生的错误信息
+     * @author Colin <15070091894@163.com>
+     */
+    public function showerror(){
+        return $this->_db->error;
+    }
 }
 ?>

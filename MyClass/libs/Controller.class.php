@@ -96,7 +96,6 @@ class Controller{
 		$return['info'] = $message;
 		$return['url'] = $url;
 		$return['status'] = $status;
-		dump($return);exit;
 		ajaxReturn($return);
 		exit;
 	}

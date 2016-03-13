@@ -62,7 +62,7 @@ class MyClass{
 	public static function Dir(){
 		self::loadFunction();
 
-		//加载配置
+		//加载常量
 		self::ReqConst();
 		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , Config('CACHE_DIR'));
 		foreach ($dir as $key => $value) {
@@ -85,7 +85,7 @@ class MyClass{
 	}
 
 	/**
-	 * 配置引入方法
+	 * 常量引入方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){
@@ -99,12 +99,12 @@ class MyClass{
     		//加载模板常量库
 			require_file(MyClass.'/Conf/template.php');	
     	}
-		//解析配置方法
+		//解析常量方法
 		self::ParConst();
 	}
 
 	/**
-	 * 解析配置方法
+	 * 解析常量方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ParConst(){

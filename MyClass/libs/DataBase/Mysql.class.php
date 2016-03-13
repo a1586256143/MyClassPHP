@@ -73,5 +73,13 @@ class Mysql implements IDataBase{
     public function close(){
         mysql_close($this->_db);
     }
+
+    /**
+     * 返回上一个操作所产生的错误信息
+     * @author Colin <15070091894@163.com>
+     */
+    public function showerror(){
+        return mysql_error();
+    }
 }
 ?>

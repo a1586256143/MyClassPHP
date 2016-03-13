@@ -15,6 +15,7 @@ interface IDataBase{
     function insert_id();
     function affected_rows();
     function close();
+    function showerror();
 }
 class Db{
     protected static $db;

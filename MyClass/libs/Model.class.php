@@ -55,6 +55,8 @@ class Model{
 	const MODEL_UPDATE = 2;
 	//所有操作
 	const MODEL_BOTH = 3;
+	//开启事务
+	protected $startTransaction = 0;
 	
 	/**
 	 * 构造方法
@@ -145,19 +147,19 @@ class Model{
 			}
 		}
 		//去除空值
-		$result = array_filter($fieldData);
+		$this->data['create'] = array_filter($fieldData);
 		//自动完成
 		if(!empty($this->auto)){
 			$this->_parse_auto();
 			//合并自动完成数据
-			$result = array_merge($this->data['auto'] , $result);
+			$this->data['create'] = array_merge($this->data['auto'] , $this->data['create']);
 		}
 		if(!empty($this->validate)){
 			$this->_parse_validate();
 			//合并自动验证数据
-			$result = array_merge($this->data['validate'] , $result);
+			$this->data['create'] = array_merge($this->data['validate'] , $this->data['create']);
 		}
-		return $result;
+		return $this->data['create'];
 	}
 
 	/**
@@ -229,6 +231,9 @@ class Model{
 		$sql = $sql === null ? $this->Sql : $sql;
 		$query = $this->db->query($this->Sql);
 		if(!$query){
+			if($this->startTransaction){
+				return false;
+			}
 			throw new MyError('SQL语句执行错误'.$this->db->showerror());
 		}
 		if($ist == 'ist'){
@@ -526,10 +531,10 @@ class Model{
 	 * @param values   要插入的数据
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function insert($values){
+	public function insert($values = null){
 		$values = array_filter($values);
         if(empty($values)){
-            throw new MyError(__METHOD__.'没有传入参数值！');
+            $values = $this->data['create'];
         }
 		foreach ($values as $key => $value) {
 			if($value != ''){
@@ -676,6 +681,31 @@ class Model{
 	public function prev($id , $field = '*'){
 		return $this->field($field)->where('id' , $id , null , '<')->find();
 	}
+
+	/**
+     * 开启事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function startTransaction(){
+    	$this->startTransaction = 1;
+        return $this->db->startTransaction();
+    }
+
+    /**
+     * 回滚事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function rollback(){
+        return $this->db->rollback();
+    }
+
+    /**
+     * 提交事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function commit(){
+        return $this->db->commit();
+    }
 
 	/**
 	 * 容错处理机制

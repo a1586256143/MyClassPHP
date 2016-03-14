@@ -121,5 +121,29 @@ abstract class Db{
     public static function CloseDB(){
         self::$db->close();
     }
+    
+    /**
+     * 开启事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function startTransaction(){
+        return $this->query('start transaction');
+    }
+
+    /**
+     * 回滚事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function rollback(){
+        return $this->query('rollback');
+    }
+
+    /**
+     * 提交事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function commit(){
+        return $this->query('commit');
+    }
 }
 ?>

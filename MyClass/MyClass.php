@@ -27,7 +27,7 @@
 	define('Core' , MyClass.'/libs/');
 
 	//第三方类库文件目录
-	define('LIBRARY' , MyClass.'/Library');
+	define('Library' , MyClass.'/Library');
 	
 	//控制器目录
 	define('ControllerDIR' , APP_PATH.'/Controller');

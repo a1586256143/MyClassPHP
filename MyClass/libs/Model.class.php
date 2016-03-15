@@ -2,8 +2,8 @@
 /*
 	Author : Colin,
 	Creation time : 2015-7-31 09:18:38
-	FileType : 
-	FileName : 
+	FileType : Model类
+	FileName : Model.class.php
 */
 namespace MyClass\libs;
 class Model{
@@ -127,7 +127,15 @@ class Model{
 		if(empty($tables)){
 			$tables = $this->DataName;
 		}
-		return $this->db->getFields($tables);
+		//缓存字段信息
+		$cache_fields = S($tables.'_field_cache');
+		if(empty($cache_fields)){
+			$fields = $this->db->getFields($tables);
+			S($tables.'_field_cache' , $fields);
+			return $fields;
+		}else{
+			return $cache_fields;
+		}
 	}
 
 	/**
@@ -766,7 +774,7 @@ class Model{
     	if($tables == null){
     		$tables = $this->db_prefix.$this->DataName;
     	}
-        $result = $this->execute("SHOW TABLES LIKE '%$tables%'");
+        $result = $this->execute("select `TABLE_NAME` from `INFORMATION_SCHEMA`.`TABLES` where `TABLE_SCHEMA`='$this->db_tabs' and `TABLE_NAME`='$tables' ");
        	if(empty($result)){
        		throw new MyError('数据表不存在！'.$tables);
        	}

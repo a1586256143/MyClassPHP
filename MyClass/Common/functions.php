@@ -250,7 +250,7 @@
 	function dump($array){
 		header('Content-type:text/html;charset="UTF-8"');
 		echo '<pre>';
-		print_r($array);
+		var_dump($array);
 		echo '</pre>';
 	}
 
@@ -427,7 +427,7 @@
 		list($filedir , $filename) = explode('/' , $name);
 		//把@替换成.
 		$filename = str_replace('@' , '.' , $filename);
-		$path = LIBRARY.'/'.$filedir.'/'.$filename.'.php';
+		$path = Library.'/'.$filedir.'/'.$filename.'.php';
 		if(!file_exists($path)){
 			E('文件不存在'.$name);	
 		}

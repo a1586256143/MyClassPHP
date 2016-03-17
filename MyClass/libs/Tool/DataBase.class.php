@@ -163,6 +163,8 @@ class DataBase{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function _parse_fieldinfo(){
+		//sql 创建字段语句
+		// ALTER TABLE `表名` ADD `字段名` int(10) not null default 0 comment '字段备注';
 		dump($this->attr);
 	}
 }

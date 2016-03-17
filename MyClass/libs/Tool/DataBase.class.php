@@ -82,6 +82,7 @@ class DataBase{
 	 */
 	public function field_name($name = null){
 		$this->attr['name'] = $name;
+		return $this;
 	}
 
 	/**
@@ -91,6 +92,7 @@ class DataBase{
 	 */
 	public function field_length($length = 11){
 		$this->attr['length'] = $length;
+		return $this;
 	}
 
 	/**
@@ -100,6 +102,7 @@ class DataBase{
 	 */
 	public function field_type($type = 'varchar'){
 		$this->attr['type'] = $type;
+		return $this;
 	}
 
 	/**
@@ -109,6 +112,7 @@ class DataBase{
 	 */
 	public function field_null($bool = false){
 		$this->attr['null'] = false;
+		return $this;
 	}
 
 	/**
@@ -118,6 +122,7 @@ class DataBase{
 	 */
 	public function field_default($value){
 		$this->attr['default'] = $value;
+		return $this;
 	}
 
 	/**
@@ -127,6 +132,7 @@ class DataBase{
 	 */
 	public function field_comment($comment = null){
 		$this->attr['comment'] = $comment;
+		return $this;
 	}
 
 	/**

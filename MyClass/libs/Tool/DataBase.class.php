@@ -15,7 +15,6 @@ class DataBase{
 	protected $comment;						//表的注释
 	protected $attr;						//字段组，字段信息组
 	protected $tables = null;				//选中数据表名，可带全缀，可不带
-	
 
 	/**
 	 * 构造方法初始化

@@ -76,6 +76,33 @@ class DataBase{
 	}
 
 	/**
+	 * 字段名
+	 * @param string $name 字段名
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function field_name($name = null){
+		$this->attr['name'] = $name;
+	}
+
+	/**
+	 * 字段长度
+	 * @param int $length 字段长度
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function field_length($length = 11){
+		$this->attr['length'] = $length;
+	}
+
+	/**
+	 * 字段类型
+	 * @param string $type 字段类型
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function field_type($type = 'varchar'){
+		$this->attr['type'] = $type;
+	}
+
+	/**
 	 * 是否为空
 	 * @param bool $bool 是否为空，默认不为空
 	 * @author Colin <15070091894@163.com>
@@ -91,15 +118,6 @@ class DataBase{
 	 */
 	public function field_default($value){
 		$this->attr['default'] = $value;
-	}
-
-	/**
-	 * 字段类型
-	 * @param string $type 字段类型
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_type($type = 'varchar'){
-		$this->attr['type'] = $type;
 	}
 
 	/**

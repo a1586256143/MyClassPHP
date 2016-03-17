@@ -14,7 +14,9 @@ class DataBase{
 	protected $engine = 'MyISAM';			//默认表引擎
 	protected $comment;						//表的注释
 	protected $attr;						//字段组，字段信息组
+<<<<<<< .mine
 	protected $tables = null;				//选中数据表名，可带全缀，可不带
+	
 
 	/**
 	 * 构造方法初始化
@@ -33,7 +35,25 @@ class DataBase{
 	public function __set($key , $value){
 		$this->$key = $value;
 	}
-
+	
+	/**
+<<<<<<< .mine
+	 * get方法
+	 */
+	public function __get($key){
+		return $this->$key;
+	}
+	
+	/**
+	 * 选中数据表操作
+	 * @param string $table 选择的数据表
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function useTable($table = null){
+		$this->tables = $table;
+		return $this;
+	}
+	
 	/**
 	 * 选中数据表操作
 	 * @param string $table 选择的数据表
@@ -57,11 +77,22 @@ class DataBase{
 	/**
 	 * 删除数据库操作
 	 * @param string $database 数据库名
-	 * @return string 返回删除状态
+	 * @return bool 返回删除状态
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function dropDatabase($database = null){
 		$this->sql = "DROP DATABASE `$database`";
+		return $this->execute($this->sql);
+	}
+	
+	/**
+	 * 删除数据表操作
+	 * @param string $table 数据表名
+	 * @return bool 返回删除状态
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function dropTable($table = null){
+		$this->sql = "DROP TABLE `$table`";
 		return $this->execute($this->sql);
 	}
 
@@ -73,78 +104,28 @@ class DataBase{
 	 */
 	public function createTable($tablename = null){
 		$this->sql = "CREATE TABLE IF NOT EXISTS `$tablename`(";
-		$this->sql .= $this->attr;
+		$this->sql .= '`id` int unsigned not null auto_increment comment "id",';
+		$this->sql .= 'PRIMARY KEY (`id`)';
 		$this->sql .= ") ENGINE='$this->engine' DEFAULT CHARSET=$this->charset COMMENT='$this->comment' AUTO_INCREMENT=1";
+		return $this->execute($this->sql);
 	}
 
 	/**
 	 * 创建字段
 	 * @author Colin <15070091894@163.com>
 	 */
+<<<<<<< .mine
+	public function createFields($fields = array()){
+		$this->attr = $fields;
+||||||| .r91
+	public function createFields($field){
+=======
 	public function createFields(){
+>>>>>>> .r92
 		$this->_parse_fieldinfo();
+		return $this->execute($this->sql);
 	}
-
-	/**
-	 * 字段名
-	 * @param string $name 字段名
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_name($name = null){
-		$this->attr['name'] = $name;
-		return $this;
-	}
-
-	/**
-	 * 字段长度
-	 * @param int $length 字段长度
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_length($length = 11){
-		$this->attr['length'] = $length;
-		return $this;
-	}
-
-	/**
-	 * 字段类型
-	 * @param string $type 字段类型
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_type($type = 'varchar'){
-		$this->attr['type'] = $type;
-		return $this;
-	}
-
-	/**
-	 * 是否为空
-	 * @param bool $bool 是否为空，默认不为空
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_null($bool = false){
-		$this->attr['null'] = false;
-		return $this;
-	}
-
-	/**
-	 * 是否有默认值
-	 * @param string $value 默认值 为空则没有，不为空则为默认值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_default($value){
-		$this->attr['default'] = $value;
-		return $this;
-	}
-
-	/**
-	 * 字段备注
-	 * @param string $comment 字段备注
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function field_comment($comment = null){
-		$this->attr['comment'] = $comment;
-		return $this;
-	}
-
+	
 	/**
 	 * 清空表
 	 * @param string $table 清空的表名
@@ -175,8 +156,15 @@ class DataBase{
 	protected function _parse_fieldinfo(){
 		//sql 创建字段语句
 		// ALTER TABLE `表名` ADD `字段名` int(10) not null default 0 comment '字段备注';
+<<<<<<< .mine
+		$this->sql = 'ALTER TABLE `' . Config('DB_PREFIX') . $this->tables . '` ADD ';
+		$this->sql .= "`{$this->attr[0]}` {$this->attr[1]}({$this->attr[2]})";
+||||||| .r91
+		dump($this->attr);
+=======
 		foreach ($this->attr as $key => $value) {
 			$this->sql .= 
 		}
+>>>>>>> .r92
 	}
 }

@@ -6,7 +6,7 @@ MyClassPHP是一个开源、免费的学习框架，也被称之为类库包，�
     1) 普通模式 index.php?c=Index&a=index  
     2) 路径模式 index.php/Index/Index  
 2.控制器   
-    2) 轻松几步搭建一个属于自己的MVC
+    2) 轻松几步搭建一个属于自己的MVC  
 3.模型  
     1) 模型CURD，提供强大的数据库操作类  
     2) 目前支持mysql , mysqli , pdo 方法连接数据库 , 其他后续更新  

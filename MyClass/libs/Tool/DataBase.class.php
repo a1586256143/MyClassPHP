@@ -7,12 +7,13 @@
 */
 namespace MyClass\libs\Tool;
 class DataBase{
-	protected $db;					//数据库操作句柄
-	protected $sql;					//最后生成sql语句
-	protected $charset = 'utf-8';	//默认字符格式
-	protected $engine = 'MyISAM';	//默认表引擎
-	protected $comment;				//表的注释
-	protected $attr;				//字段组，字段信息组
+	protected $db;							//数据库操作句柄
+	protected $sql;							//最后生成sql语句
+	protected $charset = 'utf8';			//默认字符格式
+	protected $encoding = 'utf8_general_ci';//默认字符编码
+	protected $engine = 'MyISAM';			//默认表引擎
+	protected $comment;						//表的注释
+	protected $attr;						//字段组，字段信息组
 
 	/**
 	 * 构造方法初始化
@@ -39,7 +40,8 @@ class DataBase{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function createDatabase($database = null){
-		$this->sql = "CREATE DATABASE `$database`";
+		$this->sql = "CREATE DATABASE `$database` DEFAULT CHARACTER SET $this->charset COLLATE $this->encoding;";
+		return $this->execute($this->sql);
 	}
 
 	/**
@@ -50,6 +52,7 @@ class DataBase{
 	 */
 	public function dropDatabase($database = null){
 		$this->sql = "DROP DATABASE `$database`";
+		return $this->execute($this->sql);
 	}
 
 	/**
@@ -68,8 +71,8 @@ class DataBase{
 	 * 创建字段
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function createFields($field , $attr = 'int not null default null'){
-
+	public function createFields($field){
+		$this->_parse_fieldinfo();
 	}
 
 	/**
@@ -77,7 +80,7 @@ class DataBase{
 	 * @param bool $bool 是否为空，默认不为空
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function null($bool = false){
+	public function field_null($bool = false){
 		$this->attr['null'] = false;
 	}
 
@@ -86,7 +89,7 @@ class DataBase{
 	 * @param string $value 默认值 为空则没有，不为空则为默认值
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function default($value){
+	public function field_default($value){
 		$this->attr['default'] = $value;
 	}
 
@@ -95,7 +98,7 @@ class DataBase{
 	 * @param string $type 字段类型
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function type($type = 'varchar'){
+	public function field_type($type = 'varchar'){
 		$this->attr['type'] = $type;
 	}
 
@@ -104,8 +107,18 @@ class DataBase{
 	 * @param string $comment 字段备注
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function comment($comment = null){
+	public function field_comment($comment = null){
 		$this->attr['comment'] = $comment;
+	}
+
+	/**
+	 * 清空表
+	 * @param string $table 清空的表名
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function truncate($table = null){
+		$this->sql = "TRUNCATE $table";
+		$this->execute($this->sql);
 	}
 
 	/**
@@ -117,6 +130,15 @@ class DataBase{
 		if(!empty($sql)){
 			$this->sql = $sql;
 		}
-		$this->db->query($this->sql);
+		return $this->db->query($this->sql);
+	}
+
+	/**
+	 * 解析创建字段信息
+	 * @return null
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function _parse_fieldinfo(){
+		dump($this->attr);
 	}
 }

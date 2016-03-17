@@ -14,6 +14,7 @@ class DataBase{
 	protected $engine = 'MyISAM';			//默认表引擎
 	protected $comment;						//表的注释
 	protected $attr;						//字段组，字段信息组
+	protected $tables = null;				//选中数据表名，可带全缀，可不带
 
 	/**
 	 * 构造方法初始化
@@ -31,6 +32,15 @@ class DataBase{
 	 */
 	public function __set($key , $value){
 		$this->$key = $value;
+	}
+
+	/**
+	 * 选中数据表操作
+	 * @param string $table 选择的数据表
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function useTable($table = null){
+		$this->tables = $table;
 	}
 
 	/**
@@ -71,7 +81,7 @@ class DataBase{
 	 * 创建字段
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function createFields($field){
+	public function createFields(){
 		$this->_parse_fieldinfo();
 	}
 
@@ -165,6 +175,8 @@ class DataBase{
 	protected function _parse_fieldinfo(){
 		//sql 创建字段语句
 		// ALTER TABLE `表名` ADD `字段名` int(10) not null default 0 comment '字段备注';
-		dump($this->attr);
+		foreach ($this->attr as $key => $value) {
+			$this->sql .= 
+		}
 	}
 }

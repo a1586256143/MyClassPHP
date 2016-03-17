@@ -14,7 +14,6 @@ class DataBase{
 	protected $engine = 'MyISAM';			//默认表引擎
 	protected $comment;						//表的注释
 	protected $attr;						//字段组，字段信息组
-<<<<<<< .mine
 	protected $tables = null;				//选中数据表名，可带全缀，可不带
 	
 
@@ -37,7 +36,6 @@ class DataBase{
 	}
 	
 	/**
-<<<<<<< .mine
 	 * get方法
 	 */
 	public function __get($key){
@@ -114,14 +112,9 @@ class DataBase{
 	 * 创建字段
 	 * @author Colin <15070091894@163.com>
 	 */
-<<<<<<< .mine
+
 	public function createFields($fields = array()){
 		$this->attr = $fields;
-||||||| .r91
-	public function createFields($field){
-=======
-	public function createFields(){
->>>>>>> .r92
 		$this->_parse_fieldinfo();
 		return $this->execute($this->sql);
 	}
@@ -156,15 +149,8 @@ class DataBase{
 	protected function _parse_fieldinfo(){
 		//sql 创建字段语句
 		// ALTER TABLE `表名` ADD `字段名` int(10) not null default 0 comment '字段备注';
-<<<<<<< .mine
+
 		$this->sql = 'ALTER TABLE `' . Config('DB_PREFIX') . $this->tables . '` ADD ';
 		$this->sql .= "`{$this->attr[0]}` {$this->attr[1]}({$this->attr[2]})";
-||||||| .r91
-		dump($this->attr);
-=======
-		foreach ($this->attr as $key => $value) {
-			$this->sql .= 
-		}
->>>>>>> .r92
 	}
 }

@@ -17,10 +17,10 @@ class MyClass{
 	 */
 	public static function run(){
 		try {
-			error_reporting(0);
+			error_reporting(E_PARSE);
 			//注册autoload方法
 			spl_autoload_register('MyClass\\libs\\MyClass::autoload');
-			//register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
+			register_shutdown_function('MyClass\\libs\\MyError::shutdown_function');
 			//判断文件夹是否存在
 			self::Dir();
 			//视图初始化

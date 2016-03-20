@@ -75,7 +75,7 @@ class Model{
 		//执行判断表方法
 		$this->TablesType($tables);
 		//确认表是否存在
-		$this->CheckTables();
+		$this->db->CheckTables($this->DataName , $this->db_tabs);
 		//初始化回调函数的句柄
 		$this->callback = $tables;
 	}
@@ -665,9 +665,7 @@ class Model{
      * @author Colin <15070091894@163.com>
      */
 	public function execute($sql){
-		$query = $this->db->query($sql);
-        $result = $this->db->fetch_array($query);
-        return $result;
+		return $this->db->execute($sql);
 	}
 
 	/**
@@ -764,20 +762,5 @@ class Model{
 			eval('$this->'.$member.' = "'.$value.'";');
 		}
 	}
-
-	/**
-     * 确认表是否存在
-     * @param tables 要验证的表名
-     * @author Colin <15070091894@163.com>
-     */
-    public function CheckTables($tables = null){
-    	if($tables == null){
-    		$tables = $this->db_prefix.$this->DataName;
-    	}
-        $result = $this->execute("select `TABLE_NAME` from `INFORMATION_SCHEMA`.`TABLES` where `TABLE_SCHEMA`='$this->db_tabs' and `TABLE_NAME`='$tables' ");
-       	if(empty($result)){
-       		throw new MyError('数据表不存在！'.$tables);
-       	}
-    }
 }
 ?>

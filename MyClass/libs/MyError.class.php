@@ -8,6 +8,7 @@
 */
 namespace MyClass\libs;
 class MyError extends \Exception{
+    protected static $info;
     
     /**
      * 构造方法
@@ -16,28 +17,42 @@ class MyError extends \Exception{
     public function __construct($message) {
         $this->message = $message;
     }
+
+    /**
+     * info初始化
+     */
+    protected static function info_initialize($code , $message , $file , $line){
+        header('Content-type:text/html;charset="utf-8"');
+        self::$info = "<div style='width:85%;height:100%;margin:0 auto;font-family:微软雅黑'>";
+        self::$info .= "<ul style='list-style:none;width:100%;height:100%;'>";
+        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error级别：" . $code . "</li>";
+        self::$info .= "<li style='line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error信息：<font color='red' style='word-break: break-all;'>" . $message . "</font></li>";
+        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error文件位置：" . $file . "</li>";
+        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error行数：" . $line . "</li>";
+        self::$info .= "</ul></div>";
+    }
     
     /**
      * 显示错误消息
      * @author Colin <15070091894@163.com>
      */
     public function __toString() {
-        header('Content-type:text/html;charset="utf-8"');
-        return "<div style='width:85%;height:100%;margin:0 auto;font-family:微软雅黑'><ul style='list-style:none;width:100%;height:100%;'><li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error级别：" . $this->getCode() . "</li><li style='line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error信息：<font color='red' style='word-break: break-all;'>" . $this->getMessage() . "</font></li><li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error文件位置：" . $this->getFile() . "</li><li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error行数：" . $this->getLine() . "</li></ul></div>";
+        self::info_initialize($this->getCode() , $this->getMessage() , $this->getFile(), $this->getLine());
+        return $this->getTraceAsString();
+       // return self::$info;
     }
     
     public static function customError($errno, $errstr , $errfile , $errline) {
     	if (!(error_reporting() & $errno)) {
-	        // This error code is not included in error_reporting
 	        return;
    		}
-    	header('Content-type:text/html;charset="utf-8"');
-    	exit("<div style='width:85%;height:100%;margin:0 auto;font-family:微软雅黑'><ul style='list-style:none;width:100%;height:100%;'><li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error级别：" . $errno . "</li><li style='line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error信息：<font color='red' style='word-break: break-all;'>" . $errstr . "</font></li><li style='line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error文件位置：" . $errfile . "</li><li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Error行数：" . $errline . "</li></ul></div>");
+        self::info_initialize($errno , $errstr , $errfile , $errline);
+    	exit(self::$info);
     }
 
     public static function shutdown_function(){   	
 		$e = error_get_last();
-		self::customError($e['type'] , $e['message'] , $e['file'] , $e['line']);
+        self::customError($e['type'] , $e['message'] , $e['file'] , $e['line']);
     }
 }
 ?>

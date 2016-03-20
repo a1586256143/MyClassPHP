@@ -102,6 +102,46 @@ abstract class Db{
     }
 
     /**
+     * 确认表是否存在
+     * @param tables 验证表名
+     * @param db_tabs 验证数据库
+     * @author Colin <15070091894@163.com>
+     */
+    public function CheckTables($tables = null , $db_tabs = null){
+        $tables = Config('DB_PREFIX').$tables;
+        if(empty($db_tabs)){
+            $db_tabs = Config('DB_TABS');
+        }
+        $result = $this->execute("select `TABLE_NAME` from `INFORMATION_SCHEMA`.`TABLES` where `TABLE_SCHEMA`='$db_tabs' and `TABLE_NAME`='$tables' ");
+        if(empty($result)){
+            throw new MyError('数据表不存在！'.$tables);
+        }
+    }
+
+    /**
+     * 确认字段是否存在
+     * @param table 查询表名
+     * @param field 查询字段
+     * @author Colin <15070091894@163.com>
+     */
+    public function CheckFields($table , $field){
+        if(!$this->execute("Describe `$table` `$field`")){
+            return true;
+        }
+    }
+
+    /**
+     * 执行源生sql语句并返回结果
+     * @param sql 要执行的sql语句
+     * @author Colin <15070091894@163.com>
+     */
+    public function execute($sql){
+        $query = $this->query($sql);
+        $result = $this->fetch_array($query);
+        return $result;
+    }
+
+    /**
      * 获取结果集
      * @param  [string] $query [query执行后结果]
      * @author Colin <15070091894@163.com>

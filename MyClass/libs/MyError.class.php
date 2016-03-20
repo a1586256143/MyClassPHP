@@ -38,8 +38,8 @@ class MyError extends \Exception{
      */
     public function __toString() {
         self::info_initialize($this->getCode() , $this->getMessage() , $this->getFile(), $this->getLine());
-        return $this->getTraceAsString();
-       // return self::$info;
+        //return $this->getTraceAsString();
+        return self::$info;
     }
     
     public static function customError($errno, $errstr , $errfile , $errline) {

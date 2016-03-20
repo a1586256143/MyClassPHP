@@ -108,7 +108,6 @@ abstract class Db{
      * @author Colin <15070091894@163.com>
      */
     public function CheckTables($tables = null , $db_tabs = null){
-        $tables = Config('DB_PREFIX').$tables;
         if(empty($db_tabs)){
             $db_tabs = Config('DB_TABS');
         }

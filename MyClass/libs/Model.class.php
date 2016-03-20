@@ -75,7 +75,7 @@ class Model{
 		//执行判断表方法
 		$this->TablesType($tables);
 		//确认表是否存在
-		$this->db->CheckTables($this->DataName , $this->db_tabs);
+		$this->db->CheckTables($this->db_prefix.$this->DataName , $this->db_tabs);
 		//初始化回调函数的句柄
 		$this->callback = $tables;
 	}

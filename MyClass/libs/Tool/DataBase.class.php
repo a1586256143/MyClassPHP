@@ -16,6 +16,7 @@ class DataBase{
 	protected $attr;						//字段组，字段信息组
 	protected $tables = null;				//选中数据表名，可带全缀，可不带
 	protected $prefix = null;				//数据表前缀
+	
 
 	/**
 	 * 构造方法初始化
@@ -49,8 +50,8 @@ class DataBase{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function useTable($table = null){
-		$this->db->CheckTables($table);
-		$this->tables = $table;
+		$this->tables = $this->prefix.$table;
+		$this->db->CheckTables($this->tables);
 		return $this;
 	}
 
@@ -135,6 +136,18 @@ class DataBase{
 		$this->_parse_fieldinfo();
 		return $this->execute($this->sql);
 	}
+
+	/**
+	 * 删除字段
+	 * @param string $field 字段名
+	 * @author Colin <15070091894@163.com>
+	 * @return boolen 删除状态
+	 */
+	public function dropField($field){
+		$this->sql = "ALTER TABLE `$this->tables` DROP `$field`;";
+		$this->execute($this->sql);
+		return true;
+	}
 	
 	/**
 	 * 清空表
@@ -200,8 +213,8 @@ class DataBase{
 	 */
 	protected function merge_sql($field = 'id' , $type = 'int'  , $length = 11 , $null = 'NULL' , $default = null , $comment = null , $extra = null , $separator = null){
 		//检查字段是否存在
-		if(!$this->db->CheckFields($this->prefix.$this->tables , $field)){
-			throw new \MyClass\libs\MyError($this->prefix.$this->tables . '表中已存在该字段' . $field);
+		if(!$this->db->CheckFields($this->tables , $field)){
+			throw new \MyClass\libs\MyError($this->tables . '表中已存在该字段' . $field);
 		}
 		//解析null值
 		if(!is_null($null)){
@@ -227,7 +240,7 @@ class DataBase{
 		if($separator == ','){
 			$this->sql .= "`$field` $type$length $null $default $comment$separator";
 		}else{
-			$this->sql .= "ALTER TABLE `$this->prefix$this->tables` ADD `$field` $type$length $null $default $comment$separator";
+			$this->sql .= "ALTER TABLE `$this->tables` ADD `$field` $type$length $null $default $comment$separator";
 		}
 	}
 }

@@ -67,12 +67,27 @@
 		}
 		//引入命名空间以及目录
 		$name = require_module($name , 'CONTROLLER');
+		//处理参数
+		
 		//创建控制器
 		$controller = \MyClass\libs\ObjFactory::CreateController($name);
 		if(!method_exists($controller , $method)){
 			throw new \MyClass\libs\MyError($method.'()这个方法不存在');
 		}
-		return $controller->$method($param);
+		//反射
+		$ReflectionMethod = new \ReflectionMethod($controller , $method);
+		$method_params = $ReflectionMethod->getParameters($method);
+		//处理参数返回
+		$param = array_filter($param);
+		if(!empty($param)){
+			if(!empty($method_params)){
+				foreach ($method_params as $key => $value) {
+					$var[$value->name] = $param[$value->name];
+				}
+				return $ReflectionMethod->invokeArgs($controller , $var);
+			}
+		}
+		return $controller->$method(eval($string));
 	}
 
 	/**

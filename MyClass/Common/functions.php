@@ -13,29 +13,20 @@
 	 */
 	function ShowMessage($message){
 		header('Content-Type:text/html;charset=UTF-8');
-		die('
-			<div style="width:400px;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;">
-				<dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;">
-					<dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">
-						MyClass提示信息
-					</dt>
-					<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0;word-break:break-all;">
-					'.$message.'
-					</dd>
-					<dd style="padding:0px;margin:0px;">
-						<a href="javascript:void(0);" style="font-size:15px;color:#181884;width:100%;text-align:center;display:block;" id="back">
-							[ 返回 ]
-						</a>
-					</dd>
-				</dl>
-			</div>
-			<script>
-				var back = document.getElementById("back");
+		$info = '<div style="width:400px;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;">';
+		$info .= '<dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;">';
+		$info .= '<dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt>';
+		$info .= '<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0;word-break:break-all;">' . $message . '</dd>';
+		$info .= '<dd style="padding:0px;margin:0px;">';
+		$info .= '<a href="javascript:void(0);" style="font-size:15px;color:#181884;width:100%;text-align:center;display:block;" id="back">';
+		$info .= '[ 返回 ]</a></dd></dd></dl>';
+		$info .= '</div><script>';
+		$info .= 'var back = document.getElementById("back");
 				back.onclick = function(){
 					window.history.back();
-				}
-			</script>
-		');
+				}';
+		$info .= '</script>';
+		die($info);
 	}
 
 	/**

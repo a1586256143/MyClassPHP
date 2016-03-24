@@ -84,7 +84,7 @@
 				foreach ($method_params as $key => $value) {
 					$var[$value->name] = $param[$value->name];
 				}
-				return $ReflectionMethod->invokeArgs($controller , $var);
+				return $ReflectionMethod->invokeArgs($controller , array_filter($var));
 			}
 		}
 		return $controller->$method(eval($string));

@@ -7,46 +7,98 @@
 */
 namespace MyClass\libs;
 class Url{
+    protected static $controller;
+    protected static $method;
     public static $param = array();
+
+    /**
+     * 初始化方法
+     * @author Colin <15070091894@163.com>
+     */
+    public function __construct(){
+        self::$controller = Config('DEFAULT_CONTROLLER_VAR');
+        self::$method = Config('DEFAULT_METHOD_VAR');
+    }
 
     /**
      * URL模型  1
      * @author Colin <15070091894@163.com>
      */
-    public static function urlmodel1(){
-        $controller = values('get' , 'c');
-        $method = values('get' , 'a');
-        if(empty($controller)){
-            C('Index' , $method);
-            exit;
-        }
-        C($controller , $method);
+    public function urlmodel1(){
+        $controller = values('get' , self::$controller);
+        $method = values('get' , self::$method);
+        //定义控制器和方法常量
+        self::define_controller_method($controller , $method);
+        //运行地址
+        self::exec_url($controller , $method);
     }
 
     /**
      * URL模型  2
      * @author Colin <15070091894@163.com>
      */
-    public static function urlmodel2(){
+    public function urlmodel2(){
         $parse_path = self::getCurrentUrl();
-        if(empty($parse_path)){
-            C('Index' , 'index');
-            exit;
-        }
+        $count = count(self::$param);
+        list($controller , $method) = $parse_path;
+        //定义控制器和方法常量
+        self::define_controller_method($controller , $method);
+        //运行地址
+        self::exec_url($controller , $method);
+    }
+
+    /**
+     * 处理参数 支持两种地址模式  1 普通模式 2 pathinfo模式
+     * @author Colin <15070091894@163.com>
+     */
+    protected static function paramS(){
         $count = count(self::$param);
         $new_pams = '';
         if($count > 0){
-            if($count % 2 == 0){
-                for ($i = 0; $i < $count ; $i += 2) { 
-                    $new_pams[self::$param[$i]] = self::$param[$i + 1];
-                    $_GET[self::$param[$i]] = self::$param[$i + 1];
+            if(Config('URL_MODEL') == 2){
+                if($count % 2){
+                    for ($i = 0; $i < $count ; $i += 2) { 
+                        $new_pams[self::$param[$i]] = self::$param[$i + 1];
+                        $_GET[self::$param[$i]] = self::$param[$i + 1];
+                    }
+                }
+            }else{
+                $get = values('get.');
+                foreach ($get as $key => $value) {
+                    if($key == self::$controller || $key == self::$method){
+                        continue;
+                    }
+                    $new_pams[$key] = $value;
                 }
             }
         }
-        @list($controller , $method) = $parse_path;
+        return $new_pams;
+    }
+
+    /**
+     * 定义控制器常量和方法常量
+     * @param controller 控制器名
+     * @param method 方法名
+     * @author Colin <15070091894@163.com>
+     */
+    protected static function define_controller_method($controller , $method){
         define('CONTROLLER_NAME' , $controller);
         define('METHOD_NAME' , $method);
-        C($controller , $method , $new_pams);
+    }
+
+    /**
+     * 执行控制器
+     * @param controller 控制器名
+     * @param method 方法名
+     * @author Colin <15070091894@163.com>
+     */
+    protected static function exec_url($controller , $method = null){
+        $params = self::paramS();
+        if(empty($controller)){
+            C('Index' , 'index');
+            exit;
+        }
+        C($controller , $method , $params);
     }
 
     /**

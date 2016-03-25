@@ -31,14 +31,16 @@ return array(
 
 	//控制器设置
 	'DEFAULT_CONTROLLER_LAYER'  =>  'Controller',   //默认控制器目录名
-	'DEFAULT_CONTROLLER'=>	'Index', 				//默认控制器
-	'DEFAULT_MODULE'	=>	'Home', 				//默认模块
-	'DEFAULT_METHOD'	=>	'index', 				//默认方法
+	'DEFAULT_CONTROLLER'		=>	'Index', 		//默认控制器
+	'DEFAULT_MODULE'			=>	'Home', 		//默认模块
+	'DEFAULT_METHOD'			=>	'index', 		//默认方法
 	'DEFAULT_CONTROLLER_SUFFIX' =>  'Controller',   //默认控制器后缀
 	'DEFAULT_CLASS_SUFFIX'		=>	'.class.php', 	//默认类文件后缀
+	'DEFAULT_CONTROLLER_VAR'	=> 'c' , 			//默认控制器变量
+	'DEFAULT_METHOD_VAR' 		=> 'a' , 			//默认方法变量
 
 	//模型设置
-	'DEFAULT_MODEL_LAYER'      =>  'Model',         //默认模型目录名
+	'DEFAULT_MODEL_LAYER'      	=>  'Model',         //默认模型目录名
 	'DEFAULT_MODEL_SUFFIX'      =>  'Model',        //默认模型器后缀
 
 	//模板引擎设置

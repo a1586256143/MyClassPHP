@@ -6,16 +6,26 @@
     FileName : Route.class.php
 */
 namespace MyClass\libs;
+use MyClass\libs\Url;
 class Route{
+
+    /**
+     * 初始化
+     * @author Colin <15070091894@163.com>
+     */
+    public function __construct(){
+        $this->url = new Url();
+    }
+
     /**
      * 验证路由规则
      * @author Colin <15070091894@163.com>
      */
     public function CheckRoute(){
         if(Config('URL_MODEL') == 1){
-            Url::urlmodel1();
+            $this->url->urlmodel1();
         }else if(Config('URL_MODEL') == 2){
-            Url::urlmodel2();
+            $this->url->urlmodel2();
         }
     }
 }

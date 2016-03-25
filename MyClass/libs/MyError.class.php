@@ -60,7 +60,7 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     public static function error_traceassstring(){
-        error_reporting(E_PARSE);
+        error_reporting(E_PARSE | E_RECOVERABLE_ERROR | E_ERROR );
         //设置错误处理
         set_error_handler('MyClass\\libs\\MyError::customError');
         //设置错误处理

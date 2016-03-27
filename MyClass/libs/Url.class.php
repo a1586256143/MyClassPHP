@@ -56,7 +56,7 @@ class Url{
         $new_pams = '';
         if($count > 0){
             if(Config('URL_MODEL') == 2){
-                if($count % 2){
+                if(($count % 2) == 0){
                     for ($i = 0; $i < $count ; $i += 2) { 
                         $new_pams[self::$param[$i]] = self::$param[$i + 1];
                         $_GET[self::$param[$i]] = self::$param[$i + 1];

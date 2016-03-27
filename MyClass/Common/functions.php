@@ -219,7 +219,7 @@
 		$var1 = require_file($name1);
 		$var2 = require_file($name2);
 		$var3 = require_file($name3);
-		if(empty($var2)){
+		if(empty($var2) && empty($var3)){
 			return $var1;
 		}else if(empty($var3)){
 			return array_replace_recursive($var1 , $var2);

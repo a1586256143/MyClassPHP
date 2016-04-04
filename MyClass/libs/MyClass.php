@@ -76,9 +76,12 @@ class MyClass{
 	public static function userConfig(){
 		require_once MyClass . '/Common/functions.php';
 		$modules = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
-		$config = require_once APP_PATH . '/' . $modules . '/Conf/config.php';
-		$merge = array_replace_recursive(Config() , $config);
-		Config($merge);
+		$app = APP_PATH . '/' . $modules . '/Conf/config.php';
+		if(file_exists($app)){
+			$config = require_file($app);
+			$merge = array_replace_recursive(Config() , $config);
+			Config($merge);
+		}
 	}
 
 	/**
@@ -124,7 +127,8 @@ class MyClass{
 	 */
 	public static function setWorks(){
 		$module = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
-		$dirnames = array('Module' => APP_PATH . '/' . $module , 'ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common');
+		define('Module' , APP_PATH . '/' . $module);
+		$dirnames = array('ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common');
 		foreach ($dirnames as $key => $value) {
 			if(!defined($key)){
 				define($key , $value);

@@ -20,7 +20,7 @@ return array(
 	'AUTO_REQUIRE_FILE' => '',                      //自动引入文件,号分割多个文件 例如 /Conf/template.php
 
 	//URL设置
-	'URL_MODEL'			=>	2,						//URL模式
+	'URL_MODEL'			=>	1 , 						//URL模式
 
 	//目录设置
 	'PUBLIC_DIR'		=>	ROOT_PATH.'/Public',				//公共文件地址
@@ -38,6 +38,8 @@ return array(
 	'DEFAULT_CLASS_SUFFIX'		=>	'.class.php', 	//默认类文件后缀
 	'DEFAULT_CONTROLLER_VAR'	=> 'c' , 			//默认控制器变量
 	'DEFAULT_METHOD_VAR' 		=> 'a' , 			//默认方法变量
+	'DEFAULT_MODULE_VAR' 		=> 'm' , 			//默认模块变量
+	'EXTRA_MODULE'				=> array('Common') , //其他模块,用于扩展功能
 
 	//模型设置
 	'DEFAULT_MODEL_LAYER'      	=>  'Model',         //默认模型目录名

@@ -66,5 +66,17 @@ return array(
 ?>";
 		return $string;
     }
+
+    /**
+     * 创建默认template.php模板
+     * @author Colin <15070091894@163.com>
+     */
+    public static function createTemplate(){
+    	$string = "<?php
+//此文件为模板中使用的__常量名__格式配置文件，配置格式为
+//if(!defined('常量名')) define('常量名' , '常量值');
+?>";
+		return $string;
+    }
 }
 ?>

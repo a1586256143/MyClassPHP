@@ -290,7 +290,7 @@ class Model{
 				$_b .= '`'.$key.'`'. '=' ."'". $value."'" . ',';
 			}
 			//解析主键
-			if($this->Where === null || $this->value === null){
+			if($this->Where === null){
 				$this->where($pk , $array[$pk]);
 			}
 			$this->ParKey = ' SET '.substr($_b, 0, -1);
@@ -378,9 +378,10 @@ class Model{
 	public function getpk(){
 		$pk = S('TABLE_PK_FOR_'.$this->DataName);
 		if(empty($pk)){
-			$map['TABLE_SCHEMA'] = $this->db_tabs;
-			$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
-			$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
+			//$map['TABLE_SCHEMA'] = $this->db_tabs;
+			//$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
+			//$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
+			$rows = $this->execute("select COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
 			$this->Where = null;
 			$pk = S('TABLE_PK_FOR_'.$this->DataName , $rows);
 			return $pk['COLUMN_NAME'];

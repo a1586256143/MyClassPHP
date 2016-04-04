@@ -44,22 +44,21 @@
 	 * @param name 模型名称
 	 * @author Colin <15070091894@163.com>
 	 */
-	function C($name , $method = null , $param = null){
+	function C($module , $name , $method = null , $param = null){
+		//默认模块
+		if(empty($module)) $module = Config('DEFAULT_MODULE');
 		//默认控制器
 		if(empty($name)) $name = Config('DEFAULT_CONTROLLER');
 		//默认方法
 		if(empty($method)) $method = Config('DEFAULT_METHOD');
-
 		//文件路径
-		$filepath = APP_PATH.'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		$filepath = APP_PATH . '/' . $module .'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//如果不存在
 		if(!file_exists($filepath)){
 			throw new \MyClass\libs\MyError($name.'控制器不存在！');
 		}
 		//引入命名空间以及目录
-		$name = require_module($name , 'CONTROLLER');
-		//处理参数
-		
+		$name = require_module($name , 'CONTROLLER' , null , $module);
 		//创建控制器
 		$controller = \MyClass\libs\ObjFactory::CreateController($name);
 		if(!method_exists($controller , $method)){
@@ -118,7 +117,7 @@
 			$name = require_module($name , 'MODEL');
 		}
 		//文件目录
-		$filepath = ROOT_PATH.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		$filepath = APP_PATH.'/'.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
 		//文件不存在
 		if(!file_exists(str_replace('\\', '/', $filepath))){
 			//创建系统模型
@@ -131,7 +130,7 @@
 			return $obj;
 		}else{
 			return $obj->$method();
-		}	
+		}
 	}
 	
 	/**
@@ -177,12 +176,20 @@
 	/**
 	 * 获取模块名生成模块路径
 	 * @param name 模型名称
+	 * @param type 类型
+	 * @param path 自定义引入路径
+	 * @param modules 模块
 	 * @author Colin <15070091894@163.com>
 	 */
-	function require_module($name = null , $type = null , $path = null){
-		$app_name = empty($path) ? ltrim(APP_NAME , './') : $path;
+	function require_module($name = null , $type = null , $module = null , $modules = null){
 		$layer = Config('DEFAULT_'.$type.'_LAYER');
-		$path = $app_name.'\\'.$layer.'\\'.$name;
+		if(!$modules){
+			$modules = Config('DEFAULT_MODULE');
+		}
+		$path = $modules.'\\'.$layer.'\\'.$name;
+		if($module){
+			$path = $module.'\\'.$layer.'\\'.$name;
+		}
 		return $path;
 	}
 
@@ -215,7 +222,7 @@
 	 * @param name3 第三个需合并的数组
 	 * @author Colin <15070091894@163.com>
 	 */
-	function replace_recursive_params($name1 , $name2 , $name3 = null){
+	function replace_recursive_params($name1 , $name2 = null , $name3 = null){
 		$var1 = require_file($name1);
 		$var2 = require_file($name2);
 		$var3 = require_file($name3);

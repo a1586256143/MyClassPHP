@@ -6,17 +6,15 @@
 	FileName : MyClass.php
 */
 namespace MyClass\libs;
-
-class MyClass{
-	//静态成员
-	public static $_obj;
-	
+class MyClass{	
 	/**
 	 * 运行方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function run(){
 		try {
+			//加载配置文件
+			self::loadConfig();
 			//注册autoload方法
        		spl_autoload_register('MyClass\\libs\\MyClass::autoload');
        		//收集错误
@@ -38,12 +36,49 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function autoload($ClassName){
-		require_once MyClass . '/Common/functions.php';
-		if(preg_match_all("/\\\\/" , $ClassName , $match)){
+		$getModule = values('get' , Config('DEFAULT_MODULE_VAR'));
+		$getModule = $getModule ? $getModule : Config('DEFAULT_MODULE');
+		//处理模块文件载入
+		$module = defined('MODULE_NAME') ? MODULE_NAME : $getModule;
+		//处理多模块文件载入问题
+		$extra_module = Config('EXTRA_MODULE');
+		array_push($extra_module , $module);
+		$extra_module = array_unique($extra_module);
+		foreach ($extra_module as $key => $value) {
+			if(preg_match("/$value/" , $ClassName)){
+				$ClassName = preg_replace("/$value/" , ltrim(APP_NAME , './').'\\'.$value, $ClassName);
+			}
+		}
+		if(preg_match("/\\\\/" , $ClassName)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
 			require_file(ROOT_PATH.$ClassName.'.class.php');
 		}
+	}
+
+	/**
+	 * 加载配置文件
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function loadConfig(){
+		require_once MyClass . '/Common/functions.php';
+		//合并config文件内容
+		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , Common . '/Conf/config.php');
+		//加入配置文件
+		Config($merge);
+		self::userConfig();
+	}
+
+	/**
+	 * 加载用户配置文件
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function userConfig(){
+		require_once MyClass . '/Common/functions.php';
+		$modules = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
+		$config = require_once APP_PATH . '/' . $modules . '/Conf/config.php';
+		$merge = array_replace_recursive(Config() , $config);
+		Config($merge);
 	}
 
 	/**
@@ -61,10 +96,9 @@ class MyClass{
 	 */
 	public static function Dir(){
 		self::loadFunction();
-
 		//加载常量
 		self::ReqConst();
-		$dir = array(APP_PATH , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , Config('CACHE_DIR'));
+		$dir = array(APP_PATH , Module , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , Config('CACHE_DIR'));
 		foreach ($dir as $key => $value) {
 			//创建文件夹
 			outdir($value);
@@ -85,16 +119,30 @@ class MyClass{
 	}
 
 	/**
+	 * 设置默认工作空间目录结构
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function setWorks(){
+		$module = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
+		$dirnames = array('Module' => APP_PATH . '/' . $module , 'ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common');
+		foreach ($dirnames as $key => $value) {
+			if(!defined($key)){
+				define($key , $value);
+			}
+		}
+	}
+
+	/**
 	 * 常量引入方法
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function ReqConst(){
-		//合并config文件内容
-		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , APP_PATH . '/Conf/config.php' , Common . '/Conf/config.php');
-		//加入配置文件
-		Config($merge);
-		if(file_exists(APP_PATH.'/Conf/template.php')){
-    		require_file(APP_PATH.'/Conf/template.php');
+		//默认模块
+		self::setWorks();
+		$module = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
+		$path = APP_PATH . '/' . $module . '/Conf/template.php';
+		if(file_exists($path)){
+    		require_file($path);
     	}else{
     		//加载模板常量库
 			require_file(MyClass.'/Conf/template.php');	
@@ -132,6 +180,10 @@ class MyClass{
 		//生成默认的配置文件
 		if(!file_exists(ConfDIR.'/config.php')){
             file_put_contents(ConfDIR.'/config.php',View::createConfig());
+        }
+        //生成默认的配置文件
+		if(!file_exists(ConfDIR.'/template.php')){
+            file_put_contents(ConfDIR.'/template.php',View::createTemplate());
         }
 		//生成默认的控制器
 		if(!file_exists(ControllerDIR.'/IndexController.class.php')){

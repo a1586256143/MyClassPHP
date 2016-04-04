@@ -2,8 +2,8 @@
 	/*
 		Author : Colin,
 		Creation time : 2015-7-31下午06:41:10
-		FileType : 
-		FileName : 
+		FileType : MyClassPHP引导类
+		FileName : MyClass.php
 	*/
 
 	//MyClass目录
@@ -21,35 +21,20 @@
 	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
 
 	//运行时文件
-	define('RunTime' , ROOT_PATH.'RunTime');
+	define('RunTime' , APP_NAME.'/RunTime');
 
 	//核心文件
 	define('Core' , MyClass.'/libs/');
 
 	//第三方类库文件目录
 	define('Library' , MyClass.'/Library');
-	
-	//控制器目录
-	define('ControllerDIR' , APP_PATH.'/Controller');
-	
-	//模型目录
-	define('ModelDIR' , APP_PATH.'/Model');
-	
-	//配置文件目录
-	define('ConfDIR' , APP_PATH.'/Conf');
-
-	//公共函数文件目录
-	define('CommonDIR' , APP_PATH.'/Common');
 
 	//公共文件目录
-	define('Common' , ROOT_PATH.'Common');
+	define('Common' , APP_NAME.'/Common');
 
 	//定义版本信息
 	define('VERSION' , '1.2');
 
-	//定义上一页地址		
-	//define('prev_url', @$_SERVER["HTTP_REFERER"]);
-	
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';
 

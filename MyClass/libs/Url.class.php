@@ -9,6 +9,7 @@ namespace MyClass\libs;
 class Url{
     protected static $controller;
     protected static $method;
+    protected static $module;
     public static $param = array();
 
     /**
@@ -18,6 +19,7 @@ class Url{
     public function __construct(){
         self::$controller = Config('DEFAULT_CONTROLLER_VAR');
         self::$method = Config('DEFAULT_METHOD_VAR');
+        self::$module = Config('DEFAULT_MODULE_VAR');
     }
 
     /**
@@ -27,10 +29,13 @@ class Url{
     public function urlmodel1(){
         $controller = values('get' , self::$controller);
         $method = values('get' , self::$method);
+        $getModule = values('get' , self::$module);
+        $getModule =  $getModule ? $getModule : Config('DEFAULT_MODULE');
+        $module = defined('MODULE_NAME') ? MODULE_NAME : $getModule;
         //定义控制器和方法常量
-        self::define_controller_method($controller , $method);
+        self::define_controller_method($module , $controller , $method);
         //运行地址
-        self::exec_url($controller , $method);
+        self::exec_url($module , $controller , $method);
     }
 
     /**
@@ -40,11 +45,11 @@ class Url{
     public function urlmodel2(){
         $parse_path = self::getCurrentUrl();
         $count = count(self::$param);
-        list($controller , $method) = $parse_path;
+        list($module , $controller , $method) = $parse_path;
         //定义控制器和方法常量
-        self::define_controller_method($controller , $method);
+        self::define_controller_method($module , $controller , $method);
         //运行地址
-        self::exec_url($controller , $method);
+        self::exec_url($module , $controller , $method);
     }
 
     /**
@@ -52,16 +57,19 @@ class Url{
      * @author Colin <15070091894@163.com>
      */
     protected static function paramS(){
+        self::$param = array_slice(self::$param , 3);   //去除模块 ， 控制器 ， 方法
         $count = count(self::$param);
         $new_pams = '';
         if($count > 0){
             if(Config('URL_MODEL') == 2){
                 if(($count % 2) == 0){
                     for ($i = 0; $i < $count ; $i += 2) { 
+                        dump($i);
                         $new_pams[self::$param[$i]] = self::$param[$i + 1];
                         $_GET[self::$param[$i]] = self::$param[$i + 1];
                     }
                 }
+                dump($_GET);
             }else{
                 $get = values('get.');
                 foreach ($get as $key => $value) {
@@ -81,9 +89,10 @@ class Url{
      * @param method 方法名
      * @author Colin <15070091894@163.com>
      */
-    protected static function define_controller_method($controller , $method){
+    protected static function define_controller_method($module , $controller , $method){
         define('CONTROLLER_NAME' , $controller);
         define('METHOD_NAME' , $method);
+        define('CURRENT_MODULE' , $module);
     }
 
     /**
@@ -92,13 +101,13 @@ class Url{
      * @param method 方法名
      * @author Colin <15070091894@163.com>
      */
-    protected static function exec_url($controller , $method = null){
+    protected static function exec_url($module , $controller , $method = null){
         $params = self::paramS();
         if(empty($controller)){
-            C('Index' , 'index');
+            C($module , Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
             exit;
         }
-        C($controller , $method , $params);
+        C($module , $controller , $method , $params);
     }
 
     /**
@@ -135,13 +144,12 @@ class Url{
                 if(!file_exists(ROOT_PATH.$parse_path[0])){
                     E('无效的入口文件'.$parse_path[0]);
                 }
-
                 unset($parse_path[0]);
             }
             $parse_path = array_merge($parse_path);
         }
         if(empty($parse_path)){
-            $parse_path = array(Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
+            $parse_path = array(Config('DEFAULT_MODULE') , Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
         }
         self::$param = $parse_path;
         if($is_return_current_url) return $current_url;

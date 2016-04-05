@@ -20,7 +20,7 @@ return array(
 	'AUTO_REQUIRE_FILE' => '',                      //自动引入文件,号分割多个文件 例如 /Conf/template.php
 
 	//URL设置
-	'URL_MODEL'			=>	1 , 						//URL模式
+	'URL_MODEL'			=>	2 , 						//URL模式
 
 	//目录设置
 	'PUBLIC_DIR'		=>	ROOT_PATH.'/Public',				//公共文件地址

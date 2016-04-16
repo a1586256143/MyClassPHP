@@ -144,33 +144,44 @@
 	
 	/**
 	 * 跳转方法
-	 * @param url 地址
+	 * @param string $url 地址  U('/Home/Index/index') 或 U('Index/index')
 	 * @author Colin <15070091894@163.com>
 	 */
 	function U($url , $param = null){
 		$subject = \MyClass\libs\Url::getCurrentUrl(false , true);
-		$path = explode('/', $subject['path']);
-		$is_index = array_filter($path);
-		$oldurl = empty($is_index) ? '/index.php' : '/'.$is_index[1];
-		//array_shift($path);
-		// $pars = '';
-		// if(!empty($param)){
-		// 	if(is_array($param)){
-		// 		foreach ($param as $key => $value) {
-		// 			$pars .= "/$key/$value";
-		// 		}
-		// 	}else if(is_string($param)){
-		// 		$pars = $param;
-		// 	}
-		// }
-		//list($oldurl) = $path;
-		//$pars = $pars ? $pars : '';
-		//$text = '/'.$oldurl.'/'.ltrim($url , '/').$pars;
-		//$text = '/'.ltrim($url , '/').$pars;
-		//dump(array_filter(array_unique(explode('/',$text))));
-		$filter = $oldurl.'/'.implode('/' , array_unique(explode('/',ltrim($url , '/'))));
-		//return $filter.$pars;
+		$modules = CURRENT_MODULE;
+		$path = $subject['path'];
+		//匹配是否是/开头，如果在/开头则访问模块
+		if(strpos($url , '/') == 0){	
+			preg_match("/\/([\w]+)\//" , $url , $match);
+			if(!$match[0]){
+				$match[0] = $modules;
+			}
+			$path = preg_replace("/\/([\w]+)\//", $match[1] . '/' , $path);
+		}else{
+			if(count(explode('/', $url)) < 3){
+				$path = $modules . '/' . $url;
+			}
+		}
+		$params = params($param);
+		$path = explode('/' , $path);
+		$url = array_filter(array_unique(array_merge($path , explode('/' , $url))));
+		$filter = '/index.php/'.implode('/' , $url);
+		if(null != $param){
+			$filter .= $params;
+		}
 		return $filter;
+	}
+
+	function params($param = null){
+		if(null == $param && !is_array($param)){
+			return '';
+		}
+		$params = '';
+		foreach($param as $key => $value){
+			$params .= $key . '/' . $value . '/';
+		}
+		return '/' . substr($params , 0 , -1);
 	}
 
 	/**

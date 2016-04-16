@@ -56,20 +56,22 @@ class Url{
      * 处理参数 支持两种地址模式  1 普通模式 2 pathinfo模式
      * @author Colin <15070091894@163.com>
      */
-    protected static function paramS(){
+    public static function paramS($param = null){
         self::$param = array_slice(self::$param , 3);   //去除模块 ， 控制器 ， 方法
+        if(null != $param){
+            self::$param = $param;
+        }
+        
         $count = count(self::$param);
         $new_pams = '';
         if($count > 0){
             if(Config('URL_MODEL') == 2){
                 if(($count % 2) == 0){
                     for ($i = 0; $i < $count ; $i += 2) { 
-                        dump($i);
                         $new_pams[self::$param[$i]] = self::$param[$i + 1];
                         $_GET[self::$param[$i]] = self::$param[$i + 1];
                     }
                 }
-                dump($_GET);
             }else{
                 $get = values('get.');
                 foreach ($get as $key => $value) {

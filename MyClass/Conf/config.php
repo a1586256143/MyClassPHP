@@ -24,7 +24,7 @@ return array(
 
 	//目录设置
 	'PUBLIC_DIR'		=>	ROOT_PATH.'/Public',				//公共文件地址
-	'LAYOUT_DIR'		=>	APP_PATH.'/View/Layout',			//视图公共模块
+	'LAYOUT_DIR'		=>	'/View/Layout',			//视图公共模块
 
 	//session设置
 	'SESSION_START'		=>	1,            			//开启session
@@ -48,13 +48,13 @@ return array(
 	//模板引擎设置
 	'TPL_MODEL'			=>	'tpl',					//模板引擎
 	'TPL_TYPE'			=>	'.html',				//模板类型
-	'TPL_DIR'			=>	APP_PATH.'/View/',				//模板文件存放目录
+	'TPL_DIR'			=>	'/View/',				//模板文件存放目录
 	'TPL_C_DIR'			=>	RunTime.'/Template_c/',	//编译文件存放目录
 	'TPL_CACHE'         =>  RunTime.'/Template_cache/',      //编译文件文件目录
 	'TPL_CONFIG'		=>	array('template_dir' => 'TPL_DIR' , 'compile_dir' => 'TPL_C_DIR' , 'cache_dir' => 'TPL_CACHE'),					//模板配置
 
 	//缓存设置
-	'CACHE_DIR'     	=>	RunTime.'/Cache/', //缓存文件夹
+	'CACHE_DIR'     	=>	'/Cache/', //缓存文件夹
 	'CACHE_DATA_DIR'    =>  RunTime.'/Cache/Data/', //S缓存文件存放目录
 	'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
 	'CACHE_OUT_SUFFIX'	=>	'.json',   				//缓存存储后缀

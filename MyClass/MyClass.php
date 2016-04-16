@@ -19,10 +19,7 @@
 
 	//APP路径
 	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
-
-	//运行时文件
-	define('RunTime' , APP_NAME.'/RunTime');
-
+	
 	//核心文件
 	define('Core' , MyClass.'/libs/');
 
@@ -33,7 +30,7 @@
 	define('Common' , APP_NAME.'/Common');
 
 	//定义版本信息
-	define('VERSION' , '1.2');
+	define('VERSION' , '2.0');
 
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

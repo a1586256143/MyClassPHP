@@ -44,7 +44,7 @@ class Controller{
 		if(empty($FileName)){
 			$FileName = METHOD_NAME;
 		}
-		$path = $this->view->template_dir.CONTROLLER_NAME.'/'.$FileName.Config('TPL_TYPE');
+		$path = APP_PATH . '/' . CURRENT_MODULE . $this->view->template_dir.CONTROLLER_NAME.'/'.$FileName.Config('TPL_TYPE');
 		return $path;
 	}
 

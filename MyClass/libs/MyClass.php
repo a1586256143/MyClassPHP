@@ -101,7 +101,10 @@ class MyClass{
 		self::loadFunction();
 		//加载常量
 		self::ReqConst();
-		$dir = array(APP_PATH , Module , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , APP_PATH.Config('TPL_DIR') , Config('CACHE_DIR'));
+		$view = APP_PATH . '/' . Config('DEFAULT_MODULE') .Config('TPL_DIR');
+		$cache = APP_PATH . ltrim(Config('CACHE_DIR') , './');
+		$dir = array(APP_PATH , Module , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , $view , $cache , Common);
+		dump($dir);exit;
 		foreach ($dir as $key => $value) {
 			//创建文件夹
 			outdir($value);
@@ -128,7 +131,7 @@ class MyClass{
 	public static function setWorks(){
 		$module = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
 		define('Module' , APP_PATH . '/' . $module);
-		$dirnames = array('ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common');
+		$dirnames = array('ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common' , 'RunTime' => APP_PATH.'/RunTime');
 		foreach ($dirnames as $key => $value) {
 			if(!defined($key)){
 				define($key , $value);

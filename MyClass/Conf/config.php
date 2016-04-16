@@ -27,7 +27,7 @@ return array(
 	'LAYOUT_DIR'		=>	'/View/Layout',			//视图公共模块
 
 	//session设置
-	'SESSION_START'		=>	1,            			//开启session
+	'SESSION_START'		=>	2 ,            			//开启session
 
 	//控制器设置
 	'DEFAULT_CONTROLLER_LAYER'  =>  'Controller',   //默认控制器目录名
@@ -54,7 +54,7 @@ return array(
 	'TPL_CONFIG'		=>	array('template_dir' => 'TPL_DIR' , 'compile_dir' => 'TPL_C_DIR' , 'cache_dir' => 'TPL_CACHE'),					//模板配置
 
 	//缓存设置
-	'CACHE_DIR'     	=>	'/Cache/', //缓存文件夹
+	'CACHE_DIR'     	=>	RunTime.'/Cache/', //缓存文件夹
 	'CACHE_DATA_DIR'    =>  RunTime.'/Cache/Data/', //S缓存文件存放目录
 	'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
 	'CACHE_OUT_SUFFIX'	=>	'.json',   				//缓存存储后缀

@@ -26,6 +26,9 @@
 	//第三方类库文件目录
 	define('Library' , MyClass.'/Library');
 
+	//定义运行目录
+	define('RunTime' , APP_PATH.'/RunTime');
+
 	//公共文件目录
 	define('Common' , APP_NAME.'/Common');
 

@@ -52,10 +52,16 @@
 		//默认方法
 		if(empty($method)) $method = Config('DEFAULT_METHOD');
 		//文件路径
-		$filepath = APP_PATH . '/' . $module .'/Controller/'.$name.Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		$rootpath = APP_PATH . '/' . $module .'/Controller/';
+		$suffect = Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+		$filepath = $rootpath.$name.$suffect;
 		//如果不存在
 		if(!file_exists($filepath)){
-			throw new \MyClass\libs\MyError($name.'控制器不存在！');
+			//查找空操作文件
+			if(!file_exists($rootpath . 'Empty' . $suffect)){
+				throw new \MyClass\libs\MyError($name.'控制器不存在！');
+			}
+			$name = 'Empty';
 		}
 		//引入命名空间以及目录
 		$name = require_module($name , 'CONTROLLER' , null , $module);

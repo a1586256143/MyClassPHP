@@ -59,11 +59,11 @@ class Templates{
 		//设置路径
 		$dirname = APP_PATH . '/' . $modules . $this->template_dir . $controller . '/';
 		//编译文件目录
-		$dircname = $this->compile_dir.ltrim(APP_NAME , './').'/'.$controller.'/';
+		$dircname = $this->compile_dir.$default_modules.'/'.$controller.'/';
 
 		//判断编译文件夹和缓存文件夹是否存在
-		$dir = array($this->compile_dir , $this->compile_dir.ltrim(APP_NAME , './') , $dircname);
-		dump($dir);exit;
+		$dir = array($this->compile_dir , $this->compile_dir.$default_modules , $dircname);
+
 		//生成文件夹
 		outdir($dir);
 

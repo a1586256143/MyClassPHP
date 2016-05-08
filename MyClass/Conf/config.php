@@ -20,14 +20,14 @@ return array(
 	'AUTO_REQUIRE_FILE' => '',                      //自动引入文件,号分割多个文件 例如 /Conf/template.php
 
 	//URL设置
-	'URL_MODEL'			=>	2 , 						//URL模式
+	'URL_MODEL'			=>	2 , 					//URL模式，包含两种  PATHINFO模式，普通模式
 
 	//目录设置
-	'PUBLIC_DIR'		=>	ROOT_PATH.'/Public',				//公共文件地址
+	'PUBLIC_DIR'		=>	ROOT_PATH.'/Public',	//公共文件地址
 	'LAYOUT_DIR'		=>	'/View/Layout',			//视图公共模块
 
 	//session设置
-	'SESSION_START'		=>	2 ,            			//开启session
+	'SESSION_START'		=>	1 ,            			//开启session
 
 	//控制器设置
 	'DEFAULT_CONTROLLER_LAYER'  =>  'Controller',   //默认控制器目录名

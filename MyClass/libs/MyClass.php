@@ -145,14 +145,6 @@ class MyClass{
 	public static function ReqConst(){
 		//默认模块
 		self::setWorks();
-		$module = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
-		$path = APP_PATH . '/' . $module . '/Conf/template.php';
-		if(file_exists($path)){
-    		require_file($path);
-    	}else{
-    		//加载模板常量库
-			require_file(MyClass.'/Conf/template.php');	
-    	}
 		//解析常量方法
 		self::ParConst();
 	}

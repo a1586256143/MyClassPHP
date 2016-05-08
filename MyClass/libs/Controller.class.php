@@ -39,12 +39,14 @@ class Controller{
 
 	/**
 	 * 获取文件名以及路径
+	 * @author Colin <15070091894@163.com>
 	 */
 	protected function getFilenameOrPath($FileName){
 		if(empty($FileName)){
-			$FileName = METHOD_NAME;
+			$FileName = METHOD_NAME ? METHOD_NAME : Config('DEFAULT_METHOD');
 		}
-		$path = APP_PATH . '/' . CURRENT_MODULE . $this->view->template_dir.CONTROLLER_NAME.'/'.$FileName.Config('TPL_TYPE');
+		$controller = CONTROLLER_NAME ? CONTROLLER_NAME : Config('DEFAULT_CONTROLLER');
+		$path = APP_PATH . '/' . CURRENT_MODULE . $this->view->template_dir.$controller.'/'.$FileName.Config('TPL_TYPE');
 		return $path;
 	}
 

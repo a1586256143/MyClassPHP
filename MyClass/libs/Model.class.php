@@ -172,6 +172,7 @@ class Model{
 
 	/**
 	 * 解析auto参数
+	 * array('字段名' , '完成规则' , '完成条件' , '附加规则(结合完成规则使用)') 
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function _parse_auto(){
@@ -205,6 +206,7 @@ class Model{
 
 	/**
 	 * 解析validate参数
+	 * array('表单名' , '验证规则' , '错误提示' , '验证类型' , '附加规则'),
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function _parse_validate(){

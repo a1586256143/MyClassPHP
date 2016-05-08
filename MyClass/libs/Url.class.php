@@ -104,6 +104,14 @@ class Url{
      * @author Colin <15070091894@163.com>
      */
     protected static function exec_url($module , $controller , $method = null){
+        //加载模板解析常量文件
+        $module = defined('MODULE_NAME') ? MODULE_NAME : CURRENT_MODULE;
+        //加载模板常量库
+        require_file(MyClass.'/Conf/template.php');
+        $path = APP_PATH . '/' . $module . '/Conf/template.php';
+        if(file_exists($path)){
+            require_file($path);
+        }
         $params = self::paramS();
         if(empty($controller)){
             C($module , Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));

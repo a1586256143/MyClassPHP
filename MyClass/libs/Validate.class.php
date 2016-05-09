@@ -41,7 +41,7 @@ class Validate {
 			//解析配置信息
 			$this->_parseConfig($value);
 			//解析字符串
-			$this->_parstring(@$value['string']);
+			$this->_parstring($value['string']);
 			//解析函数。开始验证
 			$this->_parsefunction($value);
 		}
@@ -91,7 +91,7 @@ class Validate {
 			$this->validate_patten = '/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/';
 		}
 		if(!preg_match($this->validate_patten, $str)){
-			$this->error($this->info);
+			$this->error($this->info ? $this->info : '邮箱格式不正确');
 		}
 		$this->setreturnValue($this->name , $str);
 	}
@@ -155,7 +155,7 @@ class Validate {
 		$name = empty($name) ? $this->name : $name;
 		if($this->require){
 			if(empty($string) && strlen($string) == 0){
-				$this->error($name . '不能为空！');
+				$this->error($this->info ? $this->info : $name . '不能为空！');
 			}
 		}
 		$this->setreturnValue($this->name , $string);
@@ -170,7 +170,7 @@ class Validate {
 		$maxlength = empty($maxlength) ? $this->maxlength : $maxlength;
 		$name = empty($name) ? $this->name : $name;
 		if (mb_strlen($string, $this->charset) > $maxlength) {
-			$this->error($name . '的长度超过'.$maxlength.'位');
+			$this->error($this->info ? $this->info : $name . '的长度超过'.$maxlength.'位');
 		}
 		$this->setreturnValue($this->name , $string);
 	}
@@ -184,7 +184,7 @@ class Validate {
 		$minlength = empty($minlength) ? $this->minlength : $minlength;
 		$name = empty($name) ? $this->name : $name;
 		if (mb_strlen($string, $this->charset) < $minlength) {
-			$this->error($name . '的长度不能低于'.$minlength.'位');
+			$this->error($this->info ? $this->info : $name . '的长度不能低于'.$minlength.'位');
 		}
 		$this->setreturnValue($this->name , $string);
 	}

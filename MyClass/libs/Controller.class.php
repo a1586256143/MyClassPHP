@@ -28,16 +28,6 @@ class Controller{
 	}
 
 	/**
-     * 载入公共视图文件
-     * @param $fileName  要被调用的视图文件名，可以为目录
-     * @author Colin <15070091894@163.com>
-     */
-	protected function Layout($fileName = null){
-		$fileName = $this->getFilenameOrPath($fileName);
-		$this->view->Layout($fileName);
-	}
-
-	/**
 	 * 获取文件名以及路径
 	 * @author Colin <15070091894@163.com>
 	 */

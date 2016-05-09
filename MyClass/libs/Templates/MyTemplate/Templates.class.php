@@ -112,12 +112,13 @@ class Templates{
 		$tplFile = $file;
 		//判断是否写了目录名支持持一级
 		$_patten = '/(.*)\/(.*)/';
+		$path = APP_PATH . '/' . CURRENT_MODULE;
 		if(preg_match($_patten , $file , $_match)){
-			$tplFile = Config('LAYOUT_DIR').'/'.$_match[2];
+			$tplFile = $path . Config('LAYOUT_DIR').'/'.$_match[2];
 		}
 		
 		//设置路径
-		$dircname = Config('TPL_C_DIR').ltrim(APP_NAME , './').'/'.$controller.'/';
+		$dircname = Config('TPL_C_DIR') . $controller.'/' . METHOD_NAME .'/' ;
 
 		//判断模板文件是否存在
 		if(!file_exists($tplFile)){
@@ -127,7 +128,6 @@ class Templates{
 		$name = str_replace('/', '_', $name);
 		//生成编译文件
 		$parFile = $dircname.md5($name).$name.'.php';
-		
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
 		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($tplFile))){
 			//编译文件的修改时间<tpl模板文件的修改时间

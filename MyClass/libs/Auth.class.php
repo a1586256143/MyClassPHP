@@ -16,7 +16,7 @@ class Auth{
 	CREATE TABLE IF NOT EXISTS `mc_auth` (
 	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '权限ID',
 	  `title` varchar(40) NOT NULL COMMENT '权限名称',
-	  `url` varchar(100) DEFAULT NULL COMMENT '权限地址',
+	  `url` varchar(100) DEFAULT NULL COMMENT '权限地址，需加入模块名例如Admin/User/Member',
 	  PRIMARY KEY (`id`)
 	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='权限表' AUTO_INCREMENT=1 ;
 
@@ -61,18 +61,18 @@ class Auth{
 	public function check($uid = null , $model = 1){
 		$auths = $this->getUserAuths($uid);
 		$current = Url::getCurrentUrl();
-		list($controller , $method) = $current;
+		list($module , $controller , $method) = $current;
 		foreach ($auths as $key => $value) {
 			$url = explode( '/' , $value['url']);
-			list($auth_controller , $auth_method) = $url;
-			//是否验证其他
+			list($auth_module , $auth_controller , $auth_method) = $url;
+			//是否验证其他 不验证，则验证表中的规则
 			if($this->auth_other === false){
 				$auth = D('Auth');
 				if(!$find = $auth->where('url' , implode('/', $current))->find()){
 					return true;
 				}
 			}
-			if($auth_controller == $controller && $auth_method == $method){
+			if($auth_module == $module && $auth_controller == $controller && $auth_method == $method){
 				return true;
 			}
 		}

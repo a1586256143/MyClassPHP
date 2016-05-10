@@ -179,6 +179,11 @@ function U($url , $param = null){
 	return $filter;
 }
 
+/**
+ * 传递一个数组，解析成URL PATHINFO 模式为参数
+ * @param  array $param array('id' => 1)
+ * @author Colin <15070091894@163.com>
+ */
 function params($param = null){
 	if(null == $param && !is_array($param)){
 		return '';

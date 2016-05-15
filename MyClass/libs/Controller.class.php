@@ -36,7 +36,8 @@ class Controller{
 			$FileName = METHOD_NAME ? METHOD_NAME : Config('DEFAULT_METHOD');
 		}
 		$controller = CONTROLLER_NAME ? CONTROLLER_NAME : Config('DEFAULT_CONTROLLER');
-		$path = APP_PATH . '/' . CURRENT_MODULE . $this->view->template_dir.$controller.'/'.$FileName.Config('TPL_TYPE');
+		$module = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
+		$path = APP_PATH . '/' . $module . $this->view->template_dir.$controller.'/'.$FileName.Config('TPL_TYPE');
 		return $path;
 	}
 

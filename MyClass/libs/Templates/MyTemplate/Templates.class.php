@@ -48,6 +48,7 @@ class Templates{
 		$default_controller = Config('DEFAULT_CONTROLLER');
 		$default_modules = Config('DEFAULT_MODULE');
 		$default_action = Config('DEFAULT_METHOD');
+		$default_modules2 = defined('CURRENT_MODULE') ? CURRENT_MODULE : $default_modules;
 		$path = APP_PATH . '/' . $modules;
 		//检查默认控制器是否存在
 		if(!file_exists($path.'/Controller/'.$default_controller.'Controller.class.php')){
@@ -55,14 +56,17 @@ class Templates{
 		}
 
 		$controller = empty($controller) ? $default_controller : $controller;
-	
+		
+		$modules = empty($default_modules2) ? $modules : $default_modules2;
+
 		//设置路径
 		$dirname = APP_PATH . '/' . $modules . $this->template_dir . $controller . '/';
+
 		//编译文件目录
-		$dircname = $this->compile_dir.$default_modules.'/'.$controller.'/';
+		$dircname = $this->compile_dir.$modules.'/'.$controller.'/';
 
 		//判断编译文件夹和缓存文件夹是否存在
-		$dir = array($this->compile_dir , $this->compile_dir.$default_modules , $dircname);
+		$dir = array($this->compile_dir , $this->compile_dir.$modules , $dircname);
 
 		//生成文件夹
 		outdir($dir);
@@ -75,7 +79,6 @@ class Templates{
 		if(!file_exists($file)){
 			throw new MyError($file.'模板文件不存在！');
 		}
-		
 		//生成编译文件
 		$parFile = $dircname.md5($filename).$filename.'.php';
 		

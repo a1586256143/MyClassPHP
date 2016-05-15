@@ -110,13 +110,14 @@ class Parser{
 
 		if(preg_match($patten,$this->_tpl,$file)){
 			$filename = $file[2];
-			$path = APP_PATH . '/' . CURRENT_MODULE . Config('TPL_DIR');
+			$modules = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
+			$path = APP_PATH . '/' . $modules . Config('TPL_DIR');
 			$filepath = $path.$filename.Config('TPL_TYPE');
 			if(!file_exists($filepath) || empty($file)){
 				throw new MyError($filepath.'包含文件出错！请检查！');
 			}
 			$prefix = Config('TPL_TYPE');
-			$this->_tpl = preg_replace($patten,"<?php \$this->display(\"$path\" . '$2$prefix') ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php \$this->display(\"$path$2$prefix\") ?>",$this->_tpl);
 		}
 	}
 

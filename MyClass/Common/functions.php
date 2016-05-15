@@ -165,10 +165,9 @@ function U($url , $param = null){
 		}
 		$path = preg_replace("/\/([\w]+)\//", $match[1] . '/' , $path);
 	}else{
-		if(count(explode('/', $url)) < 3){
-			$path = $modules . '/' . $url;
-		}
+		$path = $modules . '/' . $url;
 	}
+	
 	$params = params($param);
 	$path = explode('/' , $path);
 	$url = array_filter(array_unique(array_merge($path , explode('/' , $url))));

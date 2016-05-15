@@ -31,7 +31,7 @@ class Url{
         $method = values('get' , self::$method);
         $getModule = values('get' , self::$module);
         $getModule =  $getModule ? $getModule : Config('DEFAULT_MODULE');
-        $module = defined('MODULE_NAME') ? MODULE_NAME : $getModule;
+        $module = defined('CURRENT_MODULE') ? CURRENT_MODULE : $getModule;
         //定义控制器和方法常量
         self::define_controller_method($module , $controller , $method);
         //运行地址
@@ -108,9 +108,14 @@ class Url{
         $module = defined('MODULE_NAME') ? MODULE_NAME : CURRENT_MODULE;
         //加载模板常量库
         require_file(MyClass.'/Conf/template.php');
-        $path = APP_PATH . '/' . $module . '/Conf/template.php';
-        if(file_exists($path)){
-            require_file($path);
+        $firstpath = APP_PATH . '/Common/Conf/template.php';
+        if(file_exists($firstpath)){
+            require_file($firstpath);
+        }else{
+            $path = APP_PATH . '/' . $module . '/Conf/template.php';
+            if(file_exists($path)){
+                require_file($path);
+            }
         }
         $params = self::paramS();
         if(empty($controller)){

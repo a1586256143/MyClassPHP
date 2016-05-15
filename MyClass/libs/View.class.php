@@ -40,7 +40,7 @@ class View {
      * @author Colin <15070091894@163.com>
      */
     public static function createIndex(){
-    	$namespace = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
+        $namespace = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
     	$string = "<?php 
 namespace {$namespace}\Controller;
 use MyClass\libs\Controller;

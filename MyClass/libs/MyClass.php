@@ -38,20 +38,20 @@ class MyClass{
 	public static function autoload($ClassName){
 		$getModule = values('get' , Config('DEFAULT_MODULE_VAR'));
 		$getModule = $getModule ? $getModule : Config('DEFAULT_MODULE');
-		//处理模块文件载入
-		$module = defined('MODULE_NAME') ? MODULE_NAME : $getModule;
 		//处理多模块文件载入问题
 		$extra_module = Config('EXTRA_MODULE');
-		array_push($extra_module , $module);
+		array_push($extra_module , $getModule);
 		$extra_module = array_unique($extra_module);
 		foreach ($extra_module as $key => $value) {
-			if(preg_match("/$value/" , $ClassName)){
-				$ClassName = preg_replace("/$value/" , ltrim(APP_NAME , './').'\\'.$value, $ClassName);
+			$patten = "/^$value/";
+			if(preg_match($patten , $ClassName)){
+				$ClassName = preg_replace($patten , ltrim(APP_NAME , './').'\\'.$value, $ClassName);
 			}
 		}
 		if(preg_match("/\\\\/" , $ClassName)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
+			
 			require_file(ROOT_PATH.$ClassName.'.class.php');
 		}
 	}
@@ -75,7 +75,7 @@ class MyClass{
 	 */
 	public static function userConfig(){
 		require_once MyClass . '/Common/functions.php';
-		$modules = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
+		$modules = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
 		$app = APP_PATH . '/' . $modules . '/Conf/config.php';
 		if(file_exists($app)){
 			$config = require_file($app);
@@ -128,7 +128,7 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function setWorks(){
-		$module = defined('MODULE_NAME') ? MODULE_NAME : Config('DEFAULT_MODULE');
+		$module = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
 		define('Module' , APP_PATH . '/' . $module);
 		$dirnames = array('ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common');
 		foreach ($dirnames as $key => $value) {

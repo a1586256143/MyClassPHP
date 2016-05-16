@@ -120,7 +120,7 @@ function D($name = null , $method = null){
 	}else{
 		$tables = $name;
 		//引入命名空间以及目录
-		$name = require_module($name , 'MODEL');
+		$name = require_module($name , 'MODEL' , CURRENT_MODULE);
 	}
 	//文件目录
 	$filepath = APP_PATH.'/'.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
@@ -178,11 +178,6 @@ function U($url , $param = null){
 	return $filter;
 }
 
-/**
- * 传递一个数组，解析成URL PATHINFO 模式为参数
- * @param  array $param array('id' => 1)
- * @author Colin <15070091894@163.com>
- */
 function params($param = null){
 	if(null == $param && !is_array($param)){
 		return '';

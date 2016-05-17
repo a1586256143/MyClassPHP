@@ -97,7 +97,7 @@ abstract class Db{
         $database = Config('DB_TABS');
         $result = self::$db->select_db($database);
         if(!$result){
-            throw new MyError('数据库不存在或数据库名不正确！'.$database);
+            E('数据库不存在或数据库名不正确！'.$database);
         }
     }
 
@@ -113,7 +113,7 @@ abstract class Db{
         }
         $result = $this->execute("select `TABLE_NAME` from `INFORMATION_SCHEMA`.`TABLES` where `TABLE_SCHEMA`='$db_tabs' and `TABLE_NAME`='$tables' ");
         if(empty($result)){
-            throw new MyError('数据表不存在！'.$tables);
+            E('数据表不存在！'.$tables);
         }
     }
 

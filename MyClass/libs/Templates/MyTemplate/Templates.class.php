@@ -30,7 +30,7 @@ class Templates{
 			//相当于 $this->_vars['name'] = 'Colin';
 			$this->$var = $value;
 		}else{
-			throw new MyError('请设置模板变量名！');
+			E('请设置模板变量名！');
 		}
 	}
 
@@ -52,7 +52,7 @@ class Templates{
 		$path = APP_PATH . '/' . $modules;
 		//检查默认控制器是否存在
 		if(!file_exists($path.'/Controller/'.$default_controller.'Controller.class.php')){
-		    throw new MyError($default_controller.'控制器不存在！');
+		    E($default_controller.'控制器不存在！');
 		}
 
 		$controller = empty($controller) ? $default_controller : $controller;
@@ -73,11 +73,11 @@ class Templates{
 
 		//判断方法目录是否存在
 		if(!is_dir($dirname)){
-			throw new MyError($dirname.'目录不存在');
+			E($dirname.'目录不存在');
 		}
 		//判断模板文件是否存在
 		if(!file_exists($file)){
-			throw new MyError($file.'模板文件不存在！');
+			E($file.'模板文件不存在！');
 		}
 		//生成编译文件
 		$parFile = $dircname.md5($filename).$filename.'.php';
@@ -96,6 +96,8 @@ class Templates{
 
 	/**
 	 * 获取模板名
+	 * @param path 目录路径
+	 * @author Colin <15070091894@163.com>
 	 */
 	protected function getTemplateName($path = null){
 		$explode = explode('/' , $path);
@@ -125,7 +127,7 @@ class Templates{
 
 		//判断模板文件是否存在
 		if(!file_exists($tplFile)){
-			throw new MyError($tplFile.'视图文件不存在！');
+			E($tplFile.'视图文件不存在！');
 		}
 		$name = $this->getTemplateName($file);
 		$name = str_replace('/', '_', $name);

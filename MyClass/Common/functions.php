@@ -145,7 +145,12 @@ function D($name = null , $method = null){
  * @author Colin <15070091894@163.com>
  */
 function E($message){
-	throw new \MyClass\libs\MyError($message);
+	$debug = MY_DEBUG;
+	if($debug){
+		throw new \MyClass\libs\MyError($message);
+	}else{
+		throw new \MyClass\libs\MyError(Config('ERROR_MESSAGE'));
+	}
 }
 
 /**

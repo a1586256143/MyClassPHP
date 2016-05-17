@@ -77,7 +77,7 @@ class Validate {
 		if(method_exists($this, $method)){
 			$this->$method($string);
 		}else{
-			throw new \MyClass\libs\MyError('此方法不存在！');
+			E($method . '此方法不存在！');
 		}
 	}
 

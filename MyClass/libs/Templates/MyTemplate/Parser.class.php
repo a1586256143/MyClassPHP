@@ -13,7 +13,7 @@ class Parser{
 	//构造方法用于获取模板内容
 	public function __construct($tplFile){
 		if(!file_exists($tplFile)){
-			throw new MyError('读取模板文件出错！'.$this->_tpl);
+			E('读取模板文件出错！'.$this->_tpl);
 		}
 		$this->_tpl = file_get_contents($tplFile);
 	}
@@ -75,7 +75,7 @@ class Parser{
 					$this->_tpl = preg_replace($elseifpatten,"<?php elseif(\$this->$1 $2 $3): ?>",$this->_tpl);
 				}
 			}else{
-				throw new MyError('if语句未关闭！'.$this->_tpl);
+				E('if语句未关闭！'.$this->_tpl);
 			}
 		}
 	}
@@ -96,7 +96,7 @@ class Parser{
 					$this->_tpl = preg_replace($pattenvar,"<?php echo \$this->$1$2 ?>",$this->_tpl);
 				}
 			}else {
-				throw new MyError('foreach语句未关闭！'.$this->_tpl);
+				E('foreach语句未关闭！'.$this->_tpl);
 			}
 		}
 	}
@@ -114,7 +114,7 @@ class Parser{
 			$path = APP_PATH . '/' . $modules . Config('TPL_DIR');
 			$filepath = $path.$filename.Config('TPL_TYPE');
 			if(!file_exists($filepath) || empty($file)){
-				throw new MyError($filepath.'包含文件出错！请检查！');
+				E($filepath.'包含文件出错！请检查！');
 			}
 			$prefix = Config('TPL_TYPE');
 			$this->_tpl = preg_replace($patten,"<?php \$this->display(\"$path$2$prefix\") ?>",$this->_tpl);

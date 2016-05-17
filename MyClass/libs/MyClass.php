@@ -61,6 +61,8 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function loadConfig(){
+		//DEBUG
+		if(!defined('MY_DEBUG')) define('MY_DEBUG' , true);
 		require_once MyClass . '/Common/functions.php';
 		//合并config文件内容
 		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , Common . '/Conf/config.php');

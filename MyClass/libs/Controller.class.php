@@ -48,7 +48,7 @@ class Controller{
      */
 	public function showdisplay($file){
 		if(empty($file)){
-			throw new MyError('模板文件不能为空');
+			E('模板文件不能为空');
 		}
 		$this->view->showdisplay($file);
 	}

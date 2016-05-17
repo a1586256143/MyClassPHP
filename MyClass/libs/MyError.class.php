@@ -9,13 +9,15 @@
 namespace MyClass\libs;
 class MyError extends \Exception{
     protected static $info;
-    
+
     /**
      * 构造方法
      * @author Colin <15070091894@163.com>
      */
     public function __construct($message) {
         $this->message = $message;
+        $this->file = MY_DEBUG ? $this->file : '未知';
+        $this->line = MY_DEBUG ? $this->line : '未知';
     }
 
     /**
@@ -25,6 +27,7 @@ class MyError extends \Exception{
     public function __toString() {
         self::set_error_show();
         self::info_initialize($this->getCode() , $this->getMessage() , $this->getFile(), $this->getLine() , $this->getTraceAsString());
+        
         return self::$info;
     }
     
@@ -51,8 +54,12 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     public static function shutdown_function(){
-		$e = error_get_last();
-        self::customError($e['type'] , $e['message'] , $e['file'] , $e['line'] , null);
+        if(MY_DEBUG){
+            $e = error_get_last();
+            self::customError($e['type'] , $e['message'] , $e['file'] , $e['line'] , null);
+        }else{
+            self::customError(7 , Config('ERROR_MESSAGE') , '未知' , '未知' , null);
+        }
     }
 
     /**
@@ -93,10 +100,12 @@ class MyError extends \Exception{
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误文件：" . $file . "</li>";
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误行数：" . $line . "</li>";
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>";
-        $string = array_filter(explode("#" , $detail));
-        if(is_array($string)){
-            foreach ($string as $key => $value) {
-                self::$info .= '#'. $value . '<br>';
+        if(MY_DEBUG){
+            $string = array_filter(explode("#" , $detail));
+            if(is_array($string)){
+                foreach ($string as $key => $value) {
+                    self::$info .= '#'. $value . '<br>';
+                }
             }
         }
         self::$info .= "</li>";

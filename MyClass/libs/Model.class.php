@@ -244,7 +244,7 @@ class Model{
 			if($this->startTransaction){
 				return false;
 			}
-			throw new MyError('SQL语句执行错误'.$this->db->showerror());
+			E('SQL语句执行错误'.$this->db->showerror());
 		}
 		if($ist == 'ist'){
 			return $this->db->insert_id();
@@ -281,7 +281,7 @@ class Model{
 				$this->ParKey = substr($_b, 0, -1);
 				$this->Parvalue = substr($_c, 0, -1);
 			}else if(is_string($array)){
-				throw new MyError('解析insert sql 字段失败!'.$this->Sql);
+				E('解析insert sql 字段失败!'.$this->Sql);
 			}
 		}else if($type == 'upd'){
 			$pk = $this->getpk();
@@ -746,7 +746,7 @@ class Model{
 	 */
 	protected static function CheckConnectInfo(){
 		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_TABS')){
-			throw new MyError('请设置数据库连接信息！');
+			E('请设置数据库连接信息！');
 		}
 	}
 

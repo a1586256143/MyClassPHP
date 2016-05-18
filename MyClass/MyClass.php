@@ -33,7 +33,7 @@
 	define('Common' , APP_NAME.'/Common');
 
 	//定义版本信息
-	define('VERSION' , '2.1');
+	define('VERSION' , '2.2');
 
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

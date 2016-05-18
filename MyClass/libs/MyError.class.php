@@ -45,7 +45,12 @@ class MyError extends \Exception{
     	if (!(error_reporting() & $errno)) {
 	        return;
    		}
-        self::info_initialize($errno , $errstr , $errfile , $errline , $detail);
+        if(MY_DEBUG){
+            self::info_initialize($errno , $errstr , $errfile , $errline , $detail);
+        }else{
+            self::customError(7 , Config('ERROR_MESSAGE') , '未知' , '未知' , null);
+        }
+        
     	exit(self::$info);
     }
 
@@ -54,12 +59,8 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     public static function shutdown_function(){
-        if(MY_DEBUG){
-            $e = error_get_last();
-            self::customError($e['type'] , $e['message'] , $e['file'] , $e['line'] , null);
-        }else{
-            self::customError(7 , Config('ERROR_MESSAGE') , '未知' , '未知' , null);
-        }
+        $e = error_get_last();
+        self::customError($e['type'] , $e['message'] , $e['file'] , $e['line'] , null);
     }
 
     /**

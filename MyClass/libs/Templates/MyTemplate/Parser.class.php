@@ -147,6 +147,28 @@ class Parser{
     		$this->_tpl = preg_replace($patten, "<?php echo Config $1; ?>", $this->_tpl);
     	}
     }
+
+    /**
+     * 解析实例化MyClass\libs下的类
+     * @author Colin <15070091894@163.com>
+     */
+    private function parLibs(){
+    	$patten = '/\{:libs\(\'(.*?)\' , \'(.*?)\'\)\}/';
+    	if(preg_match($patten, $this->_tpl)){
+    		$this->_tpl = preg_replace($patten, "<?php \$object_$1 = new \MyClass\libs\\\\$1();echo \$object_$1->$2; ?>", $this->_tpl);
+    	}
+    }
+
+    /**
+     * 解析实例化MyClass\libs下类的静态方法
+     * @author Colin <15070091894@163.com>
+     */
+    public function parLibsStatic(){
+    	$patten = '/\{:libsStatic\(\'(.*?)\' , \'(.*?)\'\)\}/';
+    	if(preg_match($patten, $this->_tpl)){
+    		$this->_tpl = preg_replace($patten, "<?php echo \MyClass\libs\\\\$1::$2; ?>", $this->_tpl);
+    	}
+    }
 	
 	/**
      * 对外公开的方法
@@ -155,6 +177,8 @@ class Parser{
 	public function comile($parFile){
 		$this->parDefault();		//解析模板默认常量
 		$this->parWeb();			//解析系统变量
+		$this->parLibs();			//解析系统变量
+		$this->parLibsStatic();			//解析系统变量
 		$this->parFunc();			//解析模板函数
 		$this->parIF();				
 		$this->parForeach();

@@ -27,8 +27,8 @@ class WxBase{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function __construct($scope = 'snsapi_base' , $state = 'STATE'){
-		$this->appid = Config('APPID');
-		$this->appsecret = Config('APPSERCET');
+		$this->appid = Config('AppID');
+		$this->appsecret = Config('AppSecret');
 		$this->redirect_uri = urlencode('http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']);
 		$this->openid_uri = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$this->appid}&redirect_uri={$this->redirect_uri}&response_type=code&scope=$scope&state=$state#wechat_redirect";
 		$this->appsercet_path = './cert/cert.pem';

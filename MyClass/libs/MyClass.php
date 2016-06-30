@@ -110,9 +110,10 @@ class MyClass{
 			//创建文件夹
 			outdir($value);
 		}
-
 		//生成默认的文件
 		self::outDefaultFile();
+		//设置默认时间格式
+		Date::set_timezone();
 	}
 
 	/**

@@ -71,12 +71,14 @@ class Upload{
 	 */
 	public function proRandName() {    
 		$this->fileName = date('YmdHis')."_".rand(100,999);
+		$this->fileDir = $this->path . '/' . date('Ymd');
 		$patten = '/(\.[a-z]+)/';
 		preg_match($patten , $this->file['name'] , $match);
+		if(!is_dir($this->fileDir)) mkdir($this->fileDir);
 		if(empty($match[0])){
-			$this->newFileName = $this->path.'/'.$this->fileName.'.jpg';
+			$this->newFileName = $this->fileDir.'/'.$this->fileName.'.jpg';
 		}else{
-			$this->newFileName = $this->path.'/'.$this->fileName.$match[0];
+			$this->newFileName = $this->fileDir.'/'.$this->fileName.$match[0];
 		}
 	}
 
@@ -105,6 +107,7 @@ class Upload{
 			return $this->UploadError(-3);
 		}
 		if(move_uploaded_file($this->file['tmp_name'] , $this->newFileName)){
+			$this->file['path'] = ltrim($this->newFileName , '.');
 			return $this->UploadError(1 , $this->file);;
 		}else{
 			return $this->UploadError(-4);

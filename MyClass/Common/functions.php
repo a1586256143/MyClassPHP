@@ -168,11 +168,11 @@ function U($url , $param = null){
 		if(!$match[0]){
 			$match[0] = $modules;
 		}
-		$path = preg_replace("/\/([\w]+)\//", $match[1] . '/' , $path);
+		//$path = preg_replace("/\/([\w]+)\//", $match[1] . '/' , $path);
+		$path = $url;
 	}else{
 		$path = $modules . '/' . $url;
 	}
-	
 	$params = params($param);
 	$path = explode('/' , $path);
 	$url = array_filter(array_unique(array_merge($path , explode('/' , $url))));
@@ -220,7 +220,7 @@ function require_module($name = null , $type = null , $module = null , $modules 
  * @param modules 加载的模块
  * @author Colin <15070091894@163.com>
  */
-function require_file($path , $modules = ''){
+function require_file($path , $modules = '' , $return = true){
 	$content = '';
 	if(is_array($path)){
 		foreach ($path as $key => $value) {
@@ -231,7 +231,12 @@ function require_file($path , $modules = ''){
 		return $content;
 	}else if(is_string($path)){
 		if(file_exists($path)){
-			return require_once $path;
+			if($return){
+				return require_once $path;
+			}else{
+				require_once $path;
+			}
+			
 		}
 	}
 }
@@ -318,9 +323,10 @@ function session($name = '' , $value = ''){
  * @param type 要获取的POST或GET
  * @param formname 要获取的POST或type的表单名
  * @param function 要使用的函数
+ * @param default 默认值
  * @author Colin <15070091894@163.com>
  */
-function values($type , $formname = null , $function = 'trim'){
+function values($type , $formname = null , $function = 'trim' , $default = null){
 	switch ($type) {
 		case 'get':
 			$string = isset($_GET[$formname]) ? $_GET[$formname] : '';
@@ -351,15 +357,29 @@ function values($type , $formname = null , $function = 'trim'){
 	$processing = '';
 	if(is_array($string)){
 		foreach ($string as $key => $value) {
-			foreach ($function as $k => $v) {
-				$value = $v($value);
+			if(is_array($value)){
+				foreach ($value as $k => $v) {
+					foreach ($function as $fk => $fv) {
+						$v = $fv($v);
+						$processing[$key][$k] = $v;
+					}
+				}
+			}else{
+				foreach ($function as $fk => $fv) {
+					$value = $fv($value);
+					$processing[$key] = $value;
+				}
 			}
-			$processing[$key] = $value;
+			
+			
 		}
 	}else if(is_string($string)){
 		foreach ($function as $key => $value) {
 			$processing = $value($string);
 		}
+	}
+	if(!$processing){
+		$processing = $default === null ? null : $default;
 	}
 	return $processing;
 }
@@ -370,7 +390,7 @@ function values($type , $formname = null , $function = 'trim'){
  * @param value 存储的value
  * @author Colin <15070091894@163.com>
  */
-function S($name , $value = null){
+function S($name , $value = null,$time=0){
 	//实例化一个缓存句柄
 	$cache = \MyClass\libs\ObjFactory::CreateCache();
 	if($name == 'null'){
@@ -384,7 +404,7 @@ function S($name , $value = null){
 		return $value;
 	}else if(!empty($name) && empty($value)){
 		//读取缓存
-		return $cache->readCache($name);
+		return $time?$cache->readCache($name,$time):$cache->readCache($name);
 	}
 }
 
@@ -400,7 +420,7 @@ function Config($name = null , $value = ''){
 		return $config;
 	}else if(is_array($name)){
 		//设置
-		$config = $name;
+		$config = array_merge($config , $name);
 	}else if(is_string($name) && $value == ''){
 		return $config[$name];
 	}else if(is_string($name) && !empty($value)){
@@ -431,7 +451,7 @@ function getSiteUrl($scame = true){
  * @author Colin <15070091894@163.com>
  */
 function setPublicUrl($public){
-	return getSiteUrl().$public;
+	return getSiteUrl(false).$public;
 }
 
 /**
@@ -470,10 +490,10 @@ function library($name = null){
 			//如果是dir,则需要再次遍历，加载
 			if(is_array($value)){
 				foreach ($value as $k => $v) {
-					require_file($v);
+					require_file($v , null , false);
 				}
 			}else{
-				require_file($value);
+				require_file($value , null , false);
 			}
 		}
 	}else{

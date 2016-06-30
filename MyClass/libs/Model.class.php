@@ -151,6 +151,9 @@ class Model{
 		$fields = $this->getFields();
 		foreach ($fields as $key => $value) {
 			if(isset($data[$value])){
+				if($data[$value] === null || $data[$value] == ''){
+					continue;
+				}
 				$fieldData[$value] = $data[$value];
 			}
 		}
@@ -312,6 +315,7 @@ class Model{
 		$fieldlen = count($field);
 		$i = 0;
 		if($whereor !== null) $this->WhereOR = $whereor;
+		if($field == null) return $this;
 		//遍历字段
 		if(is_array($field)){
 			//判断是否为多条数据

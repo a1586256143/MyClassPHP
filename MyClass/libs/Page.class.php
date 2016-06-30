@@ -14,6 +14,8 @@ class Page{
 	private $pagenum;				//总页数
 	private $url;					//页面地址
 	private $bothnum;				//两边数字保留的量
+	private $page_url;					//整体URL
+	private $url_model;				//URL模式
 
 	/**
      * 构造方法
@@ -23,6 +25,13 @@ class Page{
 		$this->total = $total ? $total : 1;
 		$this->pagesize = $pagesize;
 		$this->pagenum = ceil($this->total / $this->pagesize);
+		$this->url_model = Config('URL_MODEL');
+		//处理url
+		if($this->url_model == 1){
+			$this->page_url = "&page=%d";
+		}elseif($this->url_model == 2){
+			$this->page_url = "/page/%d";
+		}
 		$this->page = $this->setPage();
 		$this->limit = "LIMIT ".($this->page-1)*$this->pagesize.",$this->pagesize";
 		$this->url = $this->setUrl();
@@ -69,15 +78,30 @@ class Page{
 		$_url = $_SERVER['REQUEST_URI'];
 		//解析url
 		$_par = parse_url($_url);
-		//判断url 里面是否包含query
-		if(isset($_par['query'])){
-			//分离url  至 query变量
-			parse_str($_par['query'],$_query);
-			//删除掉包含page的参数
-			unset($_query['page']);
-			//重组url
-			$_url = $_par['path'].'?'.http_build_query($_query);
+		if($this->url_model == 1){
+			//判断url 里面是否包含query
+			if(isset($_par['query'])){
+				//分离url  至 query变量
+				parse_str($_par['query'],$_query);
+				//删除掉包含page的参数
+				unset($_query['page']);
+				//重组url
+				$_url = $_par['path'].'?'.http_build_query($_query);
+			}
+		}elseif($this->url_model == 2){
+			$explode = array_merge(array_filter(explode('/', $_url)));
+			$count = count($explode);
+			if(($count % 2) == 0){
+                for ($i = 0; $i < $count ; $i += 2) { 
+                    $new_pams[$explode[$i]] = $explode[$i + 1];
+                }
+            }
+            if(array_key_exists('page', $new_pams)){
+            	unset($new_pams['page']);
+            }
+            $_url = params($new_pams);
 		}
+		
 		return $_url;
 	}
 	
@@ -91,13 +115,13 @@ class Page{
 		for($i=$this->bothnum;$i>=1;$i--){
 			$_page = $this->page-$i;
 			if($_page < 1) continue;
-			$_pagelist .= '<li><a href="'.$this->url.'&page='.$_page.'">'.$_page.'</a></li>';
+			$_pagelist .= '<li><a href="'.$this->url.sprintf($this->page_url , $_page).'">'.$_page.'</a></li>';
 		}
-		$_pagelist .= '<li class="active"><span class="me">'.$this->page.'</span></li>';
+		$_pagelist .= '<li class="active"><a href="javascript:void(0);">'.$this->page.'</a></li>';
 		for($i=1;$i<=$this->bothnum;$i++){
 			$_page = $this->page+$i;
 			if($_page > $this->pagenum) break;
-			$_pagelist .= '<li><a href="'.$this->url.'&page='.$_page.'">'.$_page.'</a></li>';
+			$_pagelist .= '<li><a href="'.$this->url.sprintf($this->page_url , $_page).'">'.$_page.'</a></li>';
 		}
 		return $_pagelist;
 	}
@@ -121,7 +145,7 @@ class Page{
 		if($this->page == 1){
 			return '<span class="disabled">上一页</span>';
 		}
-		return ' <a href="'.$this->url.'&page='.($this->page-1).'">上一页</a> ';
+		return ' <a href="'.$this->url.sprintf($this->page_url , ($this->page-1)).'">上一页</a> ';
 	}
 	
 	/**
@@ -132,7 +156,7 @@ class Page{
 		if($this->page == $this->pagenum){
 			return '<span class="disabled">下一页</span>';
 		}
-		return ' <a href="'.$this->url.'&page='.($this->page+1).'">下一页</a> ';
+		return ' <a href="'.$this->url.sprintf($this->page_url , ($this->page+1)).'">下一页</a> ';
 	}
 	
 	/**
@@ -142,7 +166,7 @@ class Page{
 	private function last(){
 		//如果总页码-当前页码 > 两边保持的两边分页保留量
 		if($this->pagenum - $this->page > $this->bothnum){
-			return ' ...<a href="'.$this->url.'&page='.$this->pagenum.'">'.$this->pagenum.'</a> ';	
+			return ' ...<a href="'.$this->url.sprintf($this->page_url , $this->pagenum).'">'.$this->pagenum.'</a> ';	
 		}
 	}
 	

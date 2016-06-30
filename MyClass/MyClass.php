@@ -37,6 +37,5 @@
 
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';
-
 	MyClass\libs\MyClass::run();
 ?>

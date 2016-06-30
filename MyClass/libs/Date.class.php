@@ -7,6 +7,10 @@
 */
 namespace MyClass\libs;
 class Date{
+	public static function set_timezone($timezone = 'Asia/Shanghai'){
+		date_default_timezone_set($timezone);
+	}
+
 	/**
 	 * 获取时间
 	 * @param timezone 时间区域

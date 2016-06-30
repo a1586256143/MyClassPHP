@@ -14,7 +14,11 @@ class File {
 	 * @param filename 文件名
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function OpenFile($filename){
+	public function OpenFile($filename,$time=0){
+		if($time && (fileatime($filename)+$time)<=time()){
+			$this->DeleteFile($filename);
+			return null;
+		}
 		//获取文件内容
 		$file_resoule = file_get_contents($filename);
 		if(!$file_resoule){

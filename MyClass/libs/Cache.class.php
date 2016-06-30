@@ -84,9 +84,10 @@ class Cache {
 	 * @param data 存储数据
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function readCache($name){
+	public function readCache($name,$time=0){
+
 		$FileName = $this->UrlAndDefaultSuffix($name);
-		$json = $this->file->OpenFile($FileName);
+		$json = $time?$this->file->OpenFile($FileName,$time):$this->file->OpenFile($FileName);
 		return json_decode($json , true);
 	}
 

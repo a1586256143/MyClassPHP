@@ -242,7 +242,7 @@ class Model{
 	 */
 	protected function ADUP($sql = null , $ist = null){
 		$sql = $sql === null ? $this->Sql : $sql;
-		$query = $this->db->query($this->Sql);
+		$query = $this->db->query($sql);
 		if(!$query){
 			if($this->startTransaction){
 				return false;
@@ -371,7 +371,11 @@ class Model{
 			}else if(is_numeric($wherevalue)){
 				$_a .= $sub.$wherevalue;
 			}
-			$this->Where = strpos($field , '.') !== false ? " WHERE $field " :" WHERE `$field` ";	
+			if(empty($wherevalue)){
+				$this->Where = $field;
+			}else{
+				$this->Where = strpos($field , '.') !== false ? " WHERE $field " :" WHERE `$field` ";
+			}
 			$this->value = $_a;
 		}
 		return $this;
@@ -384,10 +388,10 @@ class Model{
 	public function getpk(){
 		$pk = S('TABLE_PK_FOR_'.$this->DataName);
 		if(empty($pk)){
-			//$map['TABLE_SCHEMA'] = $this->db_tabs;
-			//$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
-			//$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
-			$rows = $this->execute("select COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
+			$map['TABLE_SCHEMA'] = $this->db_tabs;
+			$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
+			$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
+			//$rows = $this->execute("select COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
 			$this->Where = null;
 			$pk = S('TABLE_PK_FOR_'.$this->DataName , $rows);
 			return $pk['COLUMN_NAME'];
@@ -423,7 +427,7 @@ class Model{
 	 */
 	public function query($sql = null){
 		$sql = $sql === null ? $this->Sql : $sql;
-		return $this->ADUP($sql);
+		return $this->getResult($sql);
 	}
 
 	/**
@@ -547,16 +551,11 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function insert($values = null){
-		$values = array_filter($values);
+		$values = myclass_filter($values);
         if(empty($values)){
             $values = $this->data['create'];
         }
-		foreach ($values as $key => $value) {
-			if($value != ''){
-				$data[$key] = $value;
-			}
-		}
-		$this->ParData('ist',$data);
+		$this->ParData('ist' , $values);
 		$this->Sql = "INSERT INTO ".$this->TablesName."(".$this->ParKey.") VALUES (".$this->Parvalue.")";
 		return $this->ADUP($this->Sql , 'ist');
 	}

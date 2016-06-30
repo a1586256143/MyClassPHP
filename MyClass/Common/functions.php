@@ -506,4 +506,18 @@ function library($name = null){
 		require_file($path);
 	}
 }
+
+/**
+ * 处理Model类的 array_filter 过滤 0 操作
+ * @author Colin <15070091894@163.com>
+ */
+function myclass_filter($array = array()){
+	foreach ($array as $key => $value) {
+		if($value === null && $value === ''){
+			continue;
+		}
+		$result[$key] = $value;
+	}
+	return $result;
+}
 ?>

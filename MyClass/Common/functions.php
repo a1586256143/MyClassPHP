@@ -520,4 +520,18 @@ function myclass_filter($array = array()){
 	}
 	return $result;
 }
+
+/**
+ * 验证表单安全码
+ * @param string $secur_number 表单提交的安全码
+ * @author Colin <15070091894@163.com>
+ */
+function checkSecurity($secur_number = null){
+	$system = session('secur_number');
+	if($secur_number == $system){
+		session('secur_number' , 'null');
+		return true;
+	}
+	return false;
+}
 ?>

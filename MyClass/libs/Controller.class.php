@@ -124,9 +124,10 @@ class Controller{
      * @param url  要跳转的地址。为空则跳转为上一个页面
      * @author Colin <15070091894@163.com>
      */
-	protected function error($message , $url = null , $time = null){
+	protected function error($message , $url = null , $time = 3){
 		echo $this->MessageTemplate($message);
-		echo empty($url) ? "<script>window.history.back();</script>" : "<meta http-equiv='refresh' content='$time; url=$url' />";
+		$time = $time * 1000;
+		echo empty($url) ? "<script>setTimeout(function(){window.history.back()} , $time);</script>" : "<meta http-equiv='refresh' content='$time; url=$url' />";
 		exit;
 	}
 }

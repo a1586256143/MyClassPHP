@@ -61,22 +61,24 @@ class File {
 	 * @param path 返回指定格式的文件
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function getDirAllFile($path = null , $suffix = 'php'){
+	public function getDirAllFile($path = null , $suffix = null){
 		//打开目录
 		$dir_soule = $this->OpenFileDir($path);
 		while ($filename = readdir($dir_soule)) {
 			$filepath = $path . '/' . $filename;
 			//获取文件信息，主要获取文件后缀
 			$info = pathinfo($filename);
-			//屏蔽不是$suffix的文件
-			if($info['extension'] != $suffix) continue;
+			if(!empty($suffix)){
+				//屏蔽不是$suffix的文件
+				if($info['extension'] != $suffix) continue;
+			}
 			//屏蔽. 和 .. 特殊操作符
 			if(in_array($filename , array('.' , '..'))) continue;
 			if(is_dir($filepath)){
 				//如果是文件夹则递归
-				$file['dir'] = $this->getDirAllFile($filepath);
+				$file[$filename] = $this->getDirAllFile($filepath);
 			}else{
-				$file[] = $filepath;
+				$file[$filename] = $filepath;
 			}	
 		}
 		return $file;
@@ -107,5 +109,21 @@ class File {
 	public function DeleteFile($filename){
 		//删除文件
 		return @unlink($filename);
+	}
+
+	/**
+	 * 获取上一层目录
+	 * @param string $path 路径
+	 * @param string $return_all 是否返回整条路径，如果为false 则返回上一层的文件夹名称
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function getprev($path = null , $return_all = false){
+		$preg_replace = preg_replace("/\\\\/", '/', $path);
+		$path = explode('/' , $preg_replace);
+		$pop = array_pop($path);
+		$merge_path = implode('/' , $path);
+		if(is_dir($merge_path)){
+			return $return_all ? $merge_path : $pop;
+		}
 	}
 }

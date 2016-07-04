@@ -12,14 +12,15 @@ class Form {
 	/**
 	 * 打开表单
 	 * @param string $action 表单提交地址
+	 * @param string $method 表单方法
 	 * @param string $name  表单的名称
 	 * @param string $id 表单id
 	 * @param string $class 表单所拥有的类
 	 * @param string $attr 额外属性，例如onclick="xxx()";
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function openForm($action = null , $name = null , $id = null , $class = null , $attr = null){
-		self::$form .= "<form action='$action' name='$name' id='$id' class='$class' $attr>";
+	public static function openForm($action = null , $method = 'post' , $name = null , $id = null , $class = null , $attr = null){
+		self::$form .= "<form method='$method' action='$action' name='$name' id='$id' class='$class' $attr>";
 		self::echoForm();
 		self::security();
 	}
@@ -33,7 +34,7 @@ class Form {
 			$str .= dechex(mt_rand(0 , 15));
 		}
 		session('secur_number' , $str);
-		self::inputHidden('secur_number' , $str);
+		self::inputHidden('secur_number' , null , $str);
 	} 
 
 	/**
@@ -46,9 +47,9 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function inputText($name = null , $value = null , $id = null , $class = null , $placeholder = null , $attr = null){
+	public static function inputText($name = null , $class = null , $value = null , $id = null , $placeholder = null , $attr = null){
 		if($id == null) $id = $name;
-		self::input('text' , $name , $value , $id , $class , $placeholder , $attr);
+		self::input('text' , $name , $value , $class , $id , $placeholder , $attr);
 	}
 
 	/**
@@ -61,9 +62,24 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function inputHidden($name = null , $value = null , $id = null , $class = null , $placeholder = null , $attr = null){
+	public static function inputHidden($name = null , $class = null , $value = null , $id = null , $placeholder = null , $attr = null){
 		if($id == null) $id = $name;
-		self::input('hidden' , $name , $value , $id , $class , $placeholder , $attr);
+		self::input('hidden' , $name , $value , $class , $id , $placeholder , $attr);
+	}
+
+	/**
+	 * 密码表单
+	 * @param  string $name  input的名称
+	 * @param  string $value input的值
+	 * @param  string $id       input的ID属性
+	 * @param  string $class input的类名
+	 * @param  string $placeholder h5的属性，提示作用
+	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function inputPass($name = null , $class = null , $value = null , $id = null , $placeholder = null , $attr = null){
+		if($id == null) $id = $name;
+		self::input('password' , $name , $value , $class , $id , $placeholder , $attr);
 	}
 
 	/**
@@ -77,7 +93,7 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function input($type = null , $name = null , $value = null , $id = null , $class = null , $placeholder = null , $attr = null){
+	public static function input($type = null , $name = null , $value = null , $class = null , $id = null , $placeholder = null , $attr = null){
 		self::$form = "<input type='$type' name='$name' placeholder='$placeholder' value='$value' id='$id' class='$class' $attr>";
 		self::echoForm();
 	}
@@ -127,7 +143,7 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function button($type = null , $name = null , $value = null , $id = null , $class = null , $attr = null){
+	public static function button($type = null , $class = null , $name = null , $value = '确定' , $id = null , $attr = null){
 		self::$form = "<button type='$type' name='$name' id='$id' class='$class' $attr>$value</button>";
 		self::echoForm();
 	}
@@ -141,8 +157,8 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function submitButton($value = null , $name = null , $id = null , $class = null , $attr = null){
-		self::button('submit' , $value , $name , $id , $class , $attr);
+	public static function submitButton($value = null , $class = null , $name = null , $id = null , $attr = null){
+		self::button('submit' , $class , $name , $value , $id , $attr);
 	}
 
 	/**
@@ -154,8 +170,8 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function generalButton($value = null , $name = null , $id = null , $class = null , $attr = null){
-		self::button('button' , $value , $name , $id , $class , $attr);
+	public static function generalButton($value = null , $class = null , $name = null , $id = null , $attr = null){
+		self::button('button' , $class , $name , $value , $id , $attr);
 	}
 	
 	/**
@@ -167,8 +183,8 @@ class Form {
 	 * @param  string $attr  input的额外属性 例如attrid = 3 ,....
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function resetButton($value = null , $name = null , $id = null , $class = null , $attr = null){
-		self::button('reset' , $value , $name , $id , $class , $attr);
+	public static function resetButton($value = null , $class = null , $name = null , $id = null , $attr = null){
+		self::button('reset' , $class , $name , $value , $id , $attr);
 	}
 
 	/**

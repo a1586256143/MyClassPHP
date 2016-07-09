@@ -36,7 +36,7 @@ class Parser{
 	private function parVar(){
 		$patten = '/\{\$(.*?)\}/';
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo $1; ?>",$this->_tpl);
+			$this->_tpl = preg_replace($patten,"<?php echo \$$1; ?>",$this->_tpl);
 		}
 	}
 

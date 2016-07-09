@@ -83,7 +83,7 @@ function C($module , $name , $method = null , $param = null){
 			return $ReflectionMethod->invokeArgs($controller , array_filter($var));
 		}
 	}
-	return $controller->$method(eval($string));
+	return $controller->$method();
 }
 
 /**
@@ -183,6 +183,11 @@ function U($url , $param = null){
 	return $filter;
 }
 
+/**
+ * 解析U函数所需的指定URL格式，例如 array('id' => 1 , 'user' => 'admin')
+ * @param  array $param 需要解析的数组格式
+ * @author Colin <15070091894@163.com>
+ */
 function params($param = null){
 	if(null == $param && !is_array($param)){
 		return '';
@@ -353,18 +358,21 @@ function values($type , $formname = null , $function = 'trim' , $default = null)
 	if($function == null){
 		return $string;
 	}
+	//解析函数，得到函数名
 	$function = explode(',', $function);
 	$processing = '';
 	if(is_array($string)){
 		foreach ($string as $key => $value) {
 			if(is_array($value)){
 				foreach ($value as $k => $v) {
+					//对得到的值 使用函数处理
 					foreach ($function as $fk => $fv) {
 						$v = $fv($v);
 						$processing[$key][$k] = $v;
 					}
 				}
 			}else{
+				//对得到的值 使用函数处理
 				foreach ($function as $fk => $fv) {
 					$value = $fv($value);
 					$processing[$key] = $value;
@@ -374,11 +382,13 @@ function values($type , $formname = null , $function = 'trim' , $default = null)
 			
 		}
 	}else if(is_string($string)){
+		//对得到的值 使用函数处理
 		foreach ($function as $key => $value) {
 			$processing = $value($string);
 		}
 	}
 	if(!$processing){
+		//是否存在默认值。如果处理后的结果为空，则返回默认值
 		$processing = $default === null ? null : $default;
 	}
 	return $processing;
@@ -513,7 +523,7 @@ function library($name = null){
  */
 function myclass_filter($array = array()){
 	foreach ($array as $key => $value) {
-		if($value === null && $value === ''){
+		if($value === null || $value === ''){
 			continue;
 		}
 		$result[$key] = $value;

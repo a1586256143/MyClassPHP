@@ -101,7 +101,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function parTableName($tables){
-		$tablename = array_filter(preg_split('/(?=[A-Z])/', $tables));
+		$tablename = myclass_filter(preg_split('/(?=[A-Z])/', $tables));
 		$tablename = implode('_', $tablename);
 		return $tablename;
 	}
@@ -158,17 +158,17 @@ class Model{
 			}
 		}
 		//去除空值
-		$this->data['create'] = array_filter($fieldData);
+		$this->data['create'] = myclass_filter($fieldData);
 		//自动完成
 		if(!empty($this->auto)){
 			$this->_parse_auto();
 			//合并自动完成数据
-			$this->data['create'] = array_merge($this->data['auto'] , $this->data['create']);
+			$this->data['create'] = myclass_filter(array_merge($this->data['auto'] , $this->data['create']));
 		}
 		if(!empty($this->validate)){
 			$this->_parse_validate();
 			//合并自动验证数据
-			$this->data['create'] = array_merge($this->data['validate'] , $this->data['create']);
+			$this->data['create'] = myclass_filter(array_merge($this->data['validate'] , $this->data['create']));
 		}
 		return $this->data['create'];
 	}
@@ -180,10 +180,32 @@ class Model{
 	 */
 	protected function _parse_auto(){
 		$fields = $this->getFields();
+		$primary = $this->getPk();
 		//遍历自动完成属性
 		foreach ($this->auto as $key => $value) {
 			//查找是否符合字段需求
 			if(in_array($value[0], $fields)){
+				$value[2] = $value[2] ? $value[2] : self::MODEL_INSERT;
+				//解析处理状态
+				if(!empty($value[2]) && $value[2] != self::MODEL_BOTH){
+					switch($value[2]){
+						case self::MODEL_INSERT :
+							//查找主键是否存在，存在则是新增，不存在则是更改
+							if(array_key_exists($primary , $this->data['create'])){
+								$this->data['auto'][$value[0]] = null;
+								return null;
+							}
+							break;
+							//解析类型
+						case self::MODEL_UPDATE : 
+							//查找主键是否存在，存在则是更改，不存在则是新增
+							if(!array_key_exists($primary , $this->data['create'])){
+								$this->data['auto'][$value[0]] = null;
+								return null;
+							}
+							break;
+					}
+				}
 				//解析类型
 				if(!empty($value[3])){
 					switch ($value[3]) {

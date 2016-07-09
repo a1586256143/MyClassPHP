@@ -2,7 +2,7 @@
 /*
 	Author : Colin,
 	Creation time : 2015-8-13
-	FileType : 工具栏
+	FileType : 工具类
 	FileName : Tool.class.php
 */
 namespace MyClass\libs;
@@ -75,17 +75,6 @@ class Tool {
 			$_String .= chr ( 0x80 | $_C & 0x3F );
 		}
 		return iconv ( 'UTF-8', 'GB2312', $_String );
-	}
-	
-	/**
-	 * 显示ajax数据
-	 * @param number $_num
-	 * @return null
-	 */
-	static function ShowAjaxNum($_num)
-	{
-		echo $_num;
-		exit;
 	}
 }
 ?>

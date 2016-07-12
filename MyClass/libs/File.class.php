@@ -114,16 +114,51 @@ class File {
 	/**
 	 * 获取上一层目录
 	 * @param string $path 路径
+	 * @param string $endpath 遇到哪个目录停止
 	 * @param string $return_all 是否返回整条路径，如果为false 则返回上一层的文件夹名称
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function getprev($path = null , $return_all = false){
+	public function getprev($path = null , $endpath = null , $return_all = false){
 		$preg_replace = preg_replace("/\\\\/", '/', $path);
 		$path = explode('/' , $preg_replace);
 		$pop = array_pop($path);
+		$endname = array_pop($path);
+		//处理遇到目录tingzhi 
+		$endpath = explode('/' , $endpath);
+		$endpop = array_pop($endpath);
 		$merge_path = implode('/' , $path);
-		if(is_dir($merge_path)){
-			return $return_all ? $merge_path : $pop;
+		if($endname == $endpop){
+			return null;
 		}
+		if(is_dir($merge_path)){
+			return $return_all ? $merge_path : $endname;
+		}
+	}
+
+	/**
+	 * 显示一个文件管理系统
+	 * @param string $path 访问路径
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function fileManage($path = null , $param = null , $style = 'table'){
+		$oldpath = $path;
+		if(!empty($param)){
+			$path = $path . $param;
+		}
+		$path = preg_replace('/@/', '/' , $path);
+		$parsepath = preg_replace('/@/', '/' , $param);
+		$prepath = $this->getprev($path , $oldpath);
+		if($prepath){
+			$prepath = '@' . $prepath;
+			if(!$param){
+				$prepath = '';
+			}
+		}
+		$data['filearray'] = $this->getDirAllFile($path);
+		$data['oldpath'] = $oldpath;
+		$data['param'] = $param;
+		$data['prepath'] = $prepath;
+		$data['parsepath'] = $parsepath;
+		include Core . 'File/fileManage.php';
 	}
 }

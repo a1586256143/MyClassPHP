@@ -177,12 +177,12 @@ class Parser{
 	public function comile($parFile){
 		$this->parDefault();		//解析模板默认常量
 		$this->parWeb();			//解析系统变量
+		$this->parinclude();
 		$this->parLibs();			//解析系统变量
 		$this->parLibsStatic();			//解析系统变量
 		$this->parFunc();			//解析模板函数
 		$this->parIF();				
 		$this->parForeach();
-		$this->parinclude();
 		$this->parCommon();
 		$this->parVar();			//解析模板变量
 		//生成编译文件

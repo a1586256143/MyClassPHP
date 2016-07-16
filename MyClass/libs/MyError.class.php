@@ -80,7 +80,7 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     protected static function set_error_show(){
-       // ini_set('display_errors', 'On');
+       ini_set('display_errors', 'Off');
        // MY_DEBUG ? ini_set('display_errors', 'On') : ini_set('display_errors', 'Off');
     }
 

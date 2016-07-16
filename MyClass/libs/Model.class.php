@@ -301,7 +301,7 @@ class Model{
 			if(is_array($array)){
 				foreach ($array as $key => $value) {
 					$_b .= '`'.$key.'`' . ',';
-					$_c .= "'" . $value . "',";
+					$_c .= "'" . addslashes($value) . "',";
 				}
 				$this->ParKey = substr($_b, 0, -1);
 				$this->Parvalue = substr($_c, 0, -1);
@@ -314,7 +314,7 @@ class Model{
 				if($key == $pk){
 					continue;
 				}
-				$_b .= '`'.$key.'`'. '=' ."'". $value."'" . ',';
+				$_b .= '`'.$key.'`'. '=' ."'". addslashes($value)."'" . ',';
 			}
 			//解析主键
 			if($this->Where === null){
@@ -333,6 +333,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function where($field , $wherevalue = null , $whereor = null , $sub = '='){
+		$this->Where = null;
 		$_a = '';
 		$fieldlen = count($field);
 		$i = 0;
@@ -410,11 +411,7 @@ class Model{
 	public function getpk(){
 		$pk = S('TABLE_PK_FOR_'.$this->DataName);
 		if(empty($pk)){
-			$map['TABLE_SCHEMA'] = $this->db_tabs;
-			$map['TABLE_NAME'] = $this->db_prefix.$this->DataName;
-			$rows = $this->where($map)->field('COLUMN_NAME')->from('information_schema.`KEY_COLUMN_USAGE`')->find();
-			//$rows = $this->execute("select COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
-			$this->Where = null;
+			$rows = $this->execute("select COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
 			$pk = S('TABLE_PK_FOR_'.$this->DataName , $rows);
 			return $pk['COLUMN_NAME'];
 		}
@@ -465,12 +462,13 @@ class Model{
 	 * 得到查询的sql语句
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function getSql(){
+	public function getSql(){
 		if($this->Tables != null){
 	        $this->Sql = "SELECT $this->Fields FROM ".$this->Tables.' '.$this->Where.$this->value.$this->Order.$this->Limit;
 	    }else {
 	        $this->Sql = "SELECT $this->Fields ".$this->From.$this->Where.$this->value.$this->Order.$this->Limit;
 	    }
+	    return $this->Sql;
 	}
 
 	/**
@@ -497,6 +495,9 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function in($field , $values){
+		if(is_array($values)){
+			$values = implode(',' , $values);
+		}
 		$this->where($field , '('.$values.')' , null , 'in ');
 		return $this;
 	}
@@ -590,7 +591,7 @@ class Model{
 	 */
 	public function delete($value , $field = null){
 		$field = $field === null ? $this->getpk() : $field;
-		if($this->Where === null || $this->value === null){
+		if($this->Where === null){
 			$this->where($field , $value);
 		}
 		$this->Sql = "DELETE FROM ".$this->TablesName.$this->Where.$this->value;
@@ -611,7 +612,7 @@ class Model{
 				if($value === ''){
 					continue;
 				}
-				$data[$key] = $value;
+				$data[$key] = addslashes($value);
 			}
 			$this->ParData('upd',$data);
 		}
@@ -674,7 +675,7 @@ class Model{
 		if(!empty($start)){
 			$start = ($start-1) * $end;
 		}
-		$this->Limit = "LIMIT ".$start.','.$end;
+		$this->Limit = " LIMIT ".$start.','.$end;
 		return $this;
 	}
 
@@ -694,6 +695,15 @@ class Model{
      */
 	public function execute($sql){
 		return $this->db->execute($sql);
+	}
+
+	/**
+	 * 执行原声sql语句，返回资源类型
+	 * @param sql 要执行的sql语句
+     * @author Colin <15070091894@163.com>
+	 */
+	public function execute_resource($sql){
+		return $this->ADUP($sql);
 	}
 
 	/**

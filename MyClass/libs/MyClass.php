@@ -21,6 +21,8 @@ class MyClass{
        		MyError::error_traceassstring();
 			//判断文件夹是否存在
 			self::Dir();
+			//解析表单方法
+			self::formMethod();
 			//视图初始化
 			self::View();
 			//初始化URL模式
@@ -51,7 +53,6 @@ class MyClass{
 		if(preg_match("/\\\\/" , $ClassName)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
-			
 			require_file(ROOT_PATH.$ClassName.'.class.php');
 		}
 	}
@@ -100,12 +101,12 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
-		self::loadFunction();
 		//加载常量
 		self::ReqConst();
+		self::loadFunction();
 		$view = APP_PATH . '/' . Config('DEFAULT_MODULE') .Config('TPL_DIR');
 		$cache = ltrim(Config('CACHE_DIR') , './');
-		$dir = array(APP_PATH , Module , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , $view , $cache , Common);
+		$dir = array(APP_PATH , Module , Plugs , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , $view , $cache , Common);
 		foreach ($dir as $key => $value) {
 			//创建文件夹
 			outdir($value);
@@ -123,6 +124,7 @@ class MyClass{
 	public static function loadFunction(){
 		require_once MyClass . '/Common/functions.php';
 		$app = array(CommonDIR.'/functions.php' , Common.'/Common/functions.php');
+		dump($app);
 		require_file($app);
 	}
 
@@ -199,6 +201,16 @@ class MyClass{
 	public static function View(){
 		//初始化视图工厂
 		View::init(Config('TPL_MODEL') , Config('TPL_CONFIG'));
+	}
+
+	/**
+	 * 设定常量，判断各种表单方式
+	 * @author Colin <15070091894@163.com>
+	 */
+	public static function formMethod(){
+		$request_method = $_SERVER["REQUEST_METHOD"];
+		$request_method == 'POST' ? define('POST' , true) : define('POST' , false);
+		$request_method == 'GET' ? define('GET' , true) : define('GET' , false);
 	}
 }
 ?>

@@ -5,7 +5,6 @@
 		FileType : MyClassPHP引导类
 		FileName : MyClass.php
 	*/
-
 	//MyClass目录
 	define('MyClass' , str_replace('\\' , '/' , dirname(__FILE__)));
 
@@ -33,7 +32,7 @@
 	define('Common' , APP_NAME.'/Common');
 
 	//定义版本信息
-	define('VERSION' , '2.2');
+	define('VERSION' , '2.4');
 
 	//引入MyClass核心文件
 	require_once Core.'MyClass.php';

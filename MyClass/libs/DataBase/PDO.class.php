@@ -15,54 +15,81 @@ class PDO extends Db{
      * 连接数据库操作
      * @author Colin <15070091894@163.com>
      */
-    function connect(){
-        $this->_db = new \PDO("mysql:host=".Config('DB_HOST').";dbname=".Config('DB_TABS')."","".Config('DB_USER')."","".Config('DB_PASS')."");
-        //$this->_db = new \PDO("mysql:host=".Config('DB_HOST').";","".Config('DB_USER')."","".Config('DB_PASS')."");
+    public function connect(){
+        $string = "mysql:host=%s;dbname=%s";
+        $this->_db = new \PDO(sprintf($string , Config('DB_HOST') , Config('DB_NAME')) , Config('DB_USER') , Config('DB_PASS'));
     }
 
     /**
-     * query方法
+     * query
+     * @param  [string] $sql [要执行的sql语句]
      * @author Colin <15070091894@163.com>
      */
-    function query($sql){
-        $_result = $this->_db->query($sql);
-        return $_result;
+    public function query($sql){
+        $this->query = $this->_db->query($sql);
+        return $this->query;
     }
 
     /**
      * 选择数据库方法
+     * @param  [string] $tables [数据库名]
      * @author Colin <15070091894@163.com>
      */
-    public function select_db(){}
-
-    /**
-     * 取得上一步 INSERT 操作产生的 ID 
-     * @author Colin <15070091894@163.com>
-     */
-    public function insert_id(){}
-
-    /**
-     * close方法
-     * @author Colin <15070091894@163.com>
-     */
-    function close(){
-        $this->_db->close($this->_db);
+    public function select_db($tables){
+        if($this->_db){
+            return true;
+        }
     }
 
     /**
-     * 返回上一个操作所产生的错误信息
+     * 获取结果集 以数组格式获取
+     * @param  [string] $query [query后的结果集]
      * @author Colin <15070091894@163.com>
      */
-    public function showerror(){}
+    public function fetch_array($query){
+        return $this->query->fetchAll();
+    }
 
     /**
-     * 获取表所有字段
+     * 获取新增的ID
+     * @author Colin <15070091894@163.com>
+     */
+    public function insert_id(){
+        return $this->_db->lastInsertId();
+    }
+
+    /**
+     * 获取执行影响的记录数
+     * @author Colin <15070091894@163.com>
+     */
+    public function affected_rows(){
+
+    }
+
+    /**
+     * 关闭数据库
+     * @author Colin <15070091894@163.com>
+     */
+    public function close(){
+        $this->_db = null;
+    }
+
+    /**
+     * 返回最近的一条sql语句错误信息
+     * @author Colin <15070091894@163.com>
+     */
+    public function showerror(){
+        $info = $this->query->errorInfo();
+        return $info[2];
+    }
+
+    /**
+     * 获取数据库所有字段信息
+     * @param  [string] $table [表名]
      * @author Colin <15070091894@163.com>
      */
     public function getFields($table){
-        $prefix = Config('DB_PREFIX');
-        dump($prefix);
-        //select COLUMN_NAME from information_schema.COLUMNS where table_name = 'your_table_name';
+
     }
 }
 ?>

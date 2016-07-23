@@ -106,7 +106,7 @@ class MyClass{
 		self::loadFunction();
 		$view = APP_PATH . '/' . Config('DEFAULT_MODULE') .Config('TPL_DIR');
 		$cache = ltrim(Config('CACHE_DIR') , './');
-		$dir = array(APP_PATH , Module , Plugs , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , $view , $cache , Common);
+		$dir = array(APP_PATH , Module , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , $view , $cache , Common);
 		foreach ($dir as $key => $value) {
 			//创建文件夹
 			outdir($value);
@@ -124,7 +124,6 @@ class MyClass{
 	public static function loadFunction(){
 		require_once MyClass . '/Common/functions.php';
 		$app = array(CommonDIR.'/functions.php' , Common.'/Common/functions.php');
-		dump($app);
 		require_file($app);
 	}
 

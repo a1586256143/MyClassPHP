@@ -81,13 +81,13 @@ class Parser{
 	public function parForeach(){
 		$patten = '/\{foreach(.*?)\}/';
 		$_endpatten = '/\{\/foreach\}/';
-		$pattenvar = '/\{(.*?)\}/';
+		$pattenvar = '/\{\$(.*?)\}/';
 		if(preg_match($patten,$this->_tpl)){
 			if(preg_match($_endpatten,$this->_tpl)){
 				$this->_tpl = preg_replace($patten,"<?php foreach $1: ?>",$this->_tpl);
 				$this->_tpl = preg_replace($_endpatten,"<?php endforeach; ?>",$this->_tpl);
 				if(preg_match($pattenvar,$this->_tpl)){
-					$this->_tpl = preg_replace($pattenvar,"<?php echo $1; ?>",$this->_tpl);
+					$this->_tpl = preg_replace($pattenvar,"<?php echo \$$1; ?>",$this->_tpl);
 				}
 			}else {
 				E('foreach语句未关闭！'.$this->_tpl);

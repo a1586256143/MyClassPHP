@@ -3,7 +3,7 @@
     Author : Colin,
     Creation time : 2015/8/7 21:07
     FileType : pdo操作类
-    FileName : PDO.php
+    FileName : PDO.class.php
 */
 namespace MyClass\libs\DataBase;
 use MyClass\libs\Db;
@@ -46,8 +46,11 @@ class PDO extends Db{
      * @param  [string] $query [query后的结果集]
      * @author Colin <15070091894@163.com>
      */
-    public function fetch_array($query){
-        return $this->query->fetchAll();
+    public function fetch_array($query = null){
+        if($query){
+            return $query->fetch();
+        }
+        return $this->query->fetch();
     }
 
     /**
@@ -62,8 +65,8 @@ class PDO extends Db{
      * 获取执行影响的记录数
      * @author Colin <15070091894@163.com>
      */
-    public function affected_rows(){
-
+    public function affected_rows($prepare = null){
+        return $prepare->rowCount();
     }
 
     /**

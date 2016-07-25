@@ -3,7 +3,7 @@
     Author : Colin,
     Creation time : 2015/8/7 21:06
     FileType : mysql操作类
-    FileName : Mysql.php
+    FileName : Mysql.class.php
 */
 namespace MyClass\libs\DataBase;
 use MyClass\libs\Db;

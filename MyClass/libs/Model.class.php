@@ -274,7 +274,7 @@ class Model{
 		if($ist == 'ist'){
 			return $this->db->insert_id();
 		}else if($ist == 'upd'){
-			return $this->db->affected_rows();
+			return $this->db->affected_rows($query);
 		}
 		return $query;
 	}
@@ -429,11 +429,11 @@ class Model{
 		$result = $this->ADUP($sql);
 		$data = array();
 		if($is_more){
-			while ($rows = $result->fetch_assoc()){
+			while ($rows = $this->db->fetch_array($result)){
 				$data[] = $rows;
 			}
 		}else{
-			$data = $result->fetch_assoc();
+			$data = $this->db->fetch_array($result);
 		}
 		return $data;
 	}
@@ -595,7 +595,7 @@ class Model{
 			$this->where($field , $value);
 		}
 		$this->Sql = "DELETE FROM ".$this->TablesName.$this->Where.$this->value;
-		return $this->ADUP();
+		return $this->ADUP($this->Sql , 'upd');
 	}
 	
 	/**

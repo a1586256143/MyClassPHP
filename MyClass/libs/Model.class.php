@@ -75,7 +75,7 @@ class Model{
 		//执行判断表方法
 		$this->TablesType($tables);
 		//确认表是否存在
-		$this->db->CheckTables($this->db_prefix.$this->DataName , $this->db_tabs);
+		$this->db->CheckTables($this->db_prefix . $this->DataName , $this->db_tabs);
 		//初始化回调函数的句柄
 		$this->callback = $tables;
 	}
@@ -89,9 +89,9 @@ class Model{
 		//转小写
 		$this->DataName = strtolower($tables);	
 		if(empty($this->TrueTables)){
-			$this->TablesName = $this->db_tabs.'.`'.$this->db_prefix.$this->DataName.'`';
+			$this->TablesName = '`' . $this->db_prefix . $this->DataName . '`';
 		}else {
-			$this->TablesName = $this->db_tabs.'.`'.$this->TrueTables.'`';
+			$this->TablesName = '`' . $this->TrueTables . '`';
 		}
 		$this->from($this->TablesName);
 	}
@@ -101,8 +101,8 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function parTableName($tables){
-		$tablename = myclass_filter(preg_split('/(?=[A-Z])/', $tables));
-		$tablename = implode('_', $tablename);
+		$tablename = myclass_filter(preg_split('/(?=[A-Z])/' , $tables));
+		$tablename = implode('_' , $tablename);
 		return $tablename;
 	}
 	
@@ -124,18 +124,14 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function getFields($tables = null){
-		if(empty($tables)){
-			$tables = $this->DataName;
-		}
+		if(!$tables) $tables = $this->DataName;
 		//缓存字段信息
-		$cache_fields = S($tables.'_field_cache');
-		if(empty($cache_fields)){
+		$fields = S($tables . '_field_cache');
+		if(!$fields){
 			$fields = $this->db->getFields($tables);
-			S($tables.'_field_cache' , $fields);
-			return $fields;
-		}else{
-			return $cache_fields;
+			S($tables . '_field_cache' , $fields);
 		}
+		return $fields;
 	}
 
 	/**
@@ -144,9 +140,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function create($data = array()){
-		if(empty($data)){
-			$data = values('post.');
-		}
+		if(!$data) $data = values('post.');
 		//获取表所有字段
 		$fields = $this->getFields();
 		foreach ($fields as $key => $value) {
@@ -215,7 +209,7 @@ class Model{
 							break;
 						case 'callback':
 							//回调当前模型的一个方法
-							$value[1] = D($this->callback)->$value[1]();
+							$value[1] = $this->$value[1]();
 							break;
 						default:
 							//默认做字符串处理
@@ -269,7 +263,7 @@ class Model{
 			if($this->startTransaction){
 				return false;
 			}
-			E('SQL语句执行错误'.$this->db->showerror());
+			E('SQL语句执行错误' . $this->db->showerror());
 		}
 		if($ist == 'ist'){
 			return $this->db->insert_id();
@@ -295,32 +289,34 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function ParData($type , $array){
-		$_b = '';
-		$_c = '';
+		$setKey = '';
+		$setValue = '';
+		//如果是新增操作
 		if($type == 'ist'){
 			if(is_array($array)){
 				foreach ($array as $key => $value) {
-					$_b .= '`'.$key.'`' . ',';
-					$_c .= "'" . addslashes($value) . "',";
+					$setKey .= '`' . $key . '`' . ',';
+					$setValue .= "'" . addslashes($value) . "',";
 				}
-				$this->ParKey = substr($_b, 0, -1);
-				$this->Parvalue = substr($_c, 0, -1);
+				$this->ParKey = substr($setKey, 0 , -1);
+				$this->Parvalue = substr($setValue, 0 , -1);
 			}else if(is_string($array)){
-				E('解析insert sql 字段失败!'.$this->Sql);
+				E('解析insert sql 字段失败!' . $this->Sql);
 			}
+		//如果是更新操作
 		}else if($type == 'upd'){
 			$pk = $this->getpk();
 			foreach ($array as $key => $value){
 				if($key == $pk){
 					continue;
 				}
-				$_b .= '`'.$key.'`'. '=' ."'". addslashes($value)."'" . ',';
+				$setKey .= '`' . $key . '`=' . addslashes($value) . "',";
 			}
 			//解析主键
 			if($this->Where === null){
 				$this->where($pk , $array[$pk]);
 			}
-			$this->ParKey = ' SET '.substr($_b, 0, -1);
+			$this->ParKey = ' SET '.substr($setKey , 0 , -1);
 		}
 	}
 
@@ -334,7 +330,7 @@ class Model{
 	 */
 	public function where($field , $wherevalue = null , $whereor = null , $sub = '='){
 		$this->Where = null;
-		$_a = '';
+		$tmp = '';
 		$fieldlen = count($field);
 		$i = 0;
 		if($whereor !== null) $this->WhereOR = $whereor;
@@ -350,56 +346,56 @@ class Model{
 					if(is_string($value)){
 						//判断是否为最后一个
 						if($i != $fieldlen){
-							$_a .= "`$key` $sub '$value' $this->WhereOR ";
+							$tmp .= "`$key` $sub '$value' $this->WhereOR ";
 						}else {
-							$_a .= "`$key` $sub '$value'";
+							$tmp .= "`$key` $sub '$value'";
 						}
 					//判断是否为数字
 					}else if(is_numeric($value)){
 						if($i != $fieldlen){
-							$_a .= "`$key` $sub $value $this->WhereOR ";
+							$tmp .= "`$key` $sub $value $this->WhereOR ";
 						}else {
-							$_a .= "`$key` $sub $value";
+							$tmp .= "`$key` $sub $value";
 						}
 					}else if(strpos($key , '.') !== false){
-						$_a .= $key.$sub.$value;
+						$tmp .= $key . $sub . $value;
 					}
-					$this->Where = " WHERE ".$_a;
+					$this->Where = " WHERE " . $tmp;
 					$this->value = '';
 				}
 			}else {
 				//如果字段的长度不大于1条 执行下面
 				foreach ($field as $key => $value){
 					if(is_string($value)){
-						$_a .= "`$key` $sub '$value'";
+						$tmp .= "`$key` $sub '$value'";
 					//判断是否为数字
 					}else if(is_numeric($value)){
-						$_a .= "`$key` $sub $value";
+						$tmp .= "`$key` $sub $value";
 					}else if(strpos($key , '.') !== false){
-						$_a .= $key.$sub.$value;
+						$tmp .= $key . $sub . $value;
 					}
 				}
-				$this->Where =  " WHERE ".$_a;
+				$this->Where =  " WHERE " . $tmp;
 			}
 		}else {
 			//如果字段为数组的时候，那么直接使用遍历
 			//判断是否为数字或字符串
 			if(is_string($wherevalue)){
-				$_a .= "$sub '$wherevalue'";
+				$tmp .= "$sub '$wherevalue'";
 				//查找value中带了()的值 则不加''号
 				if(strpos($wherevalue , '(') !== false || strpos($wherevalue , '.') !== false || strpos($field , '.') !== false){
-					$_a = $sub.$wherevalue;
+					$tmp = $sub . $wherevalue;
 				}
 			//判断是否为数字
 			}else if(is_numeric($wherevalue)){
-				$_a .= $sub.$wherevalue;
+				$tmp .= $sub . $wherevalue;
 			}
 			if(empty($wherevalue)){
-				$this->Where = $field;
+				$this->Where = ' WHERE ' . $field;
 			}else{
-				$this->Where = strpos($field , '.') !== false ? " WHERE $field " :" WHERE `$field` ";
+				$this->Where = strpos($field , '.') !== false ? " WHERE $field " : " WHERE `$field` ";
 			}
-			$this->value = $_a;
+			$this->value = $tmp;
 		}
 		return $this;
 	}
@@ -411,9 +407,8 @@ class Model{
 	public function getpk(){
 		$pk = S('TABLE_PK_FOR_'.$this->DataName);
 		if(empty($pk)){
-			$rows = $this->execute("select COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
-			$pk = S('TABLE_PK_FOR_'.$this->DataName , $rows);
-			return $pk['COLUMN_NAME'];
+			$pk = $this->execute("SELECT COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
+			S('TABLE_PK_FOR_' . $this->DataName , $pk);
 		}
 		return $pk['COLUMN_NAME'];
 	}
@@ -464,9 +459,9 @@ class Model{
 	 */
 	public function getSql(){
 		if($this->Tables != null){
-	        $this->Sql = "SELECT $this->Fields FROM ".$this->Tables.' '.$this->Where.$this->value.$this->Order.$this->Limit;
+	        $this->Sql = "SELECT $this->Fields FROM " . $this->Tables . ' ' . $this->Where . $this->value.$this->Order . $this->Limit;
 	    }else {
-	        $this->Sql = "SELECT $this->Fields ".$this->From.$this->Where.$this->value.$this->Order.$this->Limit;
+	        $this->Sql = "SELECT $this->Fields " . $this->From . $this->Where . $this->value . $this->Order . $this->Limit;
 	    }
 	    return $this->Sql;
 	}
@@ -498,7 +493,7 @@ class Model{
 		if(is_array($values)){
 			$values = implode(',' , $values);
 		}
-		$this->where($field , '('.$values.')' , null , 'in ');
+		$this->where($field , '(' . $values . ')' , null , 'in ');
 		return $this;
 	}
 
@@ -509,7 +504,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function notin($field , $values){
-		$this->where($field , '('.$values.')' , null , 'not in ');
+		$this->where($field , '(' . $values . ')' , null , 'not in ');
 		return $this;
 	}
 
@@ -575,11 +570,11 @@ class Model{
 	 */
 	public function insert($values = null){
 		$values = myclass_filter($values);
-        if(empty($values)){
+        if(!$values){
             $values = $this->data['create'];
         }
 		$this->ParData('ist' , $values);
-		$this->Sql = "INSERT INTO ".$this->TablesName."(".$this->ParKey.") VALUES (".$this->Parvalue.")";
+		$this->Sql = "INSERT INTO " . $this->TablesName . "(" . $this->ParKey . ") VALUES (" . $this->Parvalue . ")";
 		return $this->ADUP($this->Sql , 'ist');
 	}
 	
@@ -594,7 +589,7 @@ class Model{
 		if($this->Where === null){
 			$this->where($field , $value);
 		}
-		$this->Sql = "DELETE FROM ".$this->TablesName.$this->Where.$this->value;
+		$this->Sql = "DELETE FROM " . $this->TablesName . $this->Where . $this->value;
 		return $this->ADUP($this->Sql , 'upd');
 	}
 	
@@ -606,7 +601,7 @@ class Model{
 	 */
 	public function update($field , $value = null){
 		if(is_string($field)){
-			$this->ParKey = ' SET '.'`'.$field.'`'."='".$value."'";
+			$this->ParKey = ' SET ' . '`' . $field . '`' . "='" . $value . "'";
 		}else if(is_array($field)){
 			foreach ($field as $key => $value) {
 				if($value === ''){
@@ -616,7 +611,7 @@ class Model{
 			}
 			$this->ParData('upd',$data);
 		}
-		$this->Sql = "UPDATE ".$this->TablesName.$this->ParKey.$this->Where.$this->value;
+		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $this->Where . $this->value;
 		return $this->ADUP($this->Sql , 'upd');
 	}
 	
@@ -626,7 +621,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function alias($as = 'alias'){
-		$this->Alias = ' AS '.$as;
+		$this->Alias = ' AS ' . $as;
 		return $this;
 	}
 	
@@ -675,7 +670,7 @@ class Model{
 		if(!empty($start)){
 			$start = ($start-1) * $end;
 		}
-		$this->Limit = " LIMIT ".$start.','.$end;
+		$this->Limit = " LIMIT " . $start . ',' . $end;
 		return $this;
 	}
 
@@ -684,7 +679,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function order($field , $desc = null){
-		$this->Order = " ORDER BY ".$field." ".$desc." ";
+		$this->Order = " ORDER BY " . $field . " " . $desc . " ";
 		return $this;
 	}
 
@@ -756,7 +751,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function __call($fun , $param=null){
-		ShowMessage($fun.'()这个方法不存在！');
+		ShowMessage($fun . '()这个方法不存在！');
 	}
 
 	/**
@@ -764,7 +759,7 @@ class Model{
      * @author Colin <15070091894@163.com>
      */
 	static public function __callStatic($fun , $param=null){
-		ShowMessage(__METHOD__.'()这个方法不存在！');
+		ShowMessage(__METHOD__ . '()这个方法不存在！');
 	}
 
 	/**
@@ -772,7 +767,7 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function __invoke(){
-		ShowMessage(__CLASS__.'这不是一个函数');
+		ShowMessage(__CLASS__ . '这不是一个函数');
 	}
 
 	/**
@@ -797,7 +792,7 @@ class Model{
 				continue;
 			}
 			$member = strtolower($match[0]);
-			eval('$this->'.$member.' = "'.$value.'";');
+			eval('$this->' . $member . ' = "' . $value . '";');
 		}
 	}
 }

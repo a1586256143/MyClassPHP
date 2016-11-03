@@ -21,7 +21,7 @@ class Route{
      * 验证路由规则
      * @author Colin <15070091894@163.com>
      */
-    public function CheckRoute(){
+    public function startRoute(){
         if(Config('URL_MODEL') == 1){
             $this->url->urlmodel1();
         }else if(Config('URL_MODEL') == 2){

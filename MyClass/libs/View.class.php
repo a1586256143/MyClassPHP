@@ -39,12 +39,12 @@ class View {
      * 创建index.php 模板
      * @author Colin <15070091894@163.com>
      */
-    public static function createIndex(){
+    public static function createIndex($default){
         $namespace = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
     	$string = "<?php 
 namespace {$namespace}\Controller;
 use MyClass\libs\Controller;
-class IndexController extends Controller{
+class $default extends Controller{
 	public function index(){
 		echo 'Welcome to use MyClassPHP';
 	}

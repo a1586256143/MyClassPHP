@@ -64,8 +64,7 @@ class ObjFactory{
      * @author Colin <15070091894@163.com>
      */
     public static function CreateController($name){
-        $obj = $name.Config('DEFAULT_CONTROLLER_SUFFIX');
-        return new $obj();
+        return new $name();
     }
 
     /**
@@ -74,11 +73,10 @@ class ObjFactory{
      * @author Colin <15070091894@163.com>
      */
     public static function CreateModel($name){
-        $model = $name.Config('DEFAULT_MODEL_SUFFIX');
         $modelexplode = explode('\\', $name);
         //得到最后一个值
         $modelname = array_pop($modelexplode);
-        return new $model($modelname);
+        return new $name($modelname);
     }
 
     /**

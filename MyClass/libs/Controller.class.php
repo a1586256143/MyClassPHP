@@ -37,7 +37,7 @@ class Controller{
 		}
 		$controller = CONTROLLER_NAME ? CONTROLLER_NAME : Config('DEFAULT_CONTROLLER');
 		$module = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
-		$path = APP_PATH . '/' . $module . $this->view->template_dir.$controller.'/'.$FileName.Config('TPL_TYPE');
+		$path = APP_PATH . '/' . $module . $this->view->template_dir . $controller . '/' . $FileName . Config('TPL_TYPE');
 		return $path;
 	}
 

@@ -27,8 +27,6 @@ class Templates{
      */
 	public function assign($var , $value){
 		if(isset($var) && !empty($var)){
-			//相当于 $this->_vars['name'] = 'Colin';
-			//$this->$var = $value;
 			$this->_vars[$var] = $value;
 		}else{
 			E('请设置模板变量名！');
@@ -43,46 +41,27 @@ class Templates{
 	public function display($file){
 		//获取模板名
 		$filename = $this->getTemplateName($file);
-		@list($modules , $controller , $method) = Url::getCurrentUrl();
-
 		//默认控制器和默认方法
-		$default_controller = Config('DEFAULT_CONTROLLER');
-		$default_modules = Config('DEFAULT_MODULE');
-		$default_action = Config('DEFAULT_METHOD');
 		$default_modules2 = defined('CURRENT_MODULE') ? CURRENT_MODULE : $default_modules;
-		$path = APP_PATH . '/' . $modules;
-		//检查默认控制器是否存在
-		if(!file_exists($path.'/Controller/'.$default_controller.'Controller.class.php')){
-		    E($default_controller.'控制器不存在！');
-		}
-
-		$controller = empty($controller) ? $default_controller : $controller;
-		
 		$modules = empty($default_modules2) ? $modules : $default_modules2;
-
 		//设置路径
 		$dirname = APP_PATH . '/' . $modules . $this->template_dir . $controller . '/';
-
 		//编译文件目录
-		$dircname = $this->compile_dir.$modules.'/'.$controller.'/';
-
+		$dircname = $this->compile_dir . $modules . '/' . $controller . '/';
 		//判断编译文件夹和缓存文件夹是否存在
-		$dir = array($this->compile_dir , $this->compile_dir.$modules , $dircname);
-
+		$dir = array($this->compile_dir , $this->compile_dir . $modules , $dircname);
 		//生成文件夹
 		outdir($dir);
-
 		//判断方法目录是否存在
 		if(!is_dir($dirname)){
-			E($dirname.'目录不存在');
+			E($dirname . '目录不存在');
 		}
 		//判断模板文件是否存在
 		if(!file_exists($file)){
-			E($file.'模板文件不存在！');
+			E($file . '模板文件不存在！');
 		}
 		//生成编译文件
-		$parFile = $dircname.md5($filename).$filename.'.php';
-		
+		$parFile = $dircname . md5($filename) . $filename . '.php';
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
 		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($file))){
 			//编译文件的修改时间<tpl模板文件的修改时间

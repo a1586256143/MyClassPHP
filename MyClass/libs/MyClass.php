@@ -6,7 +6,8 @@
 	FileName : MyClass.php
 */
 namespace MyClass\libs;
-class MyClass{	
+class MyClass{
+
 	/**
 	 * 运行方法
 	 * @author Colin <15070091894@163.com>
@@ -47,13 +48,14 @@ class MyClass{
 		foreach ($extra_module as $key => $value) {
 			$patten = "/^$value/";
 			if(preg_match($patten , $ClassName)){
-				$ClassName = preg_replace($patten , ltrim(APP_NAME , './').'\\'.$value, $ClassName);
+				$ClassName = preg_replace($patten , ltrim(APP_NAME , './') . '\\'  .$value, $ClassName);
 			}
 		}
 		if(preg_match("/\\\\/" , $ClassName)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/", "/", $ClassName);
-			require_file(ROOT_PATH.$ClassName.'.class.php');
+
+			require_file(ROOT_PATH . $ClassName . Config('DEFAULT_CLASS_SUFFIX'));
 		}
 	}
 
@@ -69,15 +71,7 @@ class MyClass{
 		$merge = replace_recursive_params(MyClass . '/Conf/config.php' , Common . '/Conf/config.php');
 		//加入配置文件
 		Config($merge);
-		self::userConfig();
-	}
-
-	/**
-	 * 加载用户配置文件
-	 * @author Colin <15070091894@163.com>
-	 */
-	public static function userConfig(){
-		require_once MyClass . '/Common/functions.php';
+		//加载当前模块下的配置文件
 		$modules = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
 		$app = APP_PATH . '/' . $modules . '/Conf/config.php';
 		if(file_exists($app)){
@@ -93,7 +87,7 @@ class MyClass{
 	 */
 	public static function UrlModel(){
 		$route = new Route();
-		$route->CheckRoute();
+		$route->startRoute();
 	}
 	
 	/**
@@ -106,7 +100,18 @@ class MyClass{
 		self::loadFunction();
 		$view = APP_PATH . '/' . Config('DEFAULT_MODULE') .Config('TPL_DIR');
 		$cache = ltrim(Config('CACHE_DIR') , './');
-		$dir = array(APP_PATH , Module , RunTime , ControllerDIR , ModelDIR , ConfDIR , CommonDIR , $view , $cache , Common);
+		$dir = array(
+					APP_PATH , 
+					Module , 
+					RunTime , 
+					ControllerDIR , 
+					ModelDIR , 
+					ConfDIR , 
+					CommonDIR , 
+					$view , 
+					$cache , 
+					Common
+				);
 		foreach ($dir as $key => $value) {
 			//创建文件夹
 			outdir($value);
@@ -134,7 +139,12 @@ class MyClass{
 	public static function setWorks(){
 		$module = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
 		define('Module' , APP_PATH . '/' . $module);
-		$dirnames = array('ControllerDIR' => Module.'/Controller' , 'ModelDIR' => Module.'/Model' , 'ConfDIR' => Module.'/Conf' , 'CommonDIR' => Module.'/Common');
+		$dirnames = array(
+						'ControllerDIR' => Module . '/Controller' , 
+						'ModelDIR' 		=> Module . '/Model' , 
+						'ConfDIR' 		=> Module . '/Conf' , 
+						'CommonDIR' 	=> Module . '/Common'
+					);
 		foreach ($dirnames as $key => $value) {
 			if(!defined($key)){
 				define($key , $value);
@@ -169,7 +179,7 @@ class MyClass{
 	    	if(empty($auto_require_file)){
 	    		return;
 	    	}
-	    	$dir = explode(',',Config('AUTO_REQUIRE_FILE'));
+	    	$dir = explode(',' , Config('AUTO_REQUIRE_FILE'));
 	    	require_file($dir , APP_PATH);
 	    }
 	}
@@ -179,17 +189,15 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function outDefaultFile(){
-		//生成默认的配置文件
-		if(!file_exists(ConfDIR.'/config.php')){
-            file_put_contents(ConfDIR.'/config.php',View::createConfig());
-        }
-        //生成默认的配置文件
-		if(!file_exists(ConfDIR.'/template.php')){
-            file_put_contents(ConfDIR.'/template.php',View::createTemplate());
-        }
-		//生成默认的控制器
-		if(!file_exists(ControllerDIR.'/IndexController.class.php')){
-			file_put_contents(ControllerDIR.'/IndexController.class.php',View::createIndex());
+		$data = array(
+					array(ConfDIR . '/config.php' , View::createConfig()) , 
+					array(ConfDIR . '/template.php' , View::createTemplate()) , 
+					array(ControllerDIR . '/' . Config('DEFAULT_CONTROLLER') . Config('DEFAULT_CLASS_SUFFIX') , View::createIndex(Config('DEFAULT_CONTROLLER')))
+				);
+		foreach ($data as $key => $value) {
+			if(!file_exists($value[0])){
+				file_put_contents($value[0] , $value[1]);
+			}
 		}
 	}
 

@@ -52,23 +52,28 @@ function C($module , $name , $method = null , $param = null){
 	//默认方法
 	if(empty($method)) $method = Config('DEFAULT_METHOD');
 	//文件路径
-	$rootpath = APP_PATH . '/' . $module .'/Controller/';
-	$suffect = Config('DEFAULT_CONTROLLER_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
-	$filepath = $rootpath.$name.$suffect;
+	$rootpathPrint = '%s/%s/%s/';
+	$filepath = sprintf($rootpathPrint , APP_PATH , $module , Config('DEFAULT_CONTROLLER_LAYER')).get_filename($name);
 	//如果不存在
 	if(!file_exists($filepath)){
 		//查找空操作文件
-		if(!file_exists($rootpath . 'Empty' . $suffect)){
+		$empty_name = Config('EMPTY_CONTROLLER');
+		$empty = get_filename(Config('EMPTY_CONTROLLER'));
+		if(!file_exists($rootpath . $empty)){
 			throw new \MyClass\libs\MyError($name.'控制器不存在！');
 		}
-		$name = 'Empty';
+		$name = $empty_name;
 	}
 	//引入命名空间以及目录
 	$name = require_module($name , 'CONTROLLER' , null , $module);
 	//创建控制器
 	$controller = \MyClass\libs\ObjFactory::CreateController($name);
 	if(!method_exists($controller , $method)){
-		throw new \MyClass\libs\MyError($method.'()这个方法不存在');
+		$empty_method = Config('EMPTY_METHOD');
+		if(!method_exists($controller , $empty_method)){
+			throw new \MyClass\libs\MyError($method.'()这个方法不存在');
+		}
+		$method = $empty_method;
 	}
 	//反射
 	$ReflectionMethod = new \ReflectionMethod($controller , $method);
@@ -123,7 +128,7 @@ function D($name = null , $method = null){
 		$name = require_module($name , 'MODEL' , CURRENT_MODULE);
 	}
 	//文件目录
-	$filepath = APP_PATH.'/'.$name.Config('DEFAULT_MODEL_SUFFIX').Config('DEFAULT_CLASS_SUFFIX');
+	$filepath = APP_PATH . '/' . get_filename($name);
 	//文件不存在
 	if(!file_exists(str_replace('\\', '/', $filepath))){
 		//创建系统模型
@@ -543,5 +548,13 @@ function checkSecurity($secur_number = null){
 		return true;
 	}
 	return false;
+}
+
+/**
+ * 获取类名称
+ * @return [type] [description]
+ */
+function get_filename($name){
+	return $name . Config('DEFAULT_CLASS_SUFFIX');
 }
 ?>

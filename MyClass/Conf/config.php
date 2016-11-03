@@ -23,27 +23,26 @@ return array(
 	'URL_MODEL'			=>	2 , 					//URL模式，包含两种  PATHINFO模式，普通模式
 
 	//目录设置
-	'PUBLIC_DIR'		=>	ROOT_PATH.'/Public',	//公共文件地址
-	'LAYOUT_DIR'		=>	'/View/Layout',			//视图公共模块
+	'PUBLIC_DIR'		=>	ROOT_PATH . '/Public',	//公共文件地址
 
 	//session设置
 	'SESSION_START'		=>	1 ,            			//开启session
 
 	//控制器设置
-	'DEFAULT_CONTROLLER_LAYER'  =>  'Controller',   //默认控制器目录名
+	'DEFAULT_CONTROLLER_LAYER'  =>	'Controller',   //默认控制器目录名
 	'DEFAULT_CONTROLLER'		=>	'Index', 		//默认控制器
 	'DEFAULT_MODULE'			=>	'Home', 		//默认模块
 	'DEFAULT_METHOD'			=>	'index', 		//默认方法
-	'DEFAULT_CONTROLLER_SUFFIX' =>  'Controller',   //默认控制器后缀
 	'DEFAULT_CLASS_SUFFIX'		=>	'.class.php', 	//默认类文件后缀
-	'DEFAULT_CONTROLLER_VAR'	=> 'c' , 			//默认控制器变量
-	'DEFAULT_METHOD_VAR' 		=> 'a' , 			//默认方法变量
-	'DEFAULT_MODULE_VAR' 		=> 'm' , 			//默认模块变量
-	'EXTRA_MODULE'				=> array('Common') , //其他模块,用于扩展功能
+	'DEFAULT_CONTROLLER_VAR'	=>	'c' , 			//默认控制器变量
+	'DEFAULT_METHOD_VAR' 		=>	'a' , 			//默认方法变量
+	'DEFAULT_MODULE_VAR' 		=>	'm' , 			//默认模块变量
+	'EXTRA_MODULE'				=>	array('Common') , //其他模块,用于扩展功能
+	'EMPTY_CONTROLLER'			=>	'Empty' , 		//找不到控制器时，自动重定向至该控制器
+	'EMPTY_METHOD'				=>	'_empty' , 		//找不到方法时，自动执行该方法
 
 	//模型设置
-	'DEFAULT_MODEL_LAYER'      	=>  'Model',         //默认模型目录名
-	'DEFAULT_MODEL_SUFFIX'      =>  'Model',        //默认模型器后缀
+	'DEFAULT_MODEL_LAYER'      	=>	'Model',         //默认模型目录名
 
 	//模板引擎设置
 	'TPL_MODEL'			=>	'tpl',					//模板引擎
@@ -54,9 +53,9 @@ return array(
 	'TPL_CONFIG'		=>	array('template_dir' => 'TPL_DIR' , 'compile_dir' => 'TPL_C_DIR' , 'cache_dir' => 'TPL_CACHE'),					//模板配置
 
 	//缓存设置
-	'CACHE_DIR'     	=>	RunTime.'/Cache/', //缓存文件夹
-	'CACHE_DATA_DIR'    =>  RunTime.'/Cache/Data/', //S缓存文件存放目录
-	'CACHE_OUT_PREFIX'	=>	'ca_',   				//缓存文件名生成规则
+	'CACHE_DIR'     	=>	RunTime . '/Cache/', //缓存文件夹
+	'CACHE_DATA_DIR'    =>  RunTime . '/Cache/tmp/', //S缓存文件存放目录
+	'CACHE_OUT_PREFIX'	=>	'tmp_',   				//缓存文件名生成规则
 	'CACHE_OUT_SUFFIX'	=>	'.json',   				//缓存存储后缀
 
 	//上传配置
@@ -66,12 +65,12 @@ return array(
 	'UPLOAD_RANDNAME'	=>  true,                   	//设置是否随机文件名
 
 	//验证码配置
-	'CODE_CHARSET'		=> 'abcdefghkmnprstuvwxyz23456789',//验证码随机因子
-	'CODE_LENGTH'		=> 4,								//验证码长度
-	'CODE_WIDTH'		=> 130,								//验证码宽度
-	'CODE_HEIGHT'		=> 50,								//验证码高度
-	'CODE_FONTSIZE'		=> 20,								//验证码字体大小
-	'CODE_FONTPATH'		=> MyClass.'/libs/include/elephant.ttf',//验证码字体文件存放路径
+	'CODE_CHARSET'		=>	'abcdefghkmnprstuvwxyz23456789',//验证码随机因子
+	'CODE_LENGTH'		=>	4,								//验证码长度
+	'CODE_WIDTH'		=>	130,								//验证码宽度
+	'CODE_HEIGHT'		=>	50,								//验证码高度
+	'CODE_FONTSIZE'		=>	20,								//验证码字体大小
+	'CODE_FONTPATH'		=>	MyClass . '/libs/include/elephant.ttf',//验证码字体文件存放路径
 
 	//时间配置
 	'DATE_DEFAULT_TIMEZONE' => 'PRC',				//默认时区

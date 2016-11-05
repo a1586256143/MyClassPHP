@@ -17,24 +17,24 @@
 	}
 
 	//APP路径
-	define('APP_PATH' , substr(MyClass , 0 , -8).ltrim(APP_NAME , '.'));
+	define('APP_PATH' , substr(MyClass , 0 , -8) . ltrim(APP_NAME , '.'));
 	
 	//核心文件
-	define('Core' , MyClass.'/libs/');
+	define('Core' , MyClass . '/libs/');
 
 	//第三方类库文件目录
-	define('Library' , MyClass.'/Library');
+	define('Library' , MyClass . '/Library');
 
 	//定义运行目录
-	define('RunTime' , APP_PATH.'/RunTime');
+	define('RunTime' , APP_PATH . '/RunTime');
 
 	//公共文件目录
-	define('Common' , APP_NAME.'/Common');
+	define('Common' , APP_NAME . '/Common');
 
 	//定义版本信息
 	define('VERSION' , '2.4');
 
 	//引入MyClass核心文件
-	require_once Core.'MyClass.php';
+	require_once Core . 'MyClass.php';
 	MyClass\libs\MyClass::run();
 ?>

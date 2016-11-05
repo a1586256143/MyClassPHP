@@ -122,6 +122,11 @@ class Url{
             C($module , Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
             exit;
         }
+        //处理方法
+        $request_method = $_SERVER["REQUEST_METHOD"];
+        $request_method == 'POST' ? define('POST' , true) : define('POST' , false);
+        $request_method == 'GET' ? define('GET' , true) : define('GET' , false);
+        
         C($module , $controller , $method , $params);
     }
 

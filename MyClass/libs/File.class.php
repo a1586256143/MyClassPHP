@@ -88,11 +88,14 @@ class File {
 	 * 写入文件
 	 * @param filename 文件名
 	 * @param data 数据
+	 * @param isJson 是否json编码
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function WriteFile($filename , $data){
-		//对数据进行json编码
-		$data = json_encode($data);
+	public function WriteFile($filename , $data , $isJson = true){
+		if($isJson){
+			//对数据进行json编码
+			$data = json_encode($data);
+		}
 		//生成$filename文件
 		$fileobj = file_put_contents($filename, $data);
 		if($fileobj){
@@ -100,6 +103,18 @@ class File {
 		}else{
 			return false;
 		}
+	}
+
+	/**
+	 * 追加文件
+	 * @param filename 文件名
+	 * @param data 数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function AppendFile($filename , $data){
+		$fopen = fopen($filename , 'a');
+		fwrite($fopen , $data);
+		fclose($fopen);
 	}
 
 	/**

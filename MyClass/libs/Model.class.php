@@ -259,6 +259,7 @@ class Model{
 	protected function ADUP($sql = null , $ist = null){
 		$sql = $sql === null ? $this->Sql : $sql;
 		$query = $this->db->query($sql);
+		WriteLog($sql , 'LOG_SQL_FORMAT');
 		if(!$query){
 			if($this->startTransaction){
 				return false;

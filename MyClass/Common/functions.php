@@ -151,6 +151,8 @@ function D($name = null , $method = null){
  */
 function E($message){
 	$debug = MY_DEBUG;
+	//记录日志
+	WriteLog($message);
 	if($debug){
 		throw new \MyClass\libs\MyError($message);
 	}else{
@@ -421,6 +423,26 @@ function S($name , $value = null,$time=0){
 		//读取缓存
 		return $time?$cache->readCache($name,$time):$cache->readCache($name);
 	}
+}
+
+/**
+ * 日志
+ * @author Colin <15070091894@163.com>
+ */
+function WriteLog($message , $logConfigName = 'LOG_NAME_FORMAT'){
+	$logDir = Config('LOGDIR');
+	//创建日志文件夹
+	outdir($logDir);
+	//日志文件名格式
+	$logName = Config($logConfigName);
+	$logName = date($logName , time());
+	//日志后缀
+	$logSuffix = Config('LOG_SUFFIX');
+	$file = new \MyClass\libs\File();
+	$url = getCurrentUrl();
+	$logPath = $logDir . '/' . $logName . $logSuffix;
+	$data = date('[ Y-m-d H:i:s ]') . " $url\r\n$message\r\n";
+	$status = $file->AppendFile($logPath , $data , false);
 }
 
 /**

@@ -112,6 +112,8 @@ class MyError extends \Exception{
         }
         self::$info .= "</li>";
         self::$info .= "</ul></div>";
+        //记录日志
+        WriteLog($message);
     }
 }
 ?>

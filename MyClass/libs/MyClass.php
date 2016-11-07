@@ -22,8 +22,6 @@ class MyClass{
        		MyError::error_traceassstring();
 			//创建项目文件夹
 			self::Dir();
-			//解析表单方法
-			self::formMethod();
 			//视图初始化
 			self::View();
 			//初始化URL模式
@@ -74,13 +72,6 @@ class MyClass{
 		//加载当前模块下的配置文件
 		$modules = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
 		define('Module' , APP_PATH . '/' . $modules);
-		//载入用户自定义配置文件
-		$app = Module . '/Conf/config.php';
-		if(file_exists($app)){
-			$config = require_file($app);
-			$merge = array_replace_recursive(Config() , $config);
-			Config($merge);
-		}
 		//设置默认工作空间目录结构
 		$dirnames = array(
 						'ControllerDIR' => Module . '/Controller' , 
@@ -88,12 +79,19 @@ class MyClass{
 						'ConfDIR' 		=> Module . '/Conf' , 
 						'CommonDIR' 	=> Module . '/Common'
 					);
+		//根据数组的key 生成常量
 		foreach ($dirnames as $key => $value) {
 			if(!defined($key)){
 				define($key , $value);
 			}
 		}
-		//解析常量方法
+		//载入用户自定义配置文件
+		$app = Module . '/Conf/config.php';
+		if(file_exists($app)){
+			$config = require_file($app);
+			$merge = array_replace_recursive(Config() , $config);
+			Config($merge);
+		}
 		//解析session
 	    if(Config('SESSION_START')){
 	        session_start();
@@ -109,7 +107,7 @@ class MyClass{
 	    	require_file($dir , APP_PATH);
 	    }
 	    //引入用户自定义函数库
-		$app = array(CommonDIR.'/functions.php' , Common.'/Common/functions.php');
+		$app = array(CommonDIR . '/functions.php' , Common . '/Common/functions.php');
 		require_file($app);
 	}
 
@@ -127,11 +125,11 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
-		//加载常量
-		self::ReqConst();
-		self::loadFunction();
+		//视图文件夹
 		$view = APP_PATH . '/' . Config('DEFAULT_MODULE') .Config('TPL_DIR');
+		//缓存文件夹
 		$cache = ltrim(Config('CACHE_DIR') , './');
+		//批量创建目录
 		$dir = array(
 					APP_PATH , 
 					Module , 
@@ -150,10 +148,11 @@ class MyClass{
 		}
 		//生成默认的配置文件、控制器
 		$data = array(
-					array(ConfDIR . '/config.php' , View::createConfig()) , 
-					array(ConfDIR . '/template.php' , View::createTemplate()) , 
-					array(ControllerDIR . '/' . Config('DEFAULT_CONTROLLER') . Config('DEFAULT_CLASS_SUFFIX') , View::createIndex(Config('DEFAULT_CONTROLLER')))
+					array(ConfDIR . '/config.php' , View::createConfig()) , 	//配置文件
+					array(ConfDIR . '/template.php' , View::createTemplate()) , //模板配置文件
+					array(ControllerDIR . '/' . Config('DEFAULT_CONTROLLER') . Config('DEFAULT_CLASS_SUFFIX') , View::createIndex(Config('DEFAULT_CONTROLLER')))			//控制器
 				);
+		//批量创建文件
 		foreach ($data as $key => $value) {
 			if(!file_exists($value[0])){
 				file_put_contents($value[0] , $value[1]);

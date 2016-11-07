@@ -14,6 +14,7 @@ return array(
 	'DB_TABS'			=>	'',						//数据库名称
 	'DB_PREFIX'			=>	'',						//数据表前缀
 	'DB_CODE'			=>	'UTF8',					//数据库编码
+	'DB_PORT'			=>	'3306' , 				//数据库端口
 
 	//自动引入(Noice 自动引入会很消耗资源，请谨慎使用)
 	'AUTO_REQUIRE'      => false,                   //自动引入
@@ -48,8 +49,8 @@ return array(
 	'TPL_MODEL'			=>	'tpl',					//模板引擎
 	'TPL_TYPE'			=>	'.html',				//模板类型
 	'TPL_DIR'			=>	'/View/',				//模板文件存放目录
-	'TPL_C_DIR'			=>	RunTime.'/Template_c/',	//编译文件存放目录
-	'TPL_CACHE'         =>  RunTime.'/Template_cache/',      //编译文件文件目录
+	'TPL_C_DIR'			=>	RunTime . '/Template_c/',	//编译文件存放目录
+	'TPL_CACHE'         =>  RunTime . '/Template_cache/',      //编译文件文件目录
 	'TPL_CONFIG'		=>	array('template_dir' => 'TPL_DIR' , 'compile_dir' => 'TPL_C_DIR' , 'cache_dir' => 'TPL_CACHE'),					//模板配置
 
 	//缓存设置
@@ -57,6 +58,12 @@ return array(
 	'CACHE_DATA_DIR'    =>  RunTime . '/Cache/tmp/', //S缓存文件存放目录
 	'CACHE_OUT_PREFIX'	=>	'tmp_',   				//缓存文件名生成规则
 	'CACHE_OUT_SUFFIX'	=>	'.json',   				//缓存存储后缀
+
+	//日志设置
+	'LOGDIR'			=> RunTime . '/Log' , 		//日志文件夹
+	'LOG_NAME_FORMAT'	=> 'Ymd' , 					//日志名称格式，使用date() 参数
+	'LOG_SQL_FORMAT'	=> 'SQLYmd' , 					//SQL日志名称格式，使用date() 参数
+	'LOG_SUFFIX'		=> '.txt' , 				//日志后缀
 
 	//上传配置
 	'UPLOAD_DIR'		=>	'./Upload',				//上传文件的目录

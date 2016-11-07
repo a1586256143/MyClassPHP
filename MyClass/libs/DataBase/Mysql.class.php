@@ -16,7 +16,8 @@ class Mysql extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function connect(){
-        $this->_db = mysql_connect(Config('DB_HOST'),Config('DB_USER'),Config('DB_PASS'));
+        $host = Config('DB_HOST') . ':' . Config('DB_PORT');
+        $this->_db = mysql_connect($host , Config('DB_USER'),Config('DB_PASS'));
         if(!$this->_db){
             throw new \MyClass\libs\MyError(mysql_error());
         }

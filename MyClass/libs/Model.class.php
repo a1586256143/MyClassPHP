@@ -333,71 +333,40 @@ class Model{
 		$this->Where = null;
 		$tmp = '';
 		$fieldlen = count($field);
-		$i = 0;
 		if($whereor !== null) $this->WhereOR = $whereor;
 		if($field == null) return $this;
 		//遍历字段
 		if(is_array($field)){
 			//判断是否为多条数据
-			if(count($field) > 1){
+			if($fieldlen > 1){
 				//遍历字段
+				$i = 0;
 				foreach ($field as $key => $value){
 					$i ++ ;
-					//判断是否为数字或字符串
-					if(is_string($value)){
-						//判断是否为最后一个
-						if($i != $fieldlen){
-							$tmp .= "`$key` $sub '$value' $this->WhereOR ";
-						}else {
-							$tmp .= "`$key` $sub '$value'";
-						}
-					//判断是否为数字
-					}else if(is_numeric($value)){
-						if($i != $fieldlen){
-							$tmp .= "`$key` $sub $value $this->WhereOR ";
-						}else {
-							$tmp .= "`$key` $sub $value";
-						}
-					}else if(strpos($key , '.') !== false){
-						$tmp .= $key . $sub . $value;
+					//处理数组传递区间符号
+					if(is_array($value)){
+						//得到 $value[0] 和 $value[1];
+						list($sub , $tmpValue) = $value;
+						$value = $tmpValue;
 					}
-					$this->Where = " WHERE " . $tmp;
-					$this->value = '';
+					if(strpos($key , '.') !== false){
+						$tmp .= $key . $sub . $value;
+					}else{
+						$tmp .= $i != $fieldlen ? "`$key` $sub '$value' $this->WhereOR " : "`$key` $sub '$value'";
+					}
 				}
 			}else {
 				//如果字段的长度不大于1条 执行下面
 				foreach ($field as $key => $value){
-					if(is_string($value)){
-						$tmp .= "`$key` $sub '$value'";
-					//判断是否为数字
-					}else if(is_numeric($value)){
-						$tmp .= "`$key` $sub $value";
-					}else if(strpos($key , '.') !== false){
-						$tmp .= $key . $sub . $value;
-					}
+					//是否多表操作
+					$tmp .= strpos($key , '.') !== false ? $key . $sub . $value : "`$key` $sub '$value'";
 				}
-				$this->Where =  " WHERE " . $tmp;
 			}
 		}else {
-			//如果字段为数组的时候，那么直接使用遍历
-			//判断是否为数字或字符串
-			if(is_string($wherevalue)){
-				$tmp .= "$sub '$wherevalue'";
-				//查找value中带了()的值 则不加''号
-				if(strpos($wherevalue , '(') !== false || strpos($wherevalue , '.') !== false || strpos($field , '.') !== false){
-					$tmp = $sub . $wherevalue;
-				}
-			//判断是否为数字
-			}else if(is_numeric($wherevalue)){
-				$tmp .= $sub . $wherevalue;
-			}
-			if(empty($wherevalue)){
-				$this->Where = ' WHERE ' . $field;
-			}else{
-				$this->Where = strpos($field , '.') !== false ? " WHERE $field " : " WHERE `$field` ";
-			}
-			$this->value = $tmp;
+			//非数组
+			$tmp = $field;
 		}
+		$this->Where = " WHERE " . $tmp;
 		return $this;
 	}
 
@@ -460,9 +429,9 @@ class Model{
 	 */
 	public function getSql(){
 		if($this->Tables != null){
-	        $this->Sql = "SELECT $this->Fields FROM " . $this->Tables . ' ' . $this->Where . $this->value.$this->Order . $this->Limit;
+	        $this->Sql = "SELECT $this->Fields FROM " . $this->Tables . ' ' . $this->Where . $this->Order . $this->Limit;
 	    }else {
-	        $this->Sql = "SELECT $this->Fields " . $this->From . $this->Where . $this->value . $this->Order . $this->Limit;
+	        $this->Sql = "SELECT $this->Fields " . $this->From . $this->Where . $this->Order . $this->Limit;
 	    }
 	    return $this->Sql;
 	}

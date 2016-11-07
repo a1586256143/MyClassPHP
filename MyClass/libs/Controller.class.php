@@ -35,9 +35,15 @@ class Controller{
 		if(empty($FileName)){
 			$FileName = METHOD_NAME ? METHOD_NAME : Config('DEFAULT_METHOD');
 		}
+		$FileName = ltrim($FileName , '/');
 		$controller = CONTROLLER_NAME ? CONTROLLER_NAME : Config('DEFAULT_CONTROLLER');
 		$module = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
-		$path = APP_PATH . '/' . $module . $this->view->template_dir . $controller . '/' . $FileName . Config('TPL_TYPE');
+		$FileName = $FileName . Config('TPL_TYPE');
+		if(count(explode('/' , $FileName)) > 1){
+			$path = $FileName;
+		}else{
+			$path = APP_PATH . '/' . $module . $this->view->template_dir . $controller . '/' . $FileName;
+		}
 		return $path;
 	}
 
@@ -98,10 +104,17 @@ class Controller{
 	 * @param message  输出信息
      * @author Colin <15070091894@163.com>
 	 */
-	public function MessageTemplate($message){
-		header('Content-Type:text/html;charset=UTF-8');
-		$info = '<div style="width:35%;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;"><dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;"><dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt><dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0">'.$message.'</dd></dl></div>';
-		return $info;
+	public function MessageTemplate($message , $type , $param = array()){
+		$tpl = Config('TPL_' . $type . '_PAGE');
+		if(!$tpl){
+			E('请设置提示载入的页面');
+		}
+		if(count(explode('/' , $tpl)) <= 1){
+			$tpl = MyClass . '/Tpl/' . $tpl;
+		}
+		$this->assign('param' , $param);
+		$this->assign('message' , $message);
+		$this->display($tpl);
 	}
 
 	/**
@@ -112,9 +125,7 @@ class Controller{
      * @author Colin <15070091894@163.com>
      */
 	protected function success($message , $url = null , $time = 3){
-		echo $this->MessageTemplate($message);
-		echo empty($url) ? "<meta http-equiv='refresh' content='$time; url={$_SERVER["HTTP_REFERER"]}' />" : "<meta http-equiv='refresh' content='$time; url=$url' />";
-		exit;
+		$this->MessageTemplate($message , 'SUCCESS' , array('url' => $url , 'time' => $time , 'status' => 1));
 	}
 
 	/**
@@ -125,10 +136,7 @@ class Controller{
      * @author Colin <15070091894@163.com>
      */
 	protected function error($message , $url = null , $time = 3){
-		echo $this->MessageTemplate($message);
-		$time = $time * 1000;
-		echo empty($url) ? "<script>setTimeout(function(){window.history.back()} , $time);</script>" : "<meta http-equiv='refresh' content='$time; url=$url' />";
-		exit;
+		$this->MessageTemplate($message , 'ERROR' , array('url' => $url , 'time' => $time , 'status' => 0));
 	}
 }
 ?>

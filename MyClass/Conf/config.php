@@ -87,5 +87,7 @@ return array(
 
 	//错误处理
 	'ERROR_MESSAGE' 	=> '500，此网站可能正在维护~~~' , //当MY_DEBUG关闭，网页错误时提示信息
+	'TPL_ERROR_PAGE'	=> 'tip' ,					//错误载入页面 ，默认放置 MyClassPHP/Tpl/tpl.html
+	'TPL_SUCCESS_PAGE'	=> 'tip' ,					//成功载入页面 ，默认放置 MyClassPHP/Tpl/tpl.html
 );
 ?>

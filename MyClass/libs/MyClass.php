@@ -77,7 +77,8 @@ class MyClass{
 						'ControllerDIR' => Module . '/Controller' , 
 						'ModelDIR' 		=> Module . '/Model' , 
 						'ConfDIR' 		=> Module . '/Conf' , 
-						'CommonDIR' 	=> Module . '/Common'
+						'CommonDIR' 	=> Module . '/Common' , 
+						'ViewDIR'		=> Module . '/View' , 
 					);
 		//根据数组的key 生成常量
 		foreach ($dirnames as $key => $value) {

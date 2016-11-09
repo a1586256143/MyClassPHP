@@ -20,7 +20,7 @@ class Mysqli extends Db{
         $host = Config('DB_HOST') . ':' . Config('DB_PORT');
         $this->_db = new \mysqli($post,Config('DB_USER'),Config('DB_PASS'));
         if(mysqli_connect_errno()){
-            throw new \MyClass\libs\MyError(mysqli_connect_error());
+            throw new \system\MyError(mysqli_connect_error());
         }
     }
 
@@ -87,8 +87,7 @@ class Mysqli extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function getFields($table){
-        $prefix = Config('DB_PREFIX').$table;
-        //$query = $this->_db->query("SHOW FULL COLUMNS FROM $prefix");
+        $prefix = Config('DB_PREFIX') . $table;
         $query = $this->_db->query("select COLUMN_NAME from information_schema.COLUMNS where table_name = '$prefix'");
         $result = $this->getResult($query);
         foreach ($result as $key => $value) {

@@ -155,7 +155,7 @@ class Parser{
     private function parLibs(){
     	$patten = '/\{:libs\(\'(.*?)\' , \'(.*?)\'\)\}/';
     	if(preg_match($patten, $this->_tpl)){
-    		$this->_tpl = preg_replace($patten, "<?php \$object_$1 = new \MyClass\libs\\\\$1();echo \$object_$1->$2; ?>", $this->_tpl);
+    		$this->_tpl = preg_replace($patten, "<?php \$object_$1 = new \system\\\\$1();echo \$object_$1->$2; ?>", $this->_tpl);
     	}
     }
 
@@ -166,7 +166,7 @@ class Parser{
     public function parLibsStatic(){
     	$patten = '/\{:libsStatic\(\'(.*?)\' , \'(.*?)\'\)\}/';
     	if(preg_match($patten, $this->_tpl)){
-    		$this->_tpl = preg_replace($patten, "<?php echo \MyClass\libs\\\\$1::$2; ?>", $this->_tpl);
+    		$this->_tpl = preg_replace($patten, "<?php echo \system\\\\$1::$2; ?>", $this->_tpl);
     	}
     }
 	

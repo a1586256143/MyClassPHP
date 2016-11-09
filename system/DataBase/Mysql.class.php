@@ -19,7 +19,7 @@ class Mysql extends Db{
         $host = Config('DB_HOST') . ':' . Config('DB_PORT');
         $this->_db = mysql_connect($host , Config('DB_USER'),Config('DB_PASS'));
         if(!$this->_db){
-            throw new \MyClass\libs\MyError(mysql_error());
+            throw new \system\MyError(mysql_error());
         }
     }
 
@@ -88,9 +88,14 @@ class Mysql extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function getFields($table){
-        $prefix = Config('DB_PREFIX');
-        dump($prefix);
-        //select COLUMN_NAME from information_schema.COLUMNS where table_name = 'your_table_name';
+        $prefix = Config('DB_PREFIX') . $table;
+        $query = $this->_db->query("select COLUMN_NAME from information_schema.COLUMNS where table_name = '$prefix'");
+        $result = $this->getResult($query);
+        foreach ($result as $key => $value) {
+            $fields[] = $value['COLUMN_NAME'];
+        }
+        $result = array_values($fields);
+        return $result;
     }
 }
 ?>

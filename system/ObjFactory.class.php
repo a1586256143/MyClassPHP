@@ -94,7 +94,7 @@ class ObjFactory{
      * @author Colin <15070091894@163.com>
      */
     public static function CreateView(){
-        $obj = '\\MyClass\\libs\\View';
+        $obj = '\\system\\View';
         return new $obj();
     }
 

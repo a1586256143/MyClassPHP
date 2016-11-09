@@ -23,7 +23,7 @@ class DataBase{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function __construct(){
-		$this->db = \MyClass\libs\ObjFactory::getIns();
+		$this->db = \system\ObjFactory::getIns();
 		$this->prefix = Config('DB_PREFIX');
 	}
 
@@ -130,7 +130,7 @@ class DataBase{
 	 */
 	public function createFields($fields = array()){
 		if(empty($this->tables)){
-			throw new \MyClass\libs\MyError('请先选择数据库。在进行操作');
+			throw new \system\MyError('请先选择数据库。在进行操作');
 		}
 		$this->attr = $fields;
 		$this->_parse_fieldinfo();
@@ -172,7 +172,7 @@ class DataBase{
 		foreach ($separator as $key => $value) {
 			$query = $this->db->query($value);
 			if(!$query){
-				throw new \MyClass\libs\MyError('sql解析错误：' . $this->db->showerror());
+				throw new \system\MyError('sql解析错误：' . $this->db->showerror());
 			}
 		}
 		return $query;
@@ -214,7 +214,7 @@ class DataBase{
 	protected function merge_sql($field = 'id' , $type = 'int'  , $length = 11 , $null = 'NULL' , $default = null , $comment = null , $extra = null , $separator = null){
 		//检查字段是否存在
 		if(!$this->db->CheckFields($this->tables , $field)){
-			throw new \MyClass\libs\MyError($this->tables . '表中已存在该字段' . $field);
+			throw new \system\MyError($this->tables . '表中已存在该字段' . $field);
 		}
 		//解析null值
 		if(!is_null($null)){

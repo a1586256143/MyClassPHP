@@ -311,7 +311,7 @@ class Model{
 				if($key == $pk){
 					continue;
 				}
-				$setKey .= '`' . $key . '`=' . addslashes($value) . "',";
+				$setKey .= '`' . $key . '`=\'' . addslashes($value) . "',";
 			}
 			//解析主键
 			if($this->Where === null){
@@ -365,6 +365,12 @@ class Model{
 		}else {
 			//非数组
 			$tmp = $field;
+			if($wherevalue){
+				$tmp = $field . " = $wherevalue";
+			}
+			if($wherevalue && $sub){
+				$tmp = $field . " $sub $wherevalue";
+			}
 		}
 		$this->Where = " WHERE " . $tmp;
 		return $this;
@@ -581,7 +587,7 @@ class Model{
 			}
 			$this->ParData('upd',$data);
 		}
-		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $this->Where . $this->value;
+		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $this->Where;
 		return $this->ADUP($this->Sql , 'upd');
 	}
 	

@@ -45,8 +45,14 @@
 				obj.innerHTML = content;
 				if(content <= 0){
 					clearInterval(interval);
+					var href = '{$param['url']}';
 					//跳转
-					window.location.href = hrefObj.href;
+					if(!href){
+						window.history.back(-1);
+					}else{
+						window.location.href = hrefObj.href;
+					}
+					
 				}
 			} , 1000)
 			//放弃跳转

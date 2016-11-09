@@ -61,18 +61,19 @@ class Auth{
 	public function check($uid = null , $model = 1){
 		$auths = $this->getUserAuths($uid);
 		$current = Url::getCurrentUrl();
-		list($module , $controller , $method) = $current;
+		list($controller , $method) = $current;
 		foreach ($auths as $key => $value) {
 			$url = explode( '/' , $value['url']);
-			list($auth_module , $auth_controller , $auth_method) = $url;
+			$auth_method = array_pop($url);
+			$auth_controller = implode('/' , $url);
 			//是否验证其他 不验证，则验证表中的规则
 			if($this->auth_other === false){
 				$auth = D('Auth');
-				if(!$find = $auth->where('url' , implode('/', $current))->find()){
+				if(!$find = $auth->where(array('url' => implode('/', $current)))->find()){
 					return true;
 				}
 			}
-			if($auth_module == $module && $auth_controller == $controller && $auth_method == $method){
+			if($auth_controller == $controller && $auth_method == $method){
 				return true;
 			}
 		}
@@ -89,11 +90,12 @@ class Auth{
 			throw new MyError('请设置权限uid');
 		}
 		//获取用户的权限组
-		$auth_users = D('AuthUsers')->where('uid' , $uid)->find();
+		$auth_users = D('AuthUsers')->where(array('uid' => $uid))->find();
 		//根据权限组查找组权限
 		$auth_group = D('AuthGroup')->where('id' , $auth_users['gid'])->find();
 		//根据权限规则查找对应的权限
-		$auths = D('Auth')->field('url')->in('id' , $auth_group['auths'])->select();
+		$model = D('Auth');
+		$auths = $model->field('url')->in('id' , $auth_group['auths'])->select();
 		return $auths;
 	}
 

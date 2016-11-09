@@ -40,7 +40,7 @@ class Templates{
      */
 	public function display($file){
 		//获取模板名
-		$filename = $this->getTemplateName($file);
+		//$filename = $this->getTemplateName($file);
 		//默认控制器和默认方法
 		$default_modules2 = defined('CURRENT_MODULE') ? CURRENT_MODULE : $default_modules;
 		$modules = empty($default_modules2) ? $modules : $default_modules2;
@@ -61,7 +61,7 @@ class Templates{
 			E($file . '模板文件不存在！');
 		}
 		//生成编译文件
-		$parFile = $dircname . md5($filename) . $filename . '.php';
+		$parFile = $dircname . md5($file) . '.php';
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
 		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($file))){
 			//编译文件的修改时间<tpl模板文件的修改时间
@@ -82,9 +82,11 @@ class Templates{
 	 */
 	protected function getTemplateName($path = null){
 		$explode = explode('/' , $path);
-		$filearray = array_pop($explode);
-		$filename = explode('.' , $filearray);
-		return $filename[0];
+		$filearray[] = array_pop($explode);
+		$filearray[] = array_pop($explode);
+		asort($filearray);
+		$filename = implode('/' , $filearray);
+		return $filename;
 	}
 
 	/**

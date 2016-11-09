@@ -40,7 +40,7 @@ class Controller{
 		$module = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
 		$FileName = $FileName . Config('TPL_TYPE');
 		if(count(explode('/' , $FileName)) > 1){
-			if(count(explode('/' , $FileName)) > 2){
+			if(count(explode('/' , $FileName)) > 3){
 				$path = $FileName;
 			}else{
 				$path = APP_PATH . ltrim($this->view->template_dir , '/') . $FileName;

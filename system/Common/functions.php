@@ -125,7 +125,7 @@ function D($name = null , $method = null){
 	}else{
 		$tables = $name;
 		//引入命名空间以及目录
-		$name = require_module($name , 'MODEL' , CURRENT_MODULE);
+		$name = require_module($name , 'MODEL');
 	}
 	//文件目录
 	$filepath = APP_PATH . '/' . get_filename($name);
@@ -166,6 +166,7 @@ function E($message){
  * @author Colin <15070091894@163.com>
  */
 function U($url , $param = null){
+	$url = ltrim(rtrim($url , '/') , '/');
 	$subject = \system\Url::getCurrentUrl(false , true);
 	$path = $subject['path'];
 	//匹配是否是/开头，如果在/开头则访问模块
@@ -182,7 +183,7 @@ function U($url , $param = null){
 	$params = http_build_query($param);
 	$path = explode('/' , $path);
 	$action = array_pop($path);
-	$url = array_filter(array_unique(array_merge($path , explode('/' , $url))));
+	$url = array_filter(array_unique(array_merge($path)));
 	$filter = '/index.php?c='.implode('/' , $url) . '&a=' . $action;
 	if(null != $param){
 		$filter .= '&' . $params;
@@ -221,7 +222,7 @@ function require_module($name = null , $type = null , $module = null , $modules 
 	}
 	$path = $layer.'\\'.$name;
 	if($module){
-		$path = $layer.'\\'.$name;
+		$path = $layer.'\\' . $module . '\\' .$name;
 	}
 	return str_replace('/' , '\\' , $path);
 }

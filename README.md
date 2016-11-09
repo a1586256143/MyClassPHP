@@ -6,13 +6,13 @@ MyClassPHP是一个开源、免费的学习框架，也被称之为类库包，�
 ###2.简单MVC实现多样控制器
 例如：在/controllers 建立Admin目录，并建立Index.class.php，代码如下
 ```
-    namespace controllers\Admin;
-    use system\Controller;
-    class Index extends Controller{
-        public function index(){
-            echo 'Admin';
-        }
+namespace controllers\Admin;
+use system\Controller;
+class Index extends Controller{
+    public function index(){
+        echo 'Admin';
     }
+}
 ```
     http://域名.com/index.php?c=Admin&a=index 访问该域名则会出现
     Admin

@@ -365,6 +365,12 @@ class Model{
 		}else {
 			//非数组
 			$tmp = $field;
+			if($wherevalue){
+				$tmp = $field . " = $wherevalue";
+			}
+			if($wherevalue && $sub){
+				$tmp = $field . " $sub $wherevalue";
+			}
 		}
 		$this->Where = " WHERE " . $tmp;
 		return $this;

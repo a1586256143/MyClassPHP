@@ -550,7 +550,7 @@ function library($name = null){
  */
 function myclass_filter($array = array()){
 	foreach ($array as $key => $value) {
-		if($value === null || $value === ''){
+		if($value === null || $value === '' || $value === false || $value < 0){
 			continue;
 		}
 		$result[$key] = $value;

@@ -15,8 +15,9 @@ class Index extends Controller{
 }
 然后配置路由 globals/routes.php，追加一条路由
 ```
+```
 '/hello' => '\controllers\Admin\Index@index'
-
+```
 最后完成如下
 ```
 Route::add(array(
@@ -24,8 +25,10 @@ Route::add(array(
     '/hello' => '\controllers\Admin\Index@index'
 ))
 ```
-    http://域名.com/index.php/hello 访问该域名则会出现
-    Admin
+访问路由
+```
+http://域名.com/index.php/hello
+```
 ##主要功能
 ###1.模块化  
     A. 多模块化开发，功能更细化

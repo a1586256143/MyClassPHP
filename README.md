@@ -13,8 +13,9 @@ class Index extends Controller{
         echo 'Admin';
     }
 }
-然后配置路由 globals/routes.php，追加一条路由
 ```
+然后配置路由 globals/routes.php，追加一条路由
+
 ```
 '/hello' => '\controllers\Admin\Index@index'
 ```

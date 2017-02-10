@@ -7,29 +7,6 @@
 */
 
 /**
- * 显示信息
- * @param message 信息内容
- * @author Colin <15070091894@163.com>
- */
-function ShowMessage($message){
-	header('Content-Type:text/html;charset=UTF-8');
-	$info = '<div style="width:400px;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;">';
-	$info .= '<dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;">';
-	$info .= '<dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt>';
-	$info .= '<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0;word-break:break-all;">' . $message . '</dd>';
-	$info .= '<dd style="padding:0px;margin:0px;">';
-	$info .= '<a href="javascript:void(0);" style="font-size:15px;color:#181884;width:100%;text-align:center;display:block;" id="back">';
-	$info .= '[ 返回 ]</a></dd></dd></dl>';
-	$info .= '</div><script>';
-	$info .= 'var back = document.getElementById("back");
-			back.onclick = function(){
-				window.history.back();
-			}';
-	$info .= '</script>';
-	die($info);
-}
-
-/**
  * 返回json数据
  * @param array 要返回的数据
  * @author Colin <15070091894@163.com>
@@ -40,55 +17,21 @@ function ajaxReturn($array = null){
 }
 
 /**
- * C方法实例化控制器
- * @param name 模型名称
- * @author Colin <15070091894@163.com>
+ * 显示视图
+ * @param 文件名
+ * @param 注入模板参数数组例如 array('name'=> 'Colin')
+ * @return [type] [description]
  */
-function C($name , $method = null , $param = null){
-	//默认模块
-	//if(empty($module)) $module = Config('DEFAULT_MODULE');
-	//默认控制器
-	if(empty($name)) $name = Config('DEFAULT_CONTROLLER');
-	//默认方法
-	if(empty($method)) $method = Config('DEFAULT_METHOD');
-	//文件路径
-	$rootpathPrint = '%s%s/';
-	$filepath = sprintf($rootpathPrint , APP_PATH , Config('DEFAULT_CONTROLLER_LAYER')) . get_filename($name);
-	//如果不存在
-	if(!file_exists($filepath)){
-		//查找空操作文件
-		$empty_name = Config('EMPTY_CONTROLLER');
-		$empty = get_filename(Config('EMPTY_CONTROLLER'));
-		if(!file_exists($rootpath . $empty)){
-			throw new \system\MyError($name . '控制器不存在！');
-		}
-		$name = $empty_name;
-	}
-	//引入命名空间以及目录
-	$name = require_module($name , 'CONTROLLER' , null);
-	//创建控制器
-	$controller = \system\ObjFactory::CreateController($name);
-	if(!method_exists($controller , $method)){
-		$empty_method = Config('EMPTY_METHOD');
-		if(!method_exists($controller , $empty_method)){
-			throw new \system\MyError($method.'()这个方法不存在');
-		}
-		$method = $empty_method;
-	}
-	//反射
-	$ReflectionMethod = new \ReflectionMethod($controller , $method);
-	$method_params = $ReflectionMethod->getParameters($method);
-	//处理参数返回
-	$param = array_filter($param);
-	if(!empty($param)){
-		if(!empty($method_params)){
-			foreach ($method_params as $key => $value) {
-				$var[$value->name] = $param[$value->name];
-			}
-			return $ReflectionMethod->invokeArgs($controller , array_filter($var));
+function view($filename , $params = array()){
+	$view = system\View::$view;
+	$filename = $filename . Config('TPL_TYPE');
+	$path = APP_PATH . ltrim($view->template_dir , '/') . $filename;
+	if($params){
+		foreach ($params as $key => $value) {
+			$view->assign($key , $value);
 		}
 	}
-	return $controller->$method();
+	$view->display($path);
 }
 
 /**
@@ -158,73 +101,6 @@ function E($message){
 	}else{
 		throw new \system\MyError(Config('ERROR_MESSAGE'));
 	}
-}
-
-/**
- * 跳转方法
- * @param string $url 地址  U('/Home/Index/index') 或 U('Index/index')
- * @author Colin <15070091894@163.com>
- */
-function U($url , $param = null){
-	$url = ltrim(rtrim($url , '/') , '/');
-	$subject = \system\Url::getCurrentUrl(false , true);
-	$path = $subject['path'];
-	//匹配是否是/开头，如果在/开头则访问模块
-	if(strpos($url , '/') == 0){	
-		preg_match("/\/([\w]+)\//" , $url , $match);
-		if(!$match[0]){
-			$match[0] = $modules;
-		}
-		//$path = preg_replace("/\/([\w]+)\//", $match[1] . '/' , $path);
-		$path = $url;
-	}else{
-		$path = $url;
-	}
-	$params = http_build_query($param);
-	$path = explode('/' , $path);
-	$action = array_pop($path);
-	$url = array_filter(array_unique(array_merge($path)));
-	$filter = '/index.php?c='.implode('/' , $url) . '&a=' . $action;
-	if(null != $param){
-		$filter .= '&' . $params;
-	}
-	return $filter;
-}
-
-/**
- * 解析U函数所需的指定URL格式，例如 array('id' => 1 , 'user' => 'admin')
- * @param  array $param 需要解析的数组格式
- * @author Colin <15070091894@163.com>
- */
-function params($param = null){
-	if(null == $param && !is_array($param)){
-		return '';
-	}
-	$params = '';
-	foreach($param as $key => $value){
-		$params .= $key . '/' . $value . '/';
-	}
-	return '/' . substr($params , 0 , -1);
-}
-
-/**
- * 获取模块名生成模块路径
- * @param name 模型名称
- * @param type 类型
- * @param path 自定义引入路径
- * @param modules 模块
- * @author Colin <15070091894@163.com>
- */
-function require_module($name = null , $type = null , $module = null , $modules = null){
-	$layer = Config('DEFAULT_'.$type.'_LAYER');
-	if(!$modules){
-		$modules = Config('DEFAULT_MODULE');
-	}
-	$path = $layer.'\\'.$name;
-	if($module){
-		$path = $layer.'\\' . $module . '\\' .$name;
-	}
-	return str_replace('/' , '\\' , $path);
 }
 
 /**
@@ -579,5 +455,28 @@ function checkSecurity($secur_number = null){
  */
 function get_filename($name){
 	return $name . Config('DEFAULT_CLASS_SUFFIX');
+}
+
+/**
+ * 显示信息
+ * @param message 信息内容
+ * @author Colin <15070091894@163.com>
+ */
+function ShowMessage($message){
+	header('Content-Type:text/html;charset=UTF-8');
+	$info = '<div style="width:400px;height:30%;margin:0 auto;font-size:25px;color:#000;font-weight:bold;">';
+	$info .= '<dl style="padding:0px;margin:0px;width:100%;height:100%;border:1px solid #ccc;">';
+	$info .= '<dt style="padding:0px;margin:0px;border-bottom:1px solid #ccc;line-height:50px;font-size:20px;text-align:center;background:#efefef;">MyClass提示信息</dt>';
+	$info .= '<dd style="padding:0px;width:100%;line-height:25px;font-size:17px;text-align:center;text-indent:0px;margin:0px;padding:30px 0;word-break:break-all;">' . $message . '</dd>';
+	$info .= '<dd style="padding:0px;margin:0px;">';
+	$info .= '<a href="javascript:void(0);" style="font-size:15px;color:#181884;width:100%;text-align:center;display:block;" id="back">';
+	$info .= '[ 返回 ]</a></dd></dd></dl>';
+	$info .= '</div><script>';
+	$info .= 'var back = document.getElementById("back");
+			back.onclick = function(){
+				window.history.back();
+			}';
+	$info .= '</script>';
+	die($info);
 }
 ?>

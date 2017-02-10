@@ -24,6 +24,34 @@ class Route{
      */
     public static function add($item){
         self::$routes = $item;
+        self::parseRoutes();
+    }
+
+    /**
+     * 路由分组
+     * @return [type] [description]
+     */
+    public static function group($groupName , $attr = array()){
+        $parse_url = Url::parseUrl();
+        //处理attr路由规则
+        if(!$attr || !$attr['routes']){
+            E("请设置 $groupName 路由组的属性");
+        }
+        //给$groupName增加/
+        $groupName = '/' . ltrim($groupName , '/');
+        foreach ($attr['routes'] as $key => $value) {
+            //给key 增加 /
+            $key = '/' . ltrim($key , '/');
+            self::$routes[$groupName . $key] = $value;
+        }
+        self::parseRoutes();
+    }
+
+    /**
+     * 解析路由
+     * @return [type] [description]
+     */
+    public static function parseRoutes(){
         $parse_url = Url::parseUrl();
         if(array_key_exists($parse_url , self::$routes)){
             $controllerOrAction = explode('@' , self::$routes[$parse_url]);

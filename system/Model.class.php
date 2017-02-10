@@ -24,9 +24,9 @@ class Model{
 	//数据表判断后存放的字段
 	protected $DataNameName = '';
 	//where字段
-	protected $Where = null;
+	protected $Where = array();
 	//where value 
-	protected $value = null;
+	protected $value = array();
 	//where 条件的 OR and
 	protected $WhereOR = "AND";
 	//sql语句
@@ -49,6 +49,8 @@ class Model{
 	protected $data = array();
 	//回调时使用的操作句柄
 	protected $callback = '';
+	//join
+	protected $Join = array();
 	//新增时操作
 	const MODEL_INSERT = 1;
 	//修改时操作
@@ -87,12 +89,19 @@ class Model{
 	protected function TablesType($tables){
 		$tables = $this->parTableName($tables);
 		//转小写
-		$this->DataName = strtolower($tables);	
+		$this->DataName = strtolower($tables);
+		//空格转换
+		$spaceIndex = strpos($this->DataName , ' ');
+		if($spaceIndex !== false){
+			$as = substr($this->DataName , $spaceIndex);
+			$this->DataName = substr($this->DataName , 0 , $spaceIndex);
+		}
 		if(empty($this->TrueTables)){
 			$this->TablesName = '`' . $this->db_prefix . $this->DataName . '`';
 		}else {
 			$this->TablesName = '`' . $this->TrueTables . '`';
 		}
+		$this->TablesName = $this->TablesName . $as;
 		$this->from($this->TablesName);
 	}
 
@@ -242,12 +251,35 @@ class Model{
 	}
 
 	/**
+	 * 解析@ 替换成表前缀，
+	 * @param  [type] $data [description]
+	 * @return [type]       [description]
+	 */
+	protected function _parse_prefix($data = null){
+		//处理表前缀
+		if(strpos($data , '@') !== false){
+			$data = str_replace('@' , $this->db_prefix , $data);
+		}
+		return $data;
+	}
+
+	/**
+	 * 清理where条件和join
+	 * @return [type] [description]
+	 */
+	protected function _clearThis(){
+		$this->Where = [];
+		$this->Join = [];
+	}
+
+	/**
 	 * From函数
 	 * @param  tables 表名
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function from($tables = null){
 		$tables = $tables === null ? $this->TablesName : $tables;
+		$tables = $this->_parse_prefix($tables);
 		$this->From = ' FROM ' . $tables;
 		return $this;
 	}
@@ -258,6 +290,7 @@ class Model{
 	 */
 	protected function ADUP($sql = null , $ist = null){
 		$sql = $sql === null ? $this->Sql : $sql;
+		$this->_clearThis();
 		$query = $this->db->query($sql);
 		WriteLog($sql , 'LOG_SQL_FORMAT');
 		if(!$query){
@@ -322,6 +355,34 @@ class Model{
 	}
 
 	/**
+	 * 解析where参数
+	 * @return [type] [description]
+	 */
+	protected function parseWhere($field = null , $showOr = false){
+		//遍历字段
+		foreach ($field as $key => $value){
+			//处理数组传递区间符号
+			if(is_array($value)){
+				//得到 $value[0] 和 $value[1];
+				list($sub , $tmpValue) = $value;
+				//增加一个空格
+				$sub = ' ' . $sub . ' ';
+				$value = $tmpValue;
+			}
+			if(strpos($key , '.') !== false){
+				//处理使用array('p.name' => '工' , 'p.id' => 111) 中文''问题
+				$value = is_numeric($value) ? $value : "'$value'";
+				$tmp .= $key . $sub . $value . ' ' . $this->WhereOR . ' ';
+			}else{
+				$tmp .= "`$key` $sub '$value' $this->WhereOR ";
+			}
+		}
+		$end = strlen($this->WhereOR) + 1;
+		$tmp = mb_substr($tmp , 0 , -$end , 'utf-8');
+		return array('tmp' => $tmp , 'value' => $value , 'sub' => $sub);
+	}
+
+	/**
 	 * 条件
 	 * @param fuild 字段名称
 	 * @param wherevalue 字段值
@@ -330,8 +391,6 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function where($field , $wherevalue = null , $whereor = null , $sub = '='){
-		$this->Where = null;
-		$tmp = '';
 		$fieldlen = count($field);
 		if($whereor !== null) $this->WhereOR = $whereor;
 		if($field == null) return $this;
@@ -339,28 +398,9 @@ class Model{
 		if(is_array($field)){
 			//判断是否为多条数据
 			if($fieldlen > 1){
-				//遍历字段
-				$i = 0;
-				foreach ($field as $key => $value){
-					$i ++ ;
-					//处理数组传递区间符号
-					if(is_array($value)){
-						//得到 $value[0] 和 $value[1];
-						list($sub , $tmpValue) = $value;
-						$value = $tmpValue;
-					}
-					if(strpos($key , '.') !== false){
-						$tmp .= $key . $sub . $value;
-					}else{
-						$tmp .= $i != $fieldlen ? "`$key` $sub '$value' $this->WhereOR " : "`$key` $sub '$value'";
-					}
-				}
+				extract($this->parseWhere($field , true));
 			}else {
-				//如果字段的长度不大于1条 执行下面
-				foreach ($field as $key => $value){
-					//是否多表操作
-					$tmp .= strpos($key , '.') !== false ? $key . $sub . $value : "`$key` $sub '$value'";
-				}
+				extract($this->parseWhere($field , false));
 			}
 		}else {
 			//非数组
@@ -372,7 +412,7 @@ class Model{
 				$tmp = $field . " $sub $wherevalue";
 			}
 		}
-		$this->Where = " WHERE " . $tmp;
+		$this->Where[] = $tmp;
 		return $this;
 	}
 
@@ -409,7 +449,6 @@ class Model{
 		return $data;
 	}
 
-
 	/**
 	 * 执行源生的sql语句
 	 * @param sql sql语句
@@ -417,6 +456,7 @@ class Model{
 	 */
 	public function query($sql = null){
 		$sql = $sql === null ? $this->Sql : $sql;
+		$this->Where = array();
 		return $this->getResult($sql);
 	}
 
@@ -435,10 +475,12 @@ class Model{
 	 */
 	public function getSql(){
 		if($this->Tables != null){
-	        $this->Sql = "SELECT $this->Fields FROM " . $this->Tables . ' ' . $this->Where . $this->Order . $this->Limit;
+	        $prefix = "SELECT $this->Fields FROM " . $this->Tables . $this->Alias;
 	    }else {
-	        $this->Sql = "SELECT $this->Fields " . $this->From . $this->Where . $this->Order . $this->Limit;
+	        $prefix = "SELECT $this->Fields " . $this->From . $this->Alias;
 	    }
+	    $this->Sql = $prefix . implode(' ' , $this->Join) . ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where) . $this->Order . $this->Limit;
+	    dump($this->Sql);
 	    return $this->Sql;
 	}
 
@@ -454,7 +496,11 @@ class Model{
 	 * 查询一条数据
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function find(){
+	public function find($pk = null){
+		if($pk){
+			$value = is_string($pk) ? "'$pk'" : $pk;
+			$this->Where = ' WHERE ' . $this->getPk() . ' = ' . $value;
+		}
 		$this->getSql();
 		return $this->getResult();
 	}
@@ -590,6 +636,16 @@ class Model{
 		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $this->Where;
 		return $this->ADUP($this->Sql , 'upd');
 	}
+
+	/**
+	 * 左连接
+	 * @return [type] [description]
+	 */
+	public function join($join , $method = 'LEFT'){
+		$join = $this->_parse_prefix($join);
+		$this->Join[] = ' ' . $method . ' JOIN ' . $join;
+		return $this;
+	}
 	
 	/**
 	 * 别名
@@ -643,10 +699,15 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function limit($start , $end = null){
-		if(!empty($start)){
-			$start = ($start-1) * $end;
+		if(!$end){
+			$rows = '0,' . $start;
+		}else{
+			// if(!empty($start)){
+			// 	$start = ($start-1) * $end;
+			// }
+			$rows = $start . ',' . $end;
 		}
-		$this->Limit = " LIMIT " . $start . ',' . $end;
+		$this->Limit = " LIMIT " . $rows;
 		return $this;
 	}
 

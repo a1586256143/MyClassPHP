@@ -6,45 +6,13 @@
     FileName :Controller.class.php
 */
 namespace system;
-class Controller{
-	protected $view;
-	
+class Controller{	
 	/**
      * 初始化函数
      * @author Colin <15070091894@163.com>
      */
 	public function __construct(){
-		$this->view = View::$view;
-	}
-
-	/**
-     * display函数
-     * @param $fileName  要被调用的视图文件名
-     * @author Colin <15070091894@163.com>
-     */
-	protected function display($fileName = null){
-		$fileName = $this->getFilenameOrPath($fileName);
-		$this->view->display($fileName);
-	}
-
-	/**
-	 * 获取文件名以及路径
-	 * @author Colin <15070091894@163.com>
-	 */
-	protected function getFilenameOrPath($FileName){
-		$FileName = $FileName . Config('TPL_TYPE');
-		$path = APP_PATH . ltrim($this->view->template_dir , '/') . $FileName;
-		return $path;
-	}
-
-	/**
-     * 注入变量
-     * @param name  模板中要被输出的变量名
-     * @param value  在模板中输出的值
-     * @author Colin <15070091894@163.com>
-     */
-	protected function assign($name , $value){
-		$this->view->assign($name , $value);
+		
 	}
 
 	/**

@@ -678,6 +678,8 @@ class Model{
 	public function limit($start , $end = 1){
 		if(!empty($start)){
 			$start = ($start-1) * $end;
+		}else{
+			$start = 0;
 		}
 		$this->Limit = " LIMIT " . $start . ',' . $end;
 		return $this;

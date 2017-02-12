@@ -29,6 +29,7 @@ class Parser{
 				if(!function_exists($match[1])){
 					throw new \system\MyError($match[1] . '() 这个方法不存在');
 				}
+				return "<?php echo " . $matches[1] ." ?>";
 			},$this->_tpl);
 		}
 	}

@@ -427,6 +427,26 @@ function maps($item , $item2){
 }
 
 /**
+ * array_walk转换换成html标签属性
+ * @return [type] [description]
+ */
+function walkParams(&$item , $key , $value){
+	$item = $key . '="' . $item . '" ';
+}
+
+/**
+ * 把数组转换成html标签属性
+ * @param  [type] $attrs         属性值数组
+ * @param  [type] $walk_function 回掉函数
+ * @return [type]                [description]
+ */
+function walkFormAttr($attrs , $walk_function = 'walkParams'){
+	array_walk($attrs , $walk_function);
+	$attr = implode('' , $attrs);
+	return $attr;
+}
+
+/**
  * 显示信息
  * @param message 信息内容
  * @author Colin <15070091894@163.com>

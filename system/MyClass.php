@@ -85,6 +85,8 @@ class MyClass{
 		$cache = '/' . ltrim(Config('CACHE_DIR') , './');
 		//缓存临时文件
 		$cacheTmp = '/' . ltrim(Config('CACHE_DATA_DIR') , './');
+		//更新文件权限
+		shell_exec('chmod -R +rw ' . APP_PATH);
 		//批量创建目录
 		$dir = array(
 					APP_PATH , 				//应用路径

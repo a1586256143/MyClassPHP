@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-1
-	FileType : MyClassPHP引导类
-	FileName : MyClass.php
-*/
+/**
+ * 主体引导
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class MyClass{
 
@@ -25,7 +23,7 @@ class MyClass{
 			//视图初始化
 			self::View();
 			//初始化路由
-			Route::init();
+			self::initRoute();
 		}catch (MyError $m){
 			die($m);
 		}
@@ -50,7 +48,7 @@ class MyClass{
 	 */
 	public static function loadConfig(){
 		//DEBUG
-		if(!defined('MY_DEBUG')) define('MY_DEBUG' , true);
+		if(!defined('Debug')) define('Debug' , true);
 		//载入函数库文件
 		require_once CommonDIR . '/functions.php';
 		//合并config文件内容
@@ -73,7 +71,7 @@ class MyClass{
 	    if(Config('SESSION_START')){
 	        session_start();
 	    }
-	    //引入用户自定义函数库
+	    //加载全部配置文件
 		$app = array(CommonDIR . '/functions.php' , Common . '/functions.php');
 		require_file($app);
 	}
@@ -120,10 +118,26 @@ class MyClass{
 	}
 
 	/**
+	 * 初始化路由
+	 * @author Colin <15070091894@163.com>
+	 * @return [type] [description]
+	 */
+	public static function initRoute(){
+		//加载配置文件
+		$requires = array(Common . '/routes.php' , Common . '/csrf.php');
+		//批量引入
+		require_file($requires);
+		//执行路由
+		Route\Route::init();
+	}
+
+	/**
 	 * 视图初始化
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function View(){
+		//加载配置文件
+		require_file(Common . '/template.php');
 		//初始化视图工厂
 		View::init(Config('TPL_MODEL') , Config('TPL_CONFIG'));
 	}

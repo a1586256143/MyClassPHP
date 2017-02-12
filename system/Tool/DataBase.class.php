@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2016/3/15 12:54
-	FileType :数据库工具类,不支持切换数据库操作
-	FileName :DataBase.class.php
-*/
+/**
+ * 数据库工具,不支持切换数据库操作
+ * @author Colin <15070091894@163.com>
+ */
 namespace system\Tool;
 class DataBase{
 	protected $db;							//数据库操作句柄

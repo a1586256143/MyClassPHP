@@ -1,11 +1,8 @@
 <?php
-
-/*
-    Author : Colin,
-    Creation time : 2015/8/2 16:46
-    FileType :
-    FileName : MyError.class.php
-*/
+/**
+ * 错误处理
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class MyError extends \Exception{
     protected static $info;
@@ -16,8 +13,8 @@ class MyError extends \Exception{
      */
     public function __construct($message) {
         $this->message = $message;
-        $this->file = MY_DEBUG ? $this->file : '未知';
-        $this->line = MY_DEBUG ? $this->line : '未知';
+        $this->file = Debug ? $this->file : '未知';
+        $this->line = Debug ? $this->line : '未知';
     }
 
     /**
@@ -44,7 +41,7 @@ class MyError extends \Exception{
         if (!(error_reporting() & $errno)) {
             return;
         }
-        if(MY_DEBUG){
+        if(Debug){
             self::info_initialize($errno , $errstr , $errfile , $errline , $detail);
         }else{
             self::info_initialize(7 , Config('ERROR_MESSAGE') , '未知' , '未知' , null);
@@ -80,7 +77,6 @@ class MyError extends \Exception{
      */
     protected static function set_error_show(){
        ini_set('display_errors', 'Off');
-       // MY_DEBUG ? ini_set('display_errors', 'On') : ini_set('display_errors', 'Off');
     }
 
     /**
@@ -101,7 +97,7 @@ class MyError extends \Exception{
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误文件：" . $file . "</li>";
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误行数：" . $line . "</li>";
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>";
-        if(MY_DEBUG){
+        if(Debug){
             $string = array_filter(explode("#" , $detail));
             if(is_array($string)){
                 foreach ($string as $key => $value) {

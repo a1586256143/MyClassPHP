@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-1 10:30:38
-	FileType : 视图类
-	FileName : View.class.php
-*/
+/**
+ * 视图显示
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class View {
 	//静态成员

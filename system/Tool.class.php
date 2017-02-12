@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-13
-	FileType : 工具类
-	FileName : Tool.class.php
-*/
+/**
+ * 工具
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Tool {
 	/**

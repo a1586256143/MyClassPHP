@@ -1,18 +1,45 @@
 <?php
-/*
-    Author : Colin,
-    Creation time : 2015-8-1 10:30:21
-    FileType :控制器父类
-    FileName :Controller.class.php
-*/
+/**
+ * 基础类，处理视图数据
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
-class Controller{	
+class Base{	
+	//是否get
+	protected static $is_get;
+	//是否post
+	protected static $is_post;
+	//存储session
+	protected static $session;
+	//存储缓存
+	protected static $cache;
+	//存储get字段
+	protected static $get;
+	//存储post字段
+	protected static $post;
+	//视图
+	protected static $view;
+
 	/**
      * 初始化函数
      * @author Colin <15070091894@163.com>
      */
 	public function __construct(){
-		
+		self::init();
+	}
+
+	/**
+	 * 初始化
+	 * @return [type] [description]
+	 */
+	protected static function init(){
+		self::$view = View::$view;
+		self::$is_get = GET;
+		self::$is_post = POST;
+		self::$session = session();
+		self::$cache = S();
+		self::$get = values('get.');
+		self::$post = values('post.');
 	}
 
 	/**
@@ -46,6 +73,21 @@ class Controller{
 	}
 
 	/**
+	 * 显示视图
+	 * @return [type] [description]
+	 */
+	protected function view($filename , $params){
+		$filename = $filename . Config('TPL_TYPE');
+		$path = APP_PATH . ltrim(self::$view->template_dir , '/') . $filename;
+		if($params){
+			foreach ($params as $key => $value) {
+				self::$view->assign($key , $value);
+			}
+		}
+		self::$view->display($path);
+	}
+
+	/**
 	 * 提示信息模板
 	 * @param message  输出信息
      * @author Colin <15070091894@163.com>
@@ -58,9 +100,9 @@ class Controller{
 		if(count(explode('/' , $tpl)) <= 1){
 			$tpl = MyClass . '/Tpl/' . $tpl;
 		}
-		$this->assign('param' , $param);
-		$this->assign('message' , $message);
-		$this->display($tpl);
+		self::$view->assign('param' , $param);
+		self::$view->assign('message' , $message);
+		self::$view->display($tpl);
 	}
 
 	/**

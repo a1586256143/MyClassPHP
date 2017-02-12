@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-1 10:30:21
-	FileType :模板解析类
-	FileName :Parser.class.php
-*/
+/**
+ * 模板解析
+ * @author Colin <15070091894@163.com>
+ */
 namespace system\Templates\MyTemplate;
 use system\MyError;
 class Parser{

@@ -1,21 +1,19 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-1 10:30:21
-	FileType :验证码类
-	FileName :Code.class.php
-*/
+/**
+ * 验证码
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Code {
 	private $charset = 'abcdefghkmnprstuvwxyz23456789';	//随机因子
-	private $code;							//验证码
-	private $codelen = 4;					//验证码长度
-	private $width = 130;					//宽度
-	private $height = 50;					//高度
-	private $img;							//图形资源句柄
-	private $font;							//指定的字体
-	private $fontsize = 20;					//指定字体大小
-	private $fontcolor;						//指定字体颜色
+	private $code;										//验证码
+	private $codelen = 4;								//验证码长度
+	private $width = 130;								//宽度
+	private $height = 50;								//高度
+	private $img;										//图形资源句柄
+	private $font;										//指定的字体
+	private $fontsize = 20;								//指定字体大小
+	private $fontcolor;									//指定字体颜色
 	
 	//构造方法初始化
 	public function __construct() {

@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-1 10:30:21
-	FileType :模板类
-	FileName :Templets.class.php
-*/
+/**
+ * 模板
+ * @author Colin <15070091894@163.com>
+ */
 namespace system\Templates\MyTemplate;
 use system\MyError;
 use system\ObjFactory;

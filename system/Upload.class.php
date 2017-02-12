@@ -1,10 +1,8 @@
 <?php
-/*
-    Author : Major,
-    Creation time : 2016/1/12 20:14
-    FileType :上传处理类
-    FileName : Upload.class.php
-*/
+/**
+ * 上传处理
+ * @author Major
+ */
 namespace system;
 class Upload{
 	public $path;						//上传文件保存路径

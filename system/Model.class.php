@@ -1,78 +1,56 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-7-31 09:18:38
-	FileType : Model类
-	FileName : Model.class.php
-*/
+/**
+ * 模型操作
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Model{
-	//数据库句柄
-	protected $db = '';
-	//获取数据表前缀
-	protected $db_prefix = '';
-	//获取数据库名
-	protected $DataName = '';
-	//多表查询数据库名，必须带数据前缀
-	protected $Tables;
-	//From表名
-	protected $From;
-	//多表查询字段名
-	protected $Fields = '*';
-	//数据表的真实名字
-	protected $TrueTables = '';
-	//数据表判断后存放的字段
-	protected $DataNameName = '';
-	//where字段
-	protected $Where = array();
-	//where value 
-	protected $value = array();
-	//where 条件的 OR and
-	protected $WhereOR = "AND";
-	//sql语句
-	protected $Sql = '';
-	//解析后存放的字段
-	protected $ParKey = '';
-	//解析后存放的字段
-	protected $Parvalue = '';
-	//字符别名
-	protected $Alias = '';
-	//limit
-	protected $Limit = '';
-	//order
-	protected $Order = '';
-	//自动完成
-	protected $auto = array();
-	//自动验证
-	protected $validate = array();
-	//保存数据
-	protected $data = array();
-	//回调时使用的操作句柄
-	protected $callback = '';
-	//join
-	protected $Join = array();
-	//新增时操作
-	const MODEL_INSERT = 1;
-	//修改时操作
-	const MODEL_UPDATE = 2;
-	//所有操作
-	const MODEL_BOTH = 3;
-	//开启事务
-	protected $startTransaction = 0;
+	protected $db = '';					//数据库句柄
+	protected $db_prefix = '';			//获取数据表前缀
+	protected $DataName = '';			//获取数据库名
+	protected $Tables;					//多表查询数据库名，必须带数据前缀
+	protected $TableName = '';
+	protected $From;					//From表名
+	protected $Fields = '*';			//多表查询字段名
+	protected $TrueTables = '';			//数据表的真实名字
+	protected $DataNameName = '';		//数据表判断后存放的字段
+	protected $Where = array();			//where字段
+	protected $value = array();			//where value 
+	protected $WhereOR = "AND";			//where 条件的 OR and
+	protected $Sql = '';				//sql语句
+	protected $ParKey = '';				//解析后存放的字段
+	protected $Parvalue = '';			//解析后存放的字段
+	protected $Alias = '';				//字符别名
+	protected $Limit = '';				//limit
+	protected $Order = '';				//order
+	protected $auto = array();			//自动完成
+	protected $validate = array();		//自动验证
+	protected $data = array();			//保存数据
+	protected $callback = '';			//回调时使用的操作句柄
+	protected $Join = array();			//join
+	protected $startTransaction = 0;	//开启事务
+	const MODEL_INSERT = 1;				//新增时操作
+	const MODEL_UPDATE = 2;				//修改时操作
+	const MODEL_BOTH = 3;				//所有操作
 	
 	/**
 	 * 构造方法
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function __construct($tables = null){
+	final public function __construct($tables = null){
 		//设置类成员
 		self::setClassMember();
 		//数据库信息是否填写
 		self::CheckConnectInfo();
 		//获取数据库对象
 		$this->db = ObjFactory::getIns();
-		if(empty($tables)){
+		//如果表名为空，并且TableName为空
+		if(empty($tables) && !$this->TableName){
 			return $this;
+		}
+		//是否设置表名
+		if($this->TableName){
+			$tables = $this->TableName;
 		}
 		//执行判断表方法
 		$this->TablesType($tables);
@@ -308,15 +286,6 @@ class Model{
 	}
 
 	/**
-	 * 获取数量
-	 * @author Colin <15070091894@163.com>
-	 */
-	protected function GetNum(){
-		$result = $this->query();
-		return $result->num_rows;
-	}
-
-	/**
 	 * 解析函数
 	 * @param type 解析的类型
 	 * @param array 要被解析的数据
@@ -356,9 +325,12 @@ class Model{
 
 	/**
 	 * 解析where参数
+	 * @param array 	$field 	字段数组
+	 * @param boolean 	$showOr 是否显示and 或 $this->whereOr
+	 * @param string 	$sub 	条件操作符
 	 * @return [type] [description]
 	 */
-	protected function parseWhere($field = null , $showOr = false){
+	protected function parseWhere($field = null , $showOr = false , $sub = null){
 		//遍历字段
 		foreach ($field as $key => $value){
 			//处理数组传递区间符号
@@ -398,9 +370,9 @@ class Model{
 		if(is_array($field)){
 			//判断是否为多条数据
 			if($fieldlen > 1){
-				extract($this->parseWhere($field , true));
+				extract($this->parseWhere($field , true , $sub));
 			}else {
-				extract($this->parseWhere($field , false));
+				extract($this->parseWhere($field , false , $sub));
 			}
 		}else {
 			//非数组
@@ -479,8 +451,12 @@ class Model{
 	    }else {
 	        $prefix = "SELECT $this->Fields " . $this->From . $this->Alias;
 	    }
-	    $this->Sql = $prefix . implode(' ' , $this->Join) . ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where) . $this->Order . $this->Limit;
-	    dump($this->Sql);
+	    $where = '';
+	    $whereCount = count($this->Where);
+	    if($whereCount > 0){
+	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
+	    }
+	    $this->Sql = $prefix . implode(' ' , $this->Join) . $where . $this->Order . $this->Limit;
 	    return $this->Sql;
 	}
 
@@ -579,10 +555,11 @@ class Model{
 	 * 查询数据库条数
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function selectNum(){
+	public function count(){
 		$pk = $this->getpk();
-		$this->field($pk)->find();
-		return $this->GetNum();
+		$result = $this->field('count(' . $pk . ') as count')->find();
+		$this->Fields = '*';
+		return $result['count'] ? $result['count'] : 0;
 	}
 	
 	/**
@@ -698,16 +675,11 @@ class Model{
 	 * @param num 查询结果集的数量 0,10
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function limit($start , $end = null){
-		if(!$end){
-			$rows = '0,' . $start;
-		}else{
-			// if(!empty($start)){
-			// 	$start = ($start-1) * $end;
-			// }
-			$rows = $start . ',' . $end;
+	public function limit($start , $end = 1){
+		if(!empty($start)){
+			$start = ($start-1) * $end;
 		}
-		$this->Limit = " LIMIT " . $rows;
+		$this->Limit = " LIMIT " . $start . ',' . $end;
 		return $this;
 	}
 

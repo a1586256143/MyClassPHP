@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2016/01/15 18:49
-	FileType : 表单类
-	FileName : From.class.php
-*/
+/**
+ * 表单生成
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Form {
 	public static $form;
@@ -27,14 +25,18 @@ class Form {
 
 	/**
 	 * 生成form校验码
+	 * @param boolean $token 是否返回token
 	 * @author Colin <15070091894@163.com>
 	 */
-	public static function security(){
+	public static function security($token = false){
 		for($i = 0; $i < 30; $i ++){
 			$str .= dechex(mt_rand(0 , 15));
 		}
-		session('secur_number' , $str);
-		self::inputHidden('secur_number' , null , $str);
+		session('_token' , $str);
+		if($token){
+			return $str;
+		}
+		self::inputHidden('_token' , null , $str);
 	} 
 
 	/**

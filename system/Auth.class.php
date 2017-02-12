@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2016/1/13 22:43
-	FileType :权限类
-	FileName :Auth.class.php
-*/
+/**
+ * 权限
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Auth{
 	protected $auth_other;	//验证其他
@@ -45,6 +43,11 @@ class Auth{
 	-- --------------------------------------------------------
 	 */
 	
+	/**
+	 * 初始化
+	 * @param boolean $auth_other 是否验证其它不相关的路由
+	 * @param [type] $auth_other [description]
+	 */
 	public function __construct($auth_other = null){
 		$this->auth_other = $auth_other;
 		if($this->auth_other === null){
@@ -53,28 +56,28 @@ class Auth{
 	}
 
 	/**
-	 * 验证权限
+	 * 验证权限，不支持参数验证
 	 * @param  uid 用户权限id
 	 * @param model 模式 1=>url模式,2=>权限id模式,3=>权限名称模式
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function check($uid = null , $model = 1){
+		//获取用户所拥有的权限
 		$auths = $this->getUserAuths($uid);
-		$current = Url::getCurrentUrl();
-		list($controller , $method) = $current;
+		//当前路由
+		$current = Url::parseUrl();
 		foreach ($auths as $key => $value) {
-			$url = explode( '/' , $value['url']);
-			$auth_method = array_pop($url);
-			$auth_controller = implode('/' , $url);
+			//是否相等
+			if($value['url'] == $current){
+				return true;
+			}
 			//是否验证其他 不验证，则验证表中的规则
 			if($this->auth_other === false){
-				$auth = D('Auth');
-				if(!$find = $auth->where(array('url' => implode('/', $current)))->find()){
+				$auth = M('Auth');
+				//数据库找不到，返回true
+				if(!$find = $auth->where(array('url' => $current))->find()){
 					return true;
 				}
-			}
-			if($auth_controller == $controller && $auth_method == $method){
-				return true;
 			}
 		}
 		return false;
@@ -90,11 +93,11 @@ class Auth{
 			throw new MyError('请设置权限uid');
 		}
 		//获取用户的权限组
-		$auth_users = D('AuthUsers')->where(array('uid' => $uid))->find();
+		$auth_users = M('AuthUsers')->where(array('uid' => $uid))->find();
 		//根据权限组查找组权限
-		$auth_group = D('AuthGroup')->where('id' , $auth_users['gid'])->find();
+		$auth_group = M('AuthGroup')->where('id' , $auth_users['gid'])->find();
 		//根据权限规则查找对应的权限
-		$model = D('Auth');
+		$model = M('Auth');
 		$auths = $model->field('url')->in('id' , $auth_group['auths'])->select();
 		return $auths;
 	}
@@ -104,6 +107,6 @@ class Auth{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function getAuths(){
-		return D('Auth')->select();
+		return M('Auth')->select();
 	}
 }

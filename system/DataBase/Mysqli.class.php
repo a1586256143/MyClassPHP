@@ -1,10 +1,8 @@
 <?php
-/*
-    Author : Colin,
-    Creation time : 2015/8/7 21:06
-    FileType : mysqli操作类
-    FileName : Mysqli.class.php
-*/
+/**
+ * mysqli操作
+ * @author Colin <15070091894@163.com>
+ */
 namespace system\DataBase;
 use system\Db;
 

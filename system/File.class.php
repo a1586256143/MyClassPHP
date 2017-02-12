@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2016/1/12 21:01
-	FileType :文件类
-	FileName :File.class.php
-*/
+/**
+ * 文件处理
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class File {
 	protected $file;

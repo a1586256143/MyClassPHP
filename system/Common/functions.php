@@ -17,24 +17,6 @@ function ajaxReturn($array = null){
 }
 
 /**
- * 显示视图
- * @param 文件名
- * @param 注入模板参数数组例如 array('name'=> 'Colin')
- * @return [type] [description]
- */
-function view($filename , $params = array()){
-	$view = system\View::$view;
-	$filename = $filename . Config('TPL_TYPE');
-	$path = APP_PATH . ltrim($view->template_dir , '/') . $filename;
-	if($params){
-		foreach ($params as $key => $value) {
-			$view->assign($key , $value);
-		}
-	}
-	$view->display($path);
-}
-
-/**
  * M方法实例化模型
  * @param name 模型名称
  * @author Colin <15070091894@163.com>
@@ -50,50 +32,12 @@ function M($name = null){
 }
 
 /**
- * D方法实例化数据库模型
- * @param name 模型名称
- * @param method 模型方法
- * @author Colin <15070091894@163.com>
- */
-function D($name = null , $method = null){
-	if(empty($name)){
-		ShowMessage('D方法必须传递一个值');
-	}
-	//查找分组
-	$explode = explode('/', $name);
-	if(isset($explode[1]) && !empty($explode[1])){
-		//引入命名空间以及目录
-		$tables = $explode[1];
-		$name = require_module($explode[1] , 'MODEL' , $explode[0]);
-	}else{
-		$tables = $name;
-		//引入命名空间以及目录
-		$name = require_module($name , 'MODEL');
-	}
-	//文件目录
-	$filepath = APP_PATH . '/' . get_filename($name);
-	//文件不存在
-	if(!file_exists(str_replace('\\', '/', $filepath))){
-		//创建系统模型
-		$obj = \system\ObjFactory::CreateSystemModel($tables);
-	}else{
-		//创建模型 带表名
-		$obj = \system\ObjFactory::CreateModel($name);
-	}
-	if(empty($method)){
-		return $obj;
-	}else{
-		return $obj->$method();
-	}
-}
-
-/**
  * E方法对错误进行提醒
  * @param message 地址
  * @author Colin <15070091894@163.com>
  */
 function E($message){
-	$debug = MY_DEBUG;
+	$debug = Debug;
 	//记录日志
 	WriteLog($message);
 	if($debug){
@@ -441,12 +385,24 @@ function myclass_filter($array = array()){
  * @author Colin <15070091894@163.com>
  */
 function checkSecurity($secur_number = null){
-	$system = session('secur_number');
+	if(!$secur_number){
+		return false;
+	}
+	$system = session('_token');
 	if($secur_number == $system){
-		session('secur_number' , 'null');
+		session('_token' , 'null');
 		return true;
 	}
 	return false;
+}
+
+/**
+ * 生成安全密钥文本域
+ * @param boolean $token 是否返回token
+ * @return [type] [description]
+ */
+function _token($token = false){
+	return system\Form::security($token);
 }
 
 /**
@@ -455,6 +411,19 @@ function checkSecurity($secur_number = null){
  */
 function get_filename($name){
 	return $name . Config('DEFAULT_CLASS_SUFFIX');
+}
+
+/**
+ * 设置get参数，Route.class.php调用
+ * @param  [type] $item  [description]
+ * @param  [type] $item2 [description]
+ * @return [type]        [description]
+ */
+function maps($item , $item2){
+	if($item != $item2){
+		$item2 = preg_replace('/[\{|\}]+/' , '' , $item2);
+		$_GET[$item2] = urldecode($item);
+	}
 }
 
 /**

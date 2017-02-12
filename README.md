@@ -15,7 +15,6 @@ class Index extends Controller{
 }
 ```
 然后配置路由 globals/routes.php，追加一条路由
-
 ```
 '/hello' => '\controllers\Admin\Index@index'
 ```
@@ -26,7 +25,8 @@ Route::add(array(
     '/hello' => '\controllers\Admin\Index@index'
 ))
 ```
-访问路由
+
+访问格式为
 ```
 http://域名.com/index.php/hello
 ```
@@ -34,8 +34,8 @@ http://域名.com/index.php/hello
 ###1.模块化  
     A. 多模块化开发，功能更细化
 ###2.路由  
-    A. 普通模式 index.php?m=Home&c=Index&a=index  
-    B. 路径模式 index.php/Home/Index/Index  
+    A. index.php/hello
+    B. index.php/hello/world
 ###3.控制器   
     A. 轻松几步搭建一个属于自己的MVC  
 ###4.模型  

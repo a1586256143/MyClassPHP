@@ -1,10 +1,8 @@
 <?php
-/*
-    Author : Colin,
-    Creation time : 2015/8/7 19:50
-    FileType : 工厂类  new对象
-    FileName : ObjFactory.class.php
-*/
+/**
+ * 工厂处理对象
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 
 class ObjFactory{

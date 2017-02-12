@@ -1,12 +1,15 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015-8-1 10:30:21
-	FileType :时间类
-	FileName :Date.class.php
-*/
+/**
+ * 时间处理
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Date{
+	/**
+	 * 设置默认时区
+	 * @param string $timezone 设置时区，默认上海
+	 * @author Colin <15070091894@163.com>
+	 */
 	public static function set_timezone($timezone = 'Asia/Shanghai'){
 		date_default_timezone_set($timezone);
 	}

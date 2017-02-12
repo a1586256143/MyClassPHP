@@ -1,10 +1,8 @@
 <?php
-/*
-	Author : Colin,
-	Creation time : 2015/8/17 16:09
-	FileType : 验证类
-	FileName : Validate.class.php
-*/
+/**
+ * 数据验证
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Validate {
 	protected $string = '';		//要处理的字符串

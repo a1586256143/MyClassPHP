@@ -1,27 +1,15 @@
 <?php
-/*
-    Author : Colin,
-    Creation time : 2015/8/7 16:14
-    FileType :地址处理类
-    FileName : Url.class.php
-*/
+/**
+ * URL处理
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 class Url{
-    protected static $controller;
-    protected static $method;
     public static $param = array();
 
     /**
-     * 初始化方法
-     * @author Colin <15070091894@163.com>
-     */
-    public function __construct(){
-        self::$controller = Config('DEFAULT_CONTROLLER_VAR');
-        self::$method = Config('DEFAULT_METHOD_VAR');
-    }
-
-    /**
      * 解析URL，得到url后面的参数
+     * @param string $url 被解析的地址，转换成路由，为空，则默认当前
      * @return [type] [description]
      */
     public static function parseUrl($url = null){
@@ -55,68 +43,9 @@ class Url{
     }
 
     /**
-     * 处理参数 支持两种地址模式  1 普通模式 2 pathinfo模式
-     * @author Colin <15070091894@163.com>
-     */
-    public static function paramS($param = null){
-        self::$param = array_slice(self::$param , 2);   //去除模块 ， 控制器 ， 方法
-        if(null != $param){
-            self::$param = $param;
-        }
-        
-        $count = count(self::$param);
-        $new_pams = '';
-        if($count > 0){
-            $get = values('get.');
-            foreach ($get as $key => $value) {
-                if($key == self::$controller || $key == self::$method){
-                    continue;
-                }
-                $new_pams[$key] = $value;
-            }
-        }
-        return $new_pams;
-    }
-
-    /**
-     * 定义控制器常量和方法常量
-     * @param controller 控制器名
-     * @param method 方法名
-     * @author Colin <15070091894@163.com>
-     */
-    protected static function define_controller_method($controller , $method){
-        define('CONTROLLER_NAME' , $controller);
-        define('METHOD_NAME' , $method);
-    }
-
-    /**
-     * 执行控制器
-     * @param controller 控制器名
-     * @param method 方法名
-     * @author Colin <15070091894@163.com>
-     */
-    protected static function exec_url($controller = null , $method = null){
-        //加载模板常量库
-        $firstpath = Common . '/template.php';
-        if(file_exists($firstpath)){
-            require_file($firstpath);
-        }
-        $params = self::paramS();
-        if(empty($controller)){
-            C(Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
-            exit;
-        }
-        //处理方法
-        $request_method = $_SERVER["REQUEST_METHOD"];
-        $request_method == 'POST' ? define('POST' , true) : define('POST' , false);
-        $request_method == 'GET' ? define('GET' , true) : define('GET' , false);
-        C($controller , $method , $params);
-    }
-
-    /**
      * 获取当前url
-     * @param is_return_current_url 是否返回当前地址
-     * @param is_return_array       是否返回数组
+     * @param boolean $is_return_current_url 是否返回当前地址
+     * @param boolean $is_return_array       是否返回数组
      * @return array
      * @author Colin <15070091894@163.com>
      */
@@ -154,7 +83,8 @@ class Url{
 
     /**
      * 获取域名
-     * @param  scheme 是否返回域名
+     * @param boolean $scheme 是否返回域名
+     * @param boolean $param 是否返回地址栏输入的参数
      * @return array
      * @author Colin <15070091894@163.com>
      */

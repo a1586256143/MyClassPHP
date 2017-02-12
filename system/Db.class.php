@@ -1,10 +1,8 @@
 <?php
-/*
-    Author : Colin,
-    Creation time : 2015/8/7 19:52
-    FileType : 数据类
-    FileName : Db.class.php
-*/
+/**
+ * 数据库接口
+ * @author Colin <15070091894@163.com>
+ */
 namespace system;
 abstract class Db{
     protected static $db;

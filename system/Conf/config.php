@@ -16,9 +16,6 @@ return array(
 	'DB_CODE'			=>	'UTF8',					//数据库编码
 	'DB_PORT'			=>	'3306' , 				//数据库端口
 
-	//URL设置
-	'URL_MODEL'			=>	1 , 					//URL模式，支持一种，普通模式
-
 	//目录设置
 	'PUBLIC_DIR'		=>	'/publics',	//公共文件地址
 
@@ -30,10 +27,6 @@ return array(
 	'DEFAULT_CONTROLLER'		=>	'Index', 		//默认控制器
 	'DEFAULT_METHOD'			=>	'index', 		//默认方法
 	'DEFAULT_CLASS_SUFFIX'		=>	'.class.php', 	//默认类文件后缀
-	'DEFAULT_CONTROLLER_VAR'	=>	'c' , 			//默认控制器变量
-	'DEFAULT_METHOD_VAR' 		=>	'a' , 			//默认方法变量
-	'EMPTY_CONTROLLER'			=>	'Empty' , 		//找不到控制器时，自动重定向至该控制器
-	'EMPTY_METHOD'				=>	'_empty' , 		//找不到方法时，自动执行该方法
 
 	//模型设置
 	'DEFAULT_MODEL_LAYER'      	=>	'models',         //默认模型目录名
@@ -79,7 +72,7 @@ return array(
 	'AUTH_OTHER'        => false,                   //是否验证其他不在规则表方法
 
 	//错误处理
-	'ERROR_MESSAGE' 	=> '500，此网站可能正在维护~~~' , //当MY_DEBUG关闭，网页错误时提示信息
+	'ERROR_MESSAGE' 	=> '500，此网站可能正在维护~~~' , //当Debug关闭，网页错误时提示信息
 	'TPL_ERROR_PAGE'	=> 'tip' ,					//错误载入页面 ，默认放置 system/Tpl/tpl.html
 	'TPL_SUCCESS_PAGE'	=> 'tip' ,					//成功载入页面 ，默认放置 system/Tpl/tpl.html
 );

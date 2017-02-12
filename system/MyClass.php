@@ -84,7 +84,7 @@ class MyClass{
 		//模板文件夹
 		$view = APP_PATH . Config('TPL_DIR');
 		//缓存文件夹
-		$cache = ltrim(Config('CACHE_DIR') , './');
+		$cache = '/' . ltrim(Config('CACHE_DIR') , './');
 		//批量创建目录
 		$dir = array(
 					APP_PATH , 				//应用路径

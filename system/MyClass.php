@@ -57,9 +57,9 @@ class MyClass{
 		Config($merge);
 		//设置默认工作空间目录结构
 		$dirnames = array(
-						'ControllerDIR' => APP_PATH . '/controllers' , 
-						'ModelDIR' 		=> APP_PATH . '/models' , 
-						'ViewDIR'		=> APP_PATH . '/templates' , 
+						'ControllerDIR' => APP_PATH . Config('DEFAULT_CONTROLLER_LAYER') , 
+						'ModelDIR' 		=> APP_PATH . Config('DEFAULT_MODEL_LAYER') , 
+						'ViewDIR'		=> APP_PATH . Config('TPL_DIR') , 
 					);
 		//根据数组的key 生成常量
 		foreach ($dirnames as $key => $value) {
@@ -81,8 +81,6 @@ class MyClass{
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function Dir(){
-		//模板文件夹
-		$view = APP_PATH . Config('TPL_DIR');
 		//缓存文件夹
 		$cache = '/' . ltrim(Config('CACHE_DIR') , './');
 		//缓存临时文件
@@ -93,17 +91,14 @@ class MyClass{
 					RunTime , 				//运行目录
 					ControllerDIR , 		//控制器目录
 					ModelDIR , 				//模型目录
-					$view , 				//视图目录
+					ViewDIR , 				//视图目录
 					$cache , 				//缓存目录
 					$cacheTmp , 			//缓存临时文件
 					Common , 				//全局目录
 					Library , 				//第三方目录
-					Config('PUBLIC_DIR') , 	//资源目录
 				);
-		foreach ($dir as $key => $value) {
-			//创建文件夹
-			outdir($value);
-		}
+		//创建文件夹
+		outdir($dir);
 		//生成默认的配置文件、控制器
 		$data = array(
 					array(Common . '/config.php' , View::createConfig()) , 	//配置文件

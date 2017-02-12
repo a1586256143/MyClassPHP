@@ -23,7 +23,13 @@ class Parser{
 	private function parFunc(){
 		$patten = '/\{:(.*?)\}/';
 		if(preg_match($patten,$this->_tpl)){
-			$this->_tpl = preg_replace($patten,"<?php echo $1; ?>",$this->_tpl);
+			$this->_tpl = preg_replace_callback($patten,function($matches){
+				//处理函数不存在的时候报错
+				preg_match('/([\w\_]+)\(/', $matches[1] , $match);
+				if(!function_exists($match[1])){
+					throw new \system\MyError($match[1] . '() 这个方法不存在');
+				}
+			},$this->_tpl);
 		}
 	}
 	

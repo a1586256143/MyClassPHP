@@ -34,7 +34,7 @@ return array(
 	//模板引擎设置
 	'TPL_MODEL'			=>	'tpl',					//模板引擎
 	'TPL_TYPE'			=>	'.html',				//模板类型
-	'TPL_DIR'			=>	'/templates/',				//模板文件存放目录
+	'TPL_DIR'			=>	'views/',				//模板文件存放目录
 	'TPL_C_DIR'			=>	RunTime . '/templates_c/',	//编译文件存放目录
 	'TPL_CACHE'         =>  RunTime . '/templates_cache/',      //编译文件文件目录
 	'TPL_CONFIG'		=>	array('template_dir' => 'TPL_DIR' , 'compile_dir' => 'TPL_C_DIR' , 'cache_dir' => 'TPL_CACHE'),					//模板配置

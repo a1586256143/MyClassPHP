@@ -122,7 +122,7 @@ function outdir($param){
 function dump($array){
 	header('Content-type:text/html;charset="UTF-8"');
 	echo '<pre>';
-	var_dump($array);
+	print_r($array);
 	echo '</pre>';
 }
 
@@ -135,15 +135,15 @@ function dump($array){
 function session($name = '' , $value = ''){
 	if(Config('SESSION_START')){
 		//session名称为空 返回所有
-		if($name == ''){
+		if($name === ''){
 			return $_SESSION;
 		}else if($name == 'null'){					//清空session
 			return session_destroy();
-		}else if(!empty($name) && $value == ''){	//session值为空
+		}else if(!empty($name) && $value === ''){	//session值为空
 			return $_SESSION["$name"] !== 'null' ? $_SESSION["$name"] : null;
 		}else if(!empty($name) && !empty($value)){	//session名称和值都不为空
 			$_SESSION["$name"] = $value;
-		}else if(!empty($name) && $value == 'null'){
+		}else if(!empty($name) && is_null($value)){
 			unset($_SESSION["$name"]);
 		}
 	}else{
@@ -228,12 +228,12 @@ function values($type , $formname = null , $function = 'trim' , $default = null)
  * @param value 存储的value
  * @author Colin <15070091894@163.com>
  */
-function S($name , $value = null,$time=0){
+function S($name , $value = '' , $time = 0){
 	//实例化一个缓存句柄
 	$cache = \system\ObjFactory::CreateCache();
 	if($name == 'null'){
 		$cache->clearCache();
-	}else if(!empty($name) && $value == 'null'){
+	}else if(!empty($name) && is_null($value)){
 		//移除缓存
 		$cache->removeCache($name);
 	}else if(!empty($name) && !empty($value)){

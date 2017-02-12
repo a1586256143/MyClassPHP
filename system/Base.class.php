@@ -49,7 +49,7 @@ class Base{
      * @param time  跳转时间
      * @author Colin <15070091894@163.com>
 	 */
-	public function redirect($url , $info = '正在跳转.....', $time = 3){
+	public static function redirect($url , $info = '正在跳转.....', $time = 3){
 		if(!empty($info)){
 			echo "<meta http-equiv='refresh' content='$time; url=$url'/>";
 			$this->ShowMessage($info , true);
@@ -64,7 +64,7 @@ class Base{
      * @param status  信息状态
      * @author Colin <15070091894@163.com>
 	 */
-	public function ajaxReturn($message , $url = null, $status = 0){
+	public static function ajaxReturn($message , $url = null, $status = 0){
 		$return['info'] = $message;
 		$return['url'] = $url;
 		$return['status'] = $status;
@@ -76,7 +76,7 @@ class Base{
 	 * 显示视图
 	 * @return [type] [description]
 	 */
-	protected function view($filename , $params){
+	protected static function view($filename , $params){
 		$filename = $filename . Config('TPL_TYPE');
 		$path = APP_PATH . ltrim(self::$view->template_dir , '/') . $filename;
 		if($params){
@@ -92,13 +92,13 @@ class Base{
 	 * @param message  输出信息
      * @author Colin <15070091894@163.com>
 	 */
-	public function MessageTemplate($message , $type , $param = array()){
+	public static function MessageTemplate($message , $type , $param = array()){
 		$tpl = Config('TPL_' . $type . '_PAGE');
 		if(!$tpl){
 			E('请设置提示载入的页面');
 		}
 		if(count(explode('/' , $tpl)) <= 1){
-			$tpl = MyClass . '/Tpl/' . $tpl;
+			$tpl = MyClass . '/Tpl/' . $tpl . Config('TPL_TYPE');
 		}
 		self::$view->assign('param' , $param);
 		self::$view->assign('message' , $message);
@@ -112,8 +112,8 @@ class Base{
      * @param url  要跳转的地址。为空则跳转为上一个页面
      * @author Colin <15070091894@163.com>
      */
-	protected function success($message , $url = null , $time = 3){
-		$this->MessageTemplate($message , 'SUCCESS' , array('url' => $url , 'time' => $time , 'status' => 1));
+	protected static function success($message , $url = null , $time = 3){
+		self::MessageTemplate($message , 'SUCCESS' , array('url' => $url , 'time' => $time , 'status' => 1));
 	}
 
 	/**
@@ -123,8 +123,8 @@ class Base{
      * @param url  要跳转的地址。为空则跳转为上一个页面
      * @author Colin <15070091894@163.com>
      */
-	protected function error($message , $url = null , $time = 3){
-		$this->MessageTemplate($message , 'ERROR' , array('url' => $url , 'time' => $time , 'status' => 0));
+	protected static function error($message , $url = null , $time = 3){
+		self::MessageTemplate($message , 'ERROR' , array('url' => $url , 'time' => $time , 'status' => 0));
 	}
 }
 ?>

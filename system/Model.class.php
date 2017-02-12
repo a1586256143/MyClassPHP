@@ -600,7 +600,9 @@ class Model{
 	 */
 	public function update($field , $value = null){
 		if(is_string($field)){
-			$this->ParKey = ' SET ' . '`' . $field . '`' . "='" . $value . "'";
+			if(!$this->ParKey){
+				$this->ParKey = ' SET ' . '`' . $field . '`' . "='" . $value . "'";
+			}
 		}else if(is_array($field)){
 			foreach ($field as $key => $value) {
 				if($value === ''){
@@ -610,7 +612,13 @@ class Model{
 			}
 			$this->ParData('upd',$data);
 		}
-		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $this->Where;
+		$where = '';
+	    $whereCount = count($this->Where);
+	    if($whereCount > 0){
+	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
+	    }
+		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $where;
+		dump($this->Sql);
 		return $this->ADUP($this->Sql , 'upd');
 	}
 
@@ -622,6 +630,24 @@ class Model{
 		$join = $this->_parse_prefix($join);
 		$this->Join[] = ' ' . $method . ' JOIN ' . $join;
 		return $this;
+	}
+
+	/**
+	 * 增加字段值
+	 * @return [type] [description]
+	 */
+	public function incField($field , $num = 1){
+		$this->ParKey = ' SET ' . '`' . $field . '`' . "=$field + $num";
+		return $this->update($field);
+	}
+
+	/**
+	 * 减少字段值
+	 * @return [type] [description]
+	 */
+	public function decField($field , $num = 1){
+		$this->ParKey = ' SET ' . '`' . $field . '`' . "=$field - $num";
+		return $this->update($field);
 	}
 	
 	/**

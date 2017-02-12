@@ -18,7 +18,7 @@ class Form {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function openForm($action = null , $method = 'post' , $name = null , $id = null , $class = null , $attr = null){
-		self::$form .= "<form method='$method' action='$action' name='$name' id='$id' class='$class' $attr>";
+		self::$form = "<form method='$method' action='$action' name='$name' id='$id' class='$class' $attr>\n";
 		self::echoForm();
 		self::security();
 	}
@@ -96,7 +96,7 @@ class Form {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function input($type = null , $name = null , $value = null , $class = null , $id = null , $placeholder = null , $attr = null){
-		self::$form = "<input type='$type' name='$name' placeholder='$placeholder' value='$value' id='$id' class='$class' $attr>";
+		self::$form = "\t\t<input type='$type' name='$name' placeholder='$placeholder' value='$value' id='$id' class='$class' $attr>\n";
 		self::echoForm();
 	}
 
@@ -111,12 +111,12 @@ class Form {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function select($args = array() , $value = null , $name = null , $id =null , $class = null , $attr = null){
-		self::$form = "<select id='$id' name='$name' class='$class' $attr>";
+		self::$form = "\t\t<select id='$id' name='$name' class='$class' $attr>\n";
 		foreach ($args as $k => $v) {
 			$selected = $k == $value ? " selected='selected' " : '';
-			self::$form .= "<option value='$k' $selected>$v</option>";
+			self::$form .= "\t\t\t\t<option value='$k' $selected>$v</option>\n";
 		}
-		self::$form .= "</select>";
+		self::$form .= "\t\t</select>\n";
 		self::echoForm();
 	}
 
@@ -131,7 +131,7 @@ class Form {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function textarea($name = null , $value = null , $id = null , $class = null , $placeholder = null , $rows = 10 , $cols = 50 , $attr = null){
-		self::$form = "<textarea name='$name' id='$id' class='$class' placeholder='$placeholder' rows='$rows' cols='$cols' $attr>$value</textarea>";
+		self::$form = "\t\t<textarea name='$name' id='$id' class='$class' placeholder='$placeholder' rows='$rows' cols='$cols' $attr>$value</textarea>\n";
 		self::echoForm();
 	}
 
@@ -146,7 +146,7 @@ class Form {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function button($type = null , $class = null , $name = null , $value = '确定' , $id = null , $attr = null){
-		self::$form = "<button type='$type' name='$name' id='$id' class='$class' $attr>$value</button>";
+		self::$form = "\t\t<button type='$type' name='$name' id='$id' class='$class' $attr>$value</button>\n";
 		self::echoForm();
 	}
 
@@ -194,7 +194,7 @@ class Form {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public static function closeForm(){
-		self::$form = "</form>";
+		self::$form = "\t\t</form>\n";
 		self::echoForm();
 	}
 

@@ -21,11 +21,6 @@ class Cache {
 	 * @author Colin <15070091894@163.com>
 	 */
 	public function CacheDir(){
-		if(!file_exists($this->cache_data_dir)){
-			if(!is_dir($this->cache_data_dir)) mkdir($this->cache_data_dir , 777);	//创建缓存文件目录
-		}
-		//执行更新权限
-		exec('chmod +rw ' . $this->cache_data_dir);
 		//检查是否有可写的权限
 		if(!is_writable($this->cache_data_dir)){
 			E('该目录没有可写权限！'.$this->cache_data_dir);

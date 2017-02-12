@@ -85,6 +85,8 @@ class MyClass{
 		$view = APP_PATH . Config('TPL_DIR');
 		//缓存文件夹
 		$cache = '/' . ltrim(Config('CACHE_DIR') , './');
+		//缓存临时文件
+		$cacheTmp = '/' . ltrim(Config('CACHE_DATA_DIR') , './');
 		//批量创建目录
 		$dir = array(
 					APP_PATH , 				//应用路径
@@ -93,6 +95,7 @@ class MyClass{
 					ModelDIR , 				//模型目录
 					$view , 				//视图目录
 					$cache , 				//缓存目录
+					$cacheTmp , 			//缓存临时文件
 					Common , 				//全局目录
 					Library , 				//第三方目录
 					Config('PUBLIC_DIR') , 	//资源目录

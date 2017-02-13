@@ -82,9 +82,9 @@ class MyClass{
 	 */
 	public static function Dir(){
 		//缓存文件夹
-		$cache = '/' . ltrim(Config('CACHE_DIR') , './');
+		$cache = rtrim(ltrim(Config('CACHE_DIR') , './') , './');
 		//缓存临时文件
-		$cacheTmp = '/' . ltrim(Config('CACHE_DATA_DIR') , './');
+		$cacheTmp = rtrim(ltrim(Config('CACHE_DATA_DIR') , './') , './');
 		//更新文件权限
 		shell_exec('chmod -R +rw ' . APP_PATH);
 		//批量创建目录

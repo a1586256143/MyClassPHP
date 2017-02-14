@@ -59,38 +59,17 @@ class Model{
 		//初始化回调函数的句柄
 		$this->callback = $tables;
 	}
-	
-	/**
-	 * 判断类型
-	 * @author Colin <15070091894@163.com>
-	 */
-	protected function TablesType($tables){
-		$tables = $this->parTableName($tables);
-		//转小写
-		$this->DataName = strtolower($tables);
-		//空格转换
-		$spaceIndex = strpos($this->DataName , ' ');
-		if($spaceIndex !== false){
-			$as = substr($this->DataName , $spaceIndex);
-			$this->DataName = substr($this->DataName , 0 , $spaceIndex);
-		}
-		if(empty($this->TrueTables)){
-			$this->TablesName = '`' . $this->db_prefix . $this->DataName . '`';
-		}else {
-			$this->TablesName = '`' . $this->TrueTables . '`';
-		}
-		$this->TablesName = $this->TablesName . $as;
-		$this->from($this->TablesName);
-	}
 
 	/**
-	 * 解析表名的大写
+	 * From函数
+	 * @param  tables 表名
 	 * @author Colin <15070091894@163.com>
 	 */
-	protected function parTableName($tables){
-		$tablename = myclass_filter(preg_split('/(?=[A-Z])/' , $tables));
-		$tablename = implode('_' , $tablename);
-		return $tablename;
+	public function from($tables = null){
+		$tables = $tables === null ? $this->TablesName : $tables;
+		$tables = $this->_parse_prefix($tables);
+		$this->From = ' FROM ' . $tables;
+		return $this;
 	}
 	
 	/**
@@ -103,22 +82,6 @@ class Model{
 	        $this->Fields = $field;
 	    }
 	    return $this;
-	}
-
-	/**
-	 * 获取所有字段
-	 * @param  tables 表名
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function getFields($tables = null){
-		if(!$tables) $tables = $this->DataName;
-		//缓存字段信息
-		$fields = S($tables . '_field_cache');
-		if(!$fields){
-			$fields = $this->db->getFields($tables);
-			S($tables . '_field_cache' , $fields);
-		}
-		return $fields;
 	}
 
 	/**
@@ -152,6 +115,465 @@ class Model{
 			$this->data['create'] = myclass_filter(array_merge($this->data['validate'] , $this->data['create']));
 		}
 		return $this->data['create'];
+	}
+
+	/**
+	 * 条件
+	 * @param fuild 字段名称
+	 * @param wherevalue 字段值
+	 * @param whereor OR和AND
+	 * @param sub 操作符号 可以为 =,!=,in,not in,between,not between 
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function where($field , $wherevalue = null , $whereor = null , $sub = '='){
+		$fieldlen = count($field);
+		if($whereor !== null) $this->WhereOR = $whereor;
+		if($field == null) return $this;
+		//遍历字段
+		if(is_array($field)){
+			//判断是否为多条数据
+			$fieldlen > 1 ? extract($this->parseWhere($field , true , $sub)) : extract($this->parseWhere($field , false , $sub));
+		}else {
+			//非数组
+			extract($this->parseWhere(array($field => array($sub , $wherevalue)) , false , $sub));
+		}
+		$this->Where[] = $tmp;
+		return $this;
+	}
+
+	/**
+	 * 获取主键
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function getpk(){
+		$pk = S('TABLE_PK_FOR_'.$this->DataName);
+		if(empty($pk)){
+			$pk = $this->execute("SELECT COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
+			S('TABLE_PK_FOR_' . $this->DataName , $pk);
+		}
+		return $pk['COLUMN_NAME'];
+	}
+
+	/**
+	 * 执行源生的sql语句
+	 * @param sql sql语句
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function query($sql = null){
+		$sql = $sql === null ? $this->Sql : $sql;
+		$this->Where = array();
+		return $this->getResult($sql);
+	}
+
+	/**
+	 * 查询函数
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function select(){
+	    $this->getSql();
+		return $this->getResult(null , true);
+	}
+
+	/**
+	 * 查询一条数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function find($pk = null){
+		if($pk){
+			$value = is_string($pk) ? "'$pk'" : $pk;
+			$this->where($this->getPk() , $value);
+		}
+		$this->getSql();
+		return $this->getResult();
+	}
+
+	/**
+	 * 获取最后执行的sql语句
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function getLastSql(){
+		return $this->Sql;
+	}
+
+	/**
+	 * 查询数据库条数
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function count(){
+		$pk = $this->getpk();
+		$result = $this->field('count(' . $pk . ') as count')->find();
+		$this->Fields = '*';
+		return $result['count'] ? $result['count'] : 0;
+	}
+	
+	/**
+	 * 插入数据
+	 * @param values   要插入的数据
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function insert($values = null){
+		$values = myclass_filter($values);
+        if(!$values){
+            $values = $this->data['create'];
+        }
+		$this->ParData('ist' , $values);
+		$this->Sql = "INSERT INTO " . $this->TablesName . "(" . $this->ParKey . ") VALUES (" . $this->Parvalue . ")";
+		return $this->ADUP($this->Sql , 'ist');
+	}
+	
+	/**
+	 * 删除函数
+	 * @param field 被删除的字段
+	 * @param value 唯一标示符
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function delete($value , $field = null){
+		$field = $field === null ? $this->getpk() : $field;
+		if($this->Where[0] === null){
+			$this->where($field , $value);
+		}
+		$where = $this->getWhere();
+		$this->Sql = "DELETE FROM " . $this->TablesName . $where;
+		return $this->ADUP($this->Sql , 'upd');
+	}
+	
+	/**
+	 * 修改函数
+	 * @param field	要被修改的字段
+	 * @param value	要被修改的值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function update($field , $value = null){
+		if(is_string($field)){
+			if(!$this->ParKey){
+				$this->ParKey = ' SET ' . '`' . $field . '`' . "='" . $value . "'";
+			}
+		}else if(is_array($field)){
+			foreach ($field as $key => $value) {
+				if($value === ''){
+					continue;
+				}
+				$data[$key] = addslashes($value);
+			}
+			$this->ParData('upd',$data);
+		}
+		$where = $this->getWhere();
+		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $where;
+		return $this->ADUP($this->Sql , 'upd');
+	}
+
+	/**
+	 * 左连接
+	 * @return [type] [description]
+	 */
+	public function join($join , $method = 'LEFT'){
+		$join = $this->_parse_prefix($join);
+		$this->Join[] = ' ' . $method . ' JOIN ' . $join;
+		return $this;
+	}
+
+	/**
+	 * 增加字段值
+	 * @return [type] [description]
+	 */
+	public function incField($field , $num = 1){
+		$this->ParKey = ' SET ' . '`' . $field . '`' . "=$field + $num";
+		return $this->update($field);
+	}
+
+	/**
+	 * 减少字段值
+	 * @return [type] [description]
+	 */
+	public function decField($field , $num = 1){
+		$this->ParKey = ' SET ' . '`' . $field . '`' . "=$field - $num";
+		return $this->update($field);
+	}
+
+	/**
+	 * limt
+	 * @param num 查询结果集的数量 0,10
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function limit($start , $end = 1){
+		if(!empty($start)){
+			$start = ($start-1) * $end;
+		}else{
+			$start = 0;
+		}
+		$this->Limit = " LIMIT " . $start . ',' . $end;
+		return $this;
+	}
+
+	/**
+	 * order
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function order($field , $desc = null){
+		$this->Order = " ORDER BY " . $field . " " . $desc . " ";
+		return $this;
+	}
+	
+	/**
+	 * 别名
+	 * @param as 新的别名
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function alias($as = 'alias'){
+		$this->Alias = ' AS ' . $as;
+		return $this;
+	}
+	
+	/**
+	 * 求最大值
+	 * @param fuild  要求出最大值的数值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function max($field){
+		$this->setDefaultAs($field);
+		return $this->field("MAX($field)$this->Alias")->find();
+	}
+	
+	/**
+	 * 最小值
+	 * @param field   要被求出最小值的字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function min($field){
+		$this->setDefaultAs($field);
+		return $this->field("MIN($field)$this->Alias")->find();
+	}
+	
+	/**
+	 * 某个字段求和
+	 * @param field 要被求和的字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function sum($field){
+		$this->setDefaultAs($field);
+		return $this->field("SUM($field)$this->Alias")->find();
+	}
+	
+	/**
+	 * 求平均值
+	 * @param field 平均值的字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function avg($field){
+		$this->setDefaultAs($field);
+		return $this->field("AVG($field)$this->Alias")->find();
+	}
+
+	/**
+	 * in
+	 * @param field 字段
+	 * @param values 值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function in($field , $values){
+		$this->in_common($field , $values , 'in ');
+		return $this;
+	}
+
+	/**
+	 * not in
+	 * @param field 字段
+	 * @param values 值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function notin($field , $values){
+		$this->in_common($field , $values , 'not in ');
+		return $this;
+	}
+
+	/**
+	 * like
+	 * @param field 要被like的字段名
+	 * @param value like的值
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function like($field , $value){
+		return $this->where($field , $value , null , 'LIKE ');
+	}
+
+	/**
+	 * between
+	 * @param field 要被between的字段名
+	 * @param between between的值 格式为 1,2
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function between($field , $between){
+		$this->between_common($field , $between , 'BETWEEN');
+		return $this;
+	}
+
+	/**
+	 * between
+	 * @param field 要被between的字段名
+	 * @param between between的值 格式为 1,2
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function notbetween($field , $between){
+		$this->between_common($field , $between , 'NOT BETWEEN');
+		return $this;
+	}
+
+	/**
+     * 执行源生sql语句并返回结果
+     * @param sql 要执行的sql语句
+     * @author Colin <15070091894@163.com>
+     */
+	public function execute($sql){
+		return $this->db->execute($sql);
+	}
+
+	/**
+	 * 执行原声sql语句，返回资源类型
+	 * @param sql 要执行的sql语句
+     * @author Colin <15070091894@163.com>
+	 */
+	public function execute_resource($sql){
+		return $this->ADUP($sql);
+	}
+
+	/**
+	 * 获取下一条数据
+	 * @param  id 获取下一条数据的ID
+	 * @param  field 查询字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function next($id , $field = '*'){
+		return $this->field($field)->where('id' , $id , null , '>')->find();
+	}
+
+	/**
+	 * 获取上一条数据
+	 * @param  id 获取下一条数据的ID
+	 * @param  field 查询字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function prev($id , $field = '*'){
+		return $this->field($field)->where('id' , $id , null , '<')->find();
+	}
+
+	/**
+     * 开启事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function startTransaction(){
+    	$this->startTransaction = 1;
+        return $this->db->startTransaction();
+    }
+
+    /**
+     * 回滚事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function rollback(){
+        return $this->db->rollback();
+    }
+
+    /**
+     * 提交事务处理
+     * @author Colin <15070091894@163.com>
+     */
+    public function commit(){
+        return $this->db->commit();
+    }
+
+	/**
+	 * 容错处理机制
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function __call($fun , $param=null){
+		ShowMessage($fun . '()这个方法不存在！');
+	}
+
+	/**
+     * 静态方法容错处理机制
+     * @author Colin <15070091894@163.com>
+     */
+	static public function __callStatic($fun , $param=null){
+		ShowMessage(__METHOD__ . '()这个方法不存在！');
+	}
+
+	/**
+	 * invoke方法  处理吧类当成函数来使用
+	 * @author Colin <15070091894@163.com>
+	 */
+	public function __invoke(){
+		ShowMessage(__CLASS__ . '这不是一个函数');
+	}
+
+	/**
+	 * 获取所有字段
+	 * @param  tables 表名
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function getFields($tables = null){
+		if(!$tables) $tables = $this->DataName;
+		//缓存字段信息
+		$fields = S($tables . '_field_cache');
+		if(!$fields){
+			$fields = $this->db->getFields($tables);
+			S($tables . '_field_cache' , $fields);
+		}
+		return $fields;
+	}
+
+	/**
+	 * 设置默认别名
+	 * @param string $field 别名字段
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function setDefaultAs($field = null){
+		if(!$this->Alias){
+			$this->Alias = ' AS ' . $field;
+		}
+	}
+
+	/**
+	 * 得到查询的sql语句
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function getSql(){
+		if($this->Tables != null){
+	        $prefix = "SELECT $this->Fields FROM " . $this->Tables . $this->Alias;
+	    }else {
+	        $prefix = "SELECT $this->Fields " . $this->From . $this->Alias;
+	    }
+	    $where = $this->getWhere();
+	    $this->Sql = $prefix . implode(' ' , $this->Join) . $where . $this->Order . $this->Limit;
+	    dump($this->Sql);
+	    return $this->Sql;
+	}
+
+	/**
+	 * 判断类型
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function TablesType($tables){
+		$tables = $this->parTableName($tables);
+		//转小写
+		$this->DataName = strtolower($tables);
+		//空格转换
+		$spaceIndex = strpos($this->DataName , ' ');
+		if($spaceIndex !== false){
+			$as = substr($this->DataName , $spaceIndex);
+			$this->DataName = substr($this->DataName , 0 , $spaceIndex);
+		}
+		$this->TablesName = empty($this->TrueTables) ? '`' . $this->db_prefix . $this->DataName . '`' : '`' . $this->TrueTables . '`';
+		$this->from($this->TablesName . $as);
+	}
+
+	/**
+	 * 解析表名的大写
+	 * @author Colin <15070091894@163.com>
+	 */
+	protected function parTableName($tables){
+		$tablename = myclass_filter(preg_split('/(?=[A-Z])/' , $tables));
+		$tablename = implode('_' , $tablename);
+		return $tablename;
 	}
 
 	/**
@@ -251,18 +673,6 @@ class Model{
 	}
 
 	/**
-	 * From函数
-	 * @param  tables 表名
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function from($tables = null){
-		$tables = $tables === null ? $this->TablesName : $tables;
-		$tables = $this->_parse_prefix($tables);
-		$this->From = ' FROM ' . $tables;
-		return $this;
-	}
-
-	/**
 	 * 执行sql语句函数
 	 * @author Colin <15070091894@163.com>
 	 */
@@ -294,32 +704,35 @@ class Model{
 	protected function ParData($type , $array){
 		$setKey = '';
 		$setValue = '';
-		//如果是新增操作
-		if($type == 'ist'){
-			if(is_array($array)){
-				foreach ($array as $key => $value) {
-					$setKey .= '`' . $key . '`' . ',';
-					$setValue .= "'" . addslashes($value) . "',";
+		switch ($type) {
+			//如果是新增操作
+			case 'ist':
+				if(is_array($array)){
+					foreach ($array as $key => $value) {
+						$setKey .= '`' . $key . '`' . ',';
+						$setValue .= "'" . addslashes($value) . "',";
+					}
+					$this->ParKey = substr($setKey, 0 , -1);
+					$this->Parvalue = substr($setValue, 0 , -1);
+				}else if(is_string($array)){
+					E('解析insert sql 字段失败!' . $this->Sql);
 				}
-				$this->ParKey = substr($setKey, 0 , -1);
-				$this->Parvalue = substr($setValue, 0 , -1);
-			}else if(is_string($array)){
-				E('解析insert sql 字段失败!' . $this->Sql);
-			}
-		//如果是更新操作
-		}else if($type == 'upd'){
-			$pk = $this->getpk();
-			foreach ($array as $key => $value){
-				if($key == $pk){
-					continue;
+				break;
+			//如果是更新操作
+			case 'upd':
+				$pk = $this->getpk();
+				foreach ($array as $key => $value){
+					if($key == $pk){
+						continue;
+					}
+					$setKey .= '`' . $key . '`=\'' . addslashes($value) . "',";
 				}
-				$setKey .= '`' . $key . '`=\'' . addslashes($value) . "',";
-			}
-			//解析主键
-			if($this->Where[0] === null){
-				$this->where($pk , $array[$pk]);
-			}
-			$this->ParKey = ' SET '.substr($setKey , 0 , -1);
+				//解析主键
+				if($this->Where[0] === null){
+					$this->where($pk , $array[$pk]);
+				}
+				$this->ParKey = ' SET '.substr($setKey , 0 , -1);
+				break;
 		}
 	}
 
@@ -346,10 +759,12 @@ class Model{
 				$value = is_numeric($value) ? $value : "'$value'";
 				$tmp .= $key . $sub . $value . ' ' . $this->WhereOR . ' ';
 			}else{
-				$tmp .= "`$key` $sub '$value' $this->WhereOR ";
+				//处理between，in操作
+				$tmp .= $value ? "`$key` $sub '$value' $this->WhereOR " : "`$key` $sub $this->WhereOR ";
 			}
 		}
 		$end = strlen($this->WhereOR) + 1;
+		//截取掉$this->WhereOr
 		$tmp = mb_substr($tmp , 0 , -$end , 'utf-8');
 		return array('tmp' => $tmp , 'value' => $value , 'sub' => $sub);
 	}
@@ -361,59 +776,14 @@ class Model{
 	protected function getWhere(){
 		$where = '';
 	    $whereCount = count($this->Where);
+	    //如果是字符串，则直接返回
 	    if(is_string($this->Where)){
 	    	$where = $this->Where;
+	    	//否则处理后返回
 	    }else if(is_array($this->Where) && $whereCount > 0){
 	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
 	    }
 	    return $where;
-	}
-
-	/**
-	 * 条件
-	 * @param fuild 字段名称
-	 * @param wherevalue 字段值
-	 * @param whereor OR和AND
-	 * @param sub 操作符号 可以为 =,!=,in,not in,between,not between 
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function where($field , $wherevalue = null , $whereor = null , $sub = '='){
-		$fieldlen = count($field);
-		if($whereor !== null) $this->WhereOR = $whereor;
-		if($field == null) return $this;
-		//遍历字段
-		if(is_array($field)){
-			//判断是否为多条数据
-			if($fieldlen > 1){
-				extract($this->parseWhere($field , true , $sub));
-			}else {
-				extract($this->parseWhere($field , false , $sub));
-			}
-		}else {
-			//非数组
-			$tmp = $field;
-			if($wherevalue){
-				$tmp = $field . " = $wherevalue";
-			}
-			if($wherevalue && $sub){
-				$tmp = $field . " $sub $wherevalue";
-			}
-		}
-		$this->Where[] = $tmp;
-		return $this;
-	}
-
-	/**
-	 * 获取主键
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function getpk(){
-		$pk = S('TABLE_PK_FOR_'.$this->DataName);
-		if(empty($pk)){
-			$pk = $this->execute("SELECT COLUMN_NAME FROM information_schema.`KEY_COLUMN_USAGE` WHERE TABLE_SCHEMA = '$this->db_tabs' AND TABLE_NAME = '$this->db_prefix$this->DataName' LIMIT 1");
-			S('TABLE_PK_FOR_' . $this->DataName , $pk);
-		}
-		return $pk['COLUMN_NAME'];
 	}
 
 	/**
@@ -437,119 +807,6 @@ class Model{
 	}
 
 	/**
-	 * 执行源生的sql语句
-	 * @param sql sql语句
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function query($sql = null){
-		$sql = $sql === null ? $this->Sql : $sql;
-		$this->Where = array();
-		return $this->getResult($sql);
-	}
-
-	/**
-	 * 查询函数
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function select(){
-	    $this->getSql();
-		return $this->getResult(null , true);
-	}
-
-	/**
-	 * 得到查询的sql语句
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function getSql(){
-		if($this->Tables != null){
-	        $prefix = "SELECT $this->Fields FROM " . $this->Tables . $this->Alias;
-	    }else {
-	        $prefix = "SELECT $this->Fields " . $this->From . $this->Alias;
-	    }
-	    $where = $this->getWhere();
-	    $this->Sql = $prefix . implode(' ' , $this->Join) . $where . $this->Order . $this->Limit;
-	    return $this->Sql;
-	}
-
-	/**
-	 * 获取最后执行的sql语句
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function getLastSql(){
-		return $this->Sql;
-	}
-
-	/**
-	 * 查询一条数据
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function find($pk = null){
-		if($pk){
-			$value = is_string($pk) ? "'$pk'" : $pk;
-			$this->Where = ' WHERE ' . $this->getPk() . ' = ' . $value;
-		}
-		$this->getSql();
-		return $this->getResult();
-	}
-
-	/**
-	 * in
-	 * @param field 字段
-	 * @param values 值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function in($field , $values){
-		if(is_array($values)){
-			$values = implode(',' , $values);
-		}
-		$this->where($field , '(' . $values . ')' , null , 'in ');
-		return $this;
-	}
-
-	/**
-	 * not in
-	 * @param field 字段
-	 * @param values 值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function notin($field , $values){
-		$this->where($field , '(' . $values . ')' , null , 'not in ');
-		return $this;
-	}
-
-	/**
-	 * like
-	 * @param field 要被like的字段名
-	 * @param value like的值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function like($field , $value){
-		return $this->where($field , "%$value%" , null , 'LIKE ');
-	}
-
-	/**
-	 * between
-	 * @param field 要被between的字段名
-	 * @param between between的值 格式为 1,2
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function between($field , $between){
-		$this->between_common($field , $between , 'BETWEEN');
-		return $this;
-	}
-
-	/**
-	 * between
-	 * @param field 要被between的字段名
-	 * @param between between的值 格式为 1,2
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function notbetween($field , $between){
-		$this->between_common($field , $between , 'NOT BETWEEN');
-		return $this;
-	}
-
-	/**
 	 * between公共模块
 	 * @param field 要被between的字段名
 	 * @param between between的值 格式为 1,2
@@ -557,261 +814,20 @@ class Model{
 	 * @author Colin <15070091894@163.com>
 	 */
 	protected function between_common($field , $between , $keyword){
-		$this->Where = " WHERE `$field` $keyword ";
 		list($betweenleft , $betweenright) = explode( ',' , $between);
-		$this->value = $betweenleft . ' AND ' . $betweenright;
+		$between = $keyword . ' (' . $betweenleft . ' AND ' . $betweenright . ')';
+		$this->where($field , null , null , $between);
 	}
 
 	/**
-	 * 查询数据库条数
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function count(){
-		$pk = $this->getpk();
-		$result = $this->field('count(' . $pk . ') as count')->find();
-		$this->Fields = '*';
-		return $result['count'] ? $result['count'] : 0;
-	}
-	
-	/**
-	 * 插入数据
-	 * @param values   要插入的数据
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function insert($values = null){
-		$values = myclass_filter($values);
-        if(!$values){
-            $values = $this->data['create'];
-        }
-		$this->ParData('ist' , $values);
-		$this->Sql = "INSERT INTO " . $this->TablesName . "(" . $this->ParKey . ") VALUES (" . $this->Parvalue . ")";
-		return $this->ADUP($this->Sql , 'ist');
-	}
-	
-	/**
-	 * 删除函数
-	 * @param field 被删除的字段
-	 * @param value 唯一标示符
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function delete($value , $field = null){
-		$field = $field === null ? $this->getpk() : $field;
-		if($this->Where[0] === null){
-			$this->where($field , $value);
-		}
-		$where = $this->getWhere();
-		$this->Sql = "DELETE FROM " . $this->TablesName . $where;
-		return $this->ADUP($this->Sql , 'upd');
-	}
-	
-	/**
-	 * 修改函数
-	 * @param field	要被修改的字段
-	 * @param value	要被修改的值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function update($field , $value = null){
-		if(is_string($field)){
-			if(!$this->ParKey){
-				$this->ParKey = ' SET ' . '`' . $field . '`' . "='" . $value . "'";
-			}
-		}else if(is_array($field)){
-			foreach ($field as $key => $value) {
-				if($value === ''){
-					continue;
-				}
-				$data[$key] = addslashes($value);
-			}
-			$this->ParData('upd',$data);
-		}
-		$where = $this->getWhere();
-		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $where;
-		return $this->ADUP($this->Sql , 'upd');
-	}
-
-	/**
-	 * 左连接
+	 * in操作公共方法
 	 * @return [type] [description]
 	 */
-	public function join($join , $method = 'LEFT'){
-		$join = $this->_parse_prefix($join);
-		$this->Join[] = ' ' . $method . ' JOIN ' . $join;
-		return $this;
-	}
-
-	/**
-	 * 增加字段值
-	 * @return [type] [description]
-	 */
-	public function incField($field , $num = 1){
-		$this->ParKey = ' SET ' . '`' . $field . '`' . "=$field + $num";
-		return $this->update($field);
-	}
-
-	/**
-	 * 减少字段值
-	 * @return [type] [description]
-	 */
-	public function decField($field , $num = 1){
-		$this->ParKey = ' SET ' . '`' . $field . '`' . "=$field - $num";
-		return $this->update($field);
-	}
-	
-	/**
-	 * 别名
-	 * @param as 新的别名
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function alias($as = 'alias'){
-		$this->Alias = ' AS ' . $as;
-		return $this;
-	}
-	
-	/**
-	 * 求最大值
-	 * @param fuild  要求出最大值的数值
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function max($field){
-		return $this->field("MAX($field)$this->Alias")->find();
-	}
-	
-	/**
-	 * 最小值
-	 * @param field   要被求出最小值的字段
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function min($field){
-		return $this->field("MIN($field)$this->Alias")->find();
-	}
-	
-	/**
-	 * 某个字段求和
-	 * @param field 要被求和的字段
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function sum($field){
-		return $this->field("SUM($field)$this->Alias")->find();
-	}
-	
-	/**
-	 * 求平均值
-	 * @param field 平均值的字段
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function avg($field){
-		return $this->field("AVG($field)$this->Alias")->find();
-	}
-	
-	/**
-	 * limt
-	 * @param num 查询结果集的数量 0,10
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function limit($start , $end = 1){
-		if(!empty($start)){
-			$start = ($start-1) * $end;
-		}else{
-			$start = 0;
+	protected function in_common($field , $in , $keyword){
+		if(is_array($in)){
+			$in = implode(',' , $in);
 		}
-		$this->Limit = " LIMIT " . $start . ',' . $end;
-		return $this;
-	}
-
-	/**
-	 * order
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function order($field , $desc = null){
-		$this->Order = " ORDER BY " . $field . " " . $desc . " ";
-		return $this;
-	}
-
-	/**
-     * 执行源生sql语句并返回结果
-     * @param sql 要执行的sql语句
-     * @author Colin <15070091894@163.com>
-     */
-	public function execute($sql){
-		return $this->db->execute($sql);
-	}
-
-	/**
-	 * 执行原声sql语句，返回资源类型
-	 * @param sql 要执行的sql语句
-     * @author Colin <15070091894@163.com>
-	 */
-	public function execute_resource($sql){
-		return $this->ADUP($sql);
-	}
-
-	/**
-	 * 获取下一条数据
-	 * @param  id 获取下一条数据的ID
-	 * @param  field 查询字段
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function next($id , $field = '*'){
-		return $this->field($field)->where('id' , $id , null , '>')->find();
-	}
-
-	/**
-	 * 获取上一条数据
-	 * @param  id 获取下一条数据的ID
-	 * @param  field 查询字段
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function prev($id , $field = '*'){
-		return $this->field($field)->where('id' , $id , null , '<')->find();
-	}
-
-	/**
-     * 开启事务处理
-     * @author Colin <15070091894@163.com>
-     */
-    public function startTransaction(){
-    	$this->startTransaction = 1;
-        return $this->db->startTransaction();
-    }
-
-    /**
-     * 回滚事务处理
-     * @author Colin <15070091894@163.com>
-     */
-    public function rollback(){
-        return $this->db->rollback();
-    }
-
-    /**
-     * 提交事务处理
-     * @author Colin <15070091894@163.com>
-     */
-    public function commit(){
-        return $this->db->commit();
-    }
-
-	/**
-	 * 容错处理机制
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function __call($fun , $param=null){
-		ShowMessage($fun . '()这个方法不存在！');
-	}
-
-	/**
-     * 静态方法容错处理机制
-     * @author Colin <15070091894@163.com>
-     */
-	static public function __callStatic($fun , $param=null){
-		ShowMessage(__METHOD__ . '()这个方法不存在！');
-	}
-
-	/**
-	 * invoke方法  处理吧类当成函数来使用
-	 * @author Colin <15070091894@163.com>
-	 */
-	public function __invoke(){
-		ShowMessage(__CLASS__ . '这不是一个函数');
+		$this->where($field , null , null , $keyword . '(' . $in . ')');
 	}
 
 	/**

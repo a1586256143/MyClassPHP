@@ -453,7 +453,9 @@ class Model{
 	    }
 	    $where = '';
 	    $whereCount = count($this->Where);
-	    if($whereCount > 0){
+	    if(is_string($this->Where)){
+	    	$where = $this->Where;
+	    }else if(is_array($this->Where) && $whereCount > 0){
 	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
 	    }
 	    $this->Sql = $prefix . implode(' ' , $this->Join) . $where . $this->Order . $this->Limit;

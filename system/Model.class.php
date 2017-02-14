@@ -316,7 +316,7 @@ class Model{
 				$setKey .= '`' . $key . '`=\'' . addslashes($value) . "',";
 			}
 			//解析主键
-			if($this->Where === null){
+			if($this->Where[0] === null){
 				$this->where($pk , $array[$pk]);
 			}
 			$this->ParKey = ' SET '.substr($setKey , 0 , -1);
@@ -352,6 +352,21 @@ class Model{
 		$end = strlen($this->WhereOR) + 1;
 		$tmp = mb_substr($tmp , 0 , -$end , 'utf-8');
 		return array('tmp' => $tmp , 'value' => $value , 'sub' => $sub);
+	}
+
+	/**
+	 * 获取where条件
+	 * @return [type] [description]
+	 */
+	protected function getWhere(){
+		$where = '';
+	    $whereCount = count($this->Where);
+	    if(is_string($this->Where)){
+	    	$where = $this->Where;
+	    }else if(is_array($this->Where) && $whereCount > 0){
+	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
+	    }
+	    return $where;
 	}
 
 	/**
@@ -451,13 +466,7 @@ class Model{
 	    }else {
 	        $prefix = "SELECT $this->Fields " . $this->From . $this->Alias;
 	    }
-	    $where = '';
-	    $whereCount = count($this->Where);
-	    if(is_string($this->Where)){
-	    	$where = $this->Where;
-	    }else if(is_array($this->Where) && $whereCount > 0){
-	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
-	    }
+	    $where = $this->getWhere();
 	    $this->Sql = $prefix . implode(' ' , $this->Join) . $where . $this->Order . $this->Limit;
 	    return $this->Sql;
 	}
@@ -587,10 +596,11 @@ class Model{
 	 */
 	public function delete($value , $field = null){
 		$field = $field === null ? $this->getpk() : $field;
-		if($this->Where === null){
+		if($this->Where[0] === null){
 			$this->where($field , $value);
 		}
-		$this->Sql = "DELETE FROM " . $this->TablesName . $this->Where . $this->value;
+		$where = $this->getWhere();
+		$this->Sql = "DELETE FROM " . $this->TablesName . $where;
 		return $this->ADUP($this->Sql , 'upd');
 	}
 	
@@ -614,13 +624,8 @@ class Model{
 			}
 			$this->ParData('upd',$data);
 		}
-		$where = '';
-	    $whereCount = count($this->Where);
-	    if($whereCount > 0){
-	    	$where = ' WHERE ' . implode(' ' . $this->WhereOR . ' ' , $this->Where);
-	    }
+		$where = $this->getWhere();
 		$this->Sql = "UPDATE " . $this->TablesName . $this->ParKey . $where;
-		dump($this->Sql);
 		return $this->ADUP($this->Sql , 'upd');
 	}
 

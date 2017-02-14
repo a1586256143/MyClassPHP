@@ -99,7 +99,6 @@ class MyClass{
 					Common , 				//全局目录
 					Library , 				//第三方目录
 				);
-		//创建文件夹
 		outdir($dir);
 		//生成默认的配置文件、控制器
 		$data = array(

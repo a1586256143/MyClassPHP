@@ -170,7 +170,7 @@ class Parser{
      */
     public function parLibsStatic(){
     	$patten = '/\{:libsStatic\(\'(.*?)\' , \'(.*?)\'\)\}/';
-    	if(preg_match($patten, $this->_tpl)){
+    	if(preg_match($patten, $this->_tpl , $match)){
     		$this->_tpl = preg_replace($patten, "<?php echo \system\\\\$1::$2; ?>", $this->_tpl);
     	}
     }

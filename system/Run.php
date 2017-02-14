@@ -7,12 +7,8 @@
 define('MyClass' , str_replace('\\' , '/' , dirname(__FILE__)));
 //根目录
 define('ROOT_PATH' , substr(MyClass , 0 , -6));
-//如果不存在APP_NAME
-if(!defined('APP_NAME')){
-	define('APP_NAME' , './Application');
-}
 //APP路径
-define('APP_PATH' , substr(MyClass , 0 , -6) . ltrim(APP_NAME , './'));
+define('APP_PATH' , substr(MyClass , 0 , -6));
 //核心文件
 define('Core' , MyClass . '/');
 //第三方类库文件目录

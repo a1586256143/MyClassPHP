@@ -815,7 +815,7 @@ class Model{
 	 */
 	protected function between_common($field , $between , $keyword){
 		list($betweenleft , $betweenright) = explode( ',' , $between);
-		$between = $keyword . ' (' . $betweenleft . ' AND ' . $betweenright . ')';
+		$between = $keyword . ' ' . $betweenleft . ' AND ' . $betweenright . ' ';
 		$this->where($field , null , null , $between);
 	}
 

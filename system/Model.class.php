@@ -544,7 +544,6 @@ class Model{
 	    }
 	    $where = $this->getWhere();
 	    $this->Sql = $prefix . implode(' ' , $this->Join) . $where . $this->Order . $this->Limit;
-	    dump($this->Sql);
 	    return $this->Sql;
 	}
 

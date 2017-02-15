@@ -63,9 +63,11 @@ class Route{
             if($key == '/'){
                 $route = '';
             }
-            //是否中间件
-            if($attr['middleware']){
-                is_array($value) ? $value['middleware'] = $attr['middleware'] : $value = array('route' => $value , 'middleware' => $attr['middleware']);
+            if(!$value['middleware']){
+                //是否中间件
+                if($attr['middleware']){
+                    is_array($value) ? $value['middleware'] = $attr['middleware'] : $value = array('route' => $value , 'middleware' => $attr['middleware']);
+                }
             }
             self::setRoutes($groupName . $route , $value);
         }

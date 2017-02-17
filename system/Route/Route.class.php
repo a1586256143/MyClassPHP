@@ -63,7 +63,7 @@ class Route{
             if($key == '/'){
                 $route = '';
             }
-            if(!$value['middleware']){
+            if(!isset($value['middleware'])){
                 //是否中间件
                 if($attr['middleware']){
                     is_array($value) ? $value['middleware'] = $attr['middleware'] : $value = array('route' => $value , 'middleware' => $attr['middleware']);

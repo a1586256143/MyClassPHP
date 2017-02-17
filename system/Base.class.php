@@ -81,10 +81,18 @@ class Base{
 		$path = APP_PATH . ltrim(self::$view->template_dir , '/') . $filename;
 		if($params){
 			foreach ($params as $key => $value) {
-				self::$view->assign($key , $value);
+				self::assign($key , $value);
 			}
 		}
 		self::$view->display($path);
+	}
+
+	/**
+	 * 注入变量
+	 * @return [type] [description]
+	 */
+	protected static function assign($name , $value){
+		self::$view->assign($name , $value);
 	}
 
 	/**

@@ -755,7 +755,9 @@ class Model{
 			}
 			if(strpos($key , '.') !== false){
 				//处理使用array('p.name' => '工' , 'p.id' => 111) 中文''问题
-				$value = is_numeric($value) ? $value : "'$value'";
+				if($value){
+					$value = is_numeric($value) ? $value : "'$value'";
+				}
 				$tmp .= $key . $sub . $value . ' ' . $this->WhereOR . ' ';
 			}else{
 				//处理between，in操作

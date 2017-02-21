@@ -856,7 +856,8 @@ class Model{
 				continue;
 			}
 			$member = strtolower($match[0]);
-			eval('$this->' . $member . ' = "' . $value . '";');
+			$this->$member = $value;
+			// eval('$this->' . $member . ' = "' . $value . '";');
 		}
 	}
 }

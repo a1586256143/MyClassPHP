@@ -98,6 +98,7 @@ class DataBase{
 		if(is_array($fields) && !is_null($fields)){
 			$this->sql .= $this->key('id' , 'int' , 11 , true , ',');
 			$this->attr = $fields;
+			$this->tables = $this->prefix . $tablename;
 			$this->_parse_fieldinfo(',');
 			$this->sql = substr($this->sql , 0 , -1);
 		}else{
@@ -220,7 +221,7 @@ class DataBase{
 		}
 		//解析default值
 		if(!is_null($default)){
-			$default = 'DEFAULT ' . is_string($default) ? "'$default'" : $default;
+			$default = 'DEFAULT ' . is_string($default) && $default ? "'$default'" : $default;
 		}
 		//解析comment值
 		if(!is_null($comment)){

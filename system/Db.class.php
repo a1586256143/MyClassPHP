@@ -134,6 +134,9 @@ abstract class Db{
      */
     public function execute($sql){
         $query = $this->query($sql);
+        if(!$query){
+            return false;
+        }
         $result = $this->fetch_array($query);
         return $result;
     }

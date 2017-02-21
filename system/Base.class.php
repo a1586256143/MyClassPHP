@@ -40,6 +40,7 @@ class Base{
 		self::$cache = S();
 		self::$get = values('get.');
 		self::$post = values('post.');
+		unset(self::$post['_token']);
 	}
 
 	/**
@@ -111,6 +112,7 @@ class Base{
 		self::$view->assign('param' , $param);
 		self::$view->assign('message' , $message);
 		self::$view->display($tpl);
+		exit;
 	}
 
 	/**

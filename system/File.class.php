@@ -71,7 +71,7 @@ class File {
 				if($info['extension'] != $suffix) continue;
 			}
 			//屏蔽. 和 .. 特殊操作符
-			if(in_array($filename , array('.' , '..'))) continue;
+			if(in_array($filename , array('.' , '..' , '.DS_Store'))) continue;
 			if(is_dir($filepath)){
 				//如果是文件夹则递归
 				$file[$filename] = $this->getDirAllFile($filepath);
@@ -172,6 +172,6 @@ class File {
 		$data['param'] = $param;
 		$data['prepath'] = $prepath;
 		$data['parsepath'] = $parsepath;
-		include Core . 'File/fileManage.php';
+		return $data;
 	}
 }

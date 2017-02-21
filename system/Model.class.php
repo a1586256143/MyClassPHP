@@ -137,7 +137,9 @@ class Model{
 			//非数组
 			extract($this->parseWhere(array($field => array($sub , $wherevalue)) , false , $sub));
 		}
-		$this->Where[] = $tmp;
+		if($tmp){
+			$this->Where[] = $tmp;
+		}
 		return $this;
 	}
 
@@ -180,7 +182,7 @@ class Model{
 	 */
 	public function find($pk = null){
 		if($pk){
-			$value = is_string($pk) ? "'$pk'" : $pk;
+			$value = !is_numeric($pk) ? "'$pk'" : $pk;
 			$this->where($this->getPk() , $value);
 		}
 		$this->getSql();
@@ -743,6 +745,7 @@ class Model{
 	 * @return [type] [description]
 	 */
 	protected function parseWhere($field = null , $showOr = false , $sub = null){
+		$field = myclass_filter($field);
 		//遍历字段
 		foreach ($field as $key => $value){
 			//处理数组传递区间符号
@@ -755,13 +758,12 @@ class Model{
 			}
 			if(strpos($key , '.') !== false){
 				//处理使用array('p.name' => '工' , 'p.id' => 111) 中文''问题
-				if($value){
-					$value = is_numeric($value) ? $value : "'$value'";
-				}
+				$value = is_numeric($value) ? $value : "'$value'";
 				$tmp .= $key . $sub . $value . ' ' . $this->WhereOR . ' ';
 			}else{
+
 				//处理between，in操作
-				$tmp .= $value ? "`$key` $sub '$value' $this->WhereOR " : "`$key` $sub $this->WhereOR ";
+				$tmp .= $value !== '' && $value !== null ? "`$key` $sub '$value' $this->WhereOR " : "`$key` $sub $this->WhereOR ";
 			}
 		}
 		$end = strlen($this->WhereOR) + 1;

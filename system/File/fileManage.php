@@ -1,6 +1,6 @@
 <table class="table">
 	<tr>
-		<td colspan="5"><a href="<?php echo U('Index/file' , array('path' => $prepath));?>">返回上一层</a></td>
+		<td colspan="5"><a href="Index/file/<?php echo $prepath;?>">返回上一层</a></td>
 	</tr>
 	<tr>
 		<td>名称</td>
@@ -25,7 +25,7 @@
 				<?php echo date('Y-m-d H:i:s' , filemtime($current_path));?>
 			</td>
 			<td>
-				<?php echo is_dir($current_path) ? "<a href=" . U('Index/file' , array('path' => $data['param'] . '@' . $key)) . ">进入目录</a> | " : ''; ?>
+				<?php echo is_dir($current_path) ? "<a href='Index/file/'" . $data['param'] . '@' . $key . ">进入目录</a> | " : ''; ?>
 				<a href="">编辑</a> | 
 				<a href="">删除</a></td>
 		</tr>

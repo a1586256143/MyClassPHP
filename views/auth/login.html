@@ -1,0 +1,26 @@
+{include file="master/header"}
+<div class="container">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Login
+		</div>
+		<div class="panel-body">
+			<form class="form" method="post" action="/public/login">
+				<div class="form-group">
+					<label for="" class="label-control">User</label>
+					<input type="text" placeholder="Enter Username" class="form-control" name="username" />
+				</div>
+				<div class="form-group">
+					<label for="" class="label-control">Pass</label>
+					<input type="password" placeholder="Enter Password" class="form-control" name="password" />
+				</div>
+				{:_token()}
+				<div class="form-group">
+					<button class="btn btn-primary">Login</button>
+					&nbsp;<a href="/public/register">to Register</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{include file="master/bottom"}

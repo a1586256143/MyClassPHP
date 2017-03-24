@@ -389,8 +389,10 @@ function checkSecurity($secur_number = null){
 		return false;
 	}
 	$system = session('_token');
+	dump($system);
+	dump(values('post.'));
 	if($secur_number == $system){
-		session('_token' , 'null');
+		// session('_token' , 'null');
 		return true;
 	}
 	return false;
@@ -402,6 +404,7 @@ function checkSecurity($secur_number = null){
  * @return [type] [description]
  */
 function _token($token = false){
+	dump(1);
 	return system\Form::security($token);
 }
 

@@ -8,4 +8,13 @@
 use system\Route\Route;
 Route::add(array(
 	'/' => '\controllers\Index@index' , 
+	'/about' => '\controllers\Index@about' , 
+));
+
+//登录
+Route::group('/public' , array(
+	'routes' => array(
+		'/login' => '\controllers\Index@login' , 
+		'/register' => '\controllers\Index@register' , 
+	)
 ));

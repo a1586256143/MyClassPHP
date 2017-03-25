@@ -1,6 +1,7 @@
 {
     "name": "myclassphp/myclassphp",
     "description": "The MyClassPHP Framework..",
+    "license" : "MIT",
     "authors": [
         {
             "name": "Colin",

@@ -5,20 +5,20 @@
 			Register
 		</div>
 		<div class="panel-body">
-			<form class="form">
+			{:libsStatic('Form' , 'openForm("public/register" , 'post')')}
 				<div class="form-group">
 					<label for="" class="label-control">User</label>
-					<input type="text" placeholder="Enter Username" class="form-control" name="username" />
+					{:libsStatic('Form' , 'inputText('username' , '' , array('placeholder' => 'Enter Username' , 'class' => 'form-control'))')}
 				</div>
 				<div class="form-group">
 					<label for="" class="label-control">Pass</label>
-					<input type="password" placeholder="Enter Password" class="form-control" name="password" />
+					{:libsStatic('Form' , 'inputPass('password' , '' , array('placeholder' => 'Enter Password' , 'class' => 'form-control'))')}
 				</div>
 				<div class="form-group">
-					<button class="btn btn-primary">Register</button>
+					{:libsStatic('Form' , 'button('button' , '' , 'Register' , array('class' => 'btn btn-primary'))')}
 					&nbsp;<a href="/public/login">to Login</a>
 				</div>
-			</form>
+			{:libsStatic('Form' , 'closeForm()')}
 		</div>
 	</div>
 </div>

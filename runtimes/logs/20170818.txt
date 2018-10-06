@@ -1,8 +1,0 @@
-[ 2017-08-18 22:11:40 ] http://www.myclassphp.cn/favicon.ico
-一个未定义的路由
-[ 2017-08-18 22:11:40 ] http://www.myclassphp.cn/favicon.ico
-一个未定义的路由
-[ 2017-08-18 22:11:44 ] http://www.myclassphp.cn/favicon.ico
-一个未定义的路由
-[ 2017-08-18 22:11:44 ] http://www.myclassphp.cn/favicon.ico
-一个未定义的路由

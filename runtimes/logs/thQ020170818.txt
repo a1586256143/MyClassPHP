@@ -1,4 +1,0 @@
-[ 2017-08-18 22:11:40 ] http://www.myclassphp.cn/
-SELECT *  FROM `my_user`
-[ 2017-08-18 22:11:44 ] http://www.myclassphp.cn/
-SELECT *  FROM `my_user`

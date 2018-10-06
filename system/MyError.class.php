@@ -64,7 +64,7 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     public static function error_traceassstring(){
-        error_reporting(E_PARSE | E_RECOVERABLE_ERROR | E_ERROR );
+        error_reporting(E_PARSE | E_ERROR );
         //设置错误处理
         set_error_handler('system\\MyError::customError');
         //设置错误处理
@@ -76,7 +76,7 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     protected static function set_error_show(){
-       ini_set('display_errors', 'Off');
+       // ini_set('display_errors', 'Off');
     }
 
     /**
@@ -89,16 +89,20 @@ class MyError extends \Exception{
      * @author Colin <15070091894@163.com>
      */
     protected static function info_initialize($code , $message , $file , $line , $detail){
+        http_response_code(404);
         header('Content-type:text/html;charset="utf-8"');
         self::$info = "<div style='width:85%;height:100%;margin:0 auto;font-family:微软雅黑'>";
         self::$info .= "<ul style='list-style:none;width:100%;height:100%;'>";
-        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误级别：" . $code . "</li>";
-        self::$info .= "<li style='line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误信息：<font color='red' style='word-break: break-all;'>" . $message . "</font></li>";
-        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误文件：" . $file . "</li>";
-        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>错误行数：" . $line . "</li>";
+        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Level: " . $code . "</li>";
+        self::$info .= "<li style='line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Message: <font color='red' style='word-break: break-all;'>" . $message . "</font></li>";
+        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>File: " . $file . "</li>";
+        self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>Line: " . $line . "</li>";
         self::$info .= "<li style='height:40px;line-height:40px;font-size:20px;color:#333;word-break: break-all;'>";
         if(Debug){
-            $string = array_filter(explode("#" , $detail));
+            $string = '';
+            if(is_string($detail)){
+                $string = array_filter(explode("#" , $detail));
+            }
             if(is_array($string)){
                 foreach ($string as $key => $value) {
                     self::$info .= '#'. $value . '<br>';

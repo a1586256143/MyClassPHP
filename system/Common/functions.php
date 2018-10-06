@@ -280,7 +280,7 @@ function Config($name = null , $value = ''){
 		//设置
 		$config = array_merge($config , $name);
 	}else if(is_string($name) && $value == ''){
-		return $config[$name];
+		return isset($config[$name]) ? $config[$name] : '';
 	}else if(is_string($name) && !empty($value)){
 		$config[$name] = $value;
 	}

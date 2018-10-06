@@ -39,15 +39,12 @@ class Templates{
 	public function display($file){
 		//获取模板名
 		//$filename = $this->getTemplateName($file);
-		//默认控制器和默认方法
-		$default_modules2 = defined('CURRENT_MODULE') ? CURRENT_MODULE : $default_modules;
-		$modules = empty($default_modules2) ? $modules : $default_modules2;
 		//设置路径
-		$dirname = APP_PATH . '/' . $modules . $this->template_dir . $controller . '/';
+		$dirname = APP_PATH . $this->template_dir;
 		//编译文件目录
-		$dircname = $this->compile_dir . $modules . '/' . $controller . '/';
+		$dircname = $this->compile_dir;
 		//判断编译文件夹和缓存文件夹是否存在
-		$dir = array($this->compile_dir , $this->compile_dir . $modules , $dircname);
+		$dir = array($this->compile_dir , $this->compile_dir , $dircname);
 		//生成文件夹
 		outdir($dir);
 		//判断方法目录是否存在
@@ -61,13 +58,13 @@ class Templates{
 		//生成编译文件
 		$parFile = $dircname . md5($file) . '.php';
 		//判断编译文件是否存在 如果存在那么就直接调用编译文件 如果不存在 那么久重新编译生成
-		if(!file_exists($parFile) || (filemtime($parFile) < filemtime($file))){
+		// if(!file_exists($parFile) || (filemtime($parFile) < filemtime($file))){
 			//编译文件的修改时间<tpl模板文件的修改时间
 			//实例化解析类
 			$_parser = ObjFactory::CreateTemplatesParse('tpl' , $file);
 			//调用解析类里面的公共方法
 			$_parser->comile($parFile);
-		}
+		// }
 		//引入编译文件
 		extract($this->_vars);
 		require $parFile;

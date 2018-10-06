@@ -2,6 +2,7 @@
 namespace controllers;
 use system\Base;
 use models\User;
+use system\Model;
 class Index extends Base{
 	/**
 	 * 首页
@@ -27,8 +28,8 @@ class Index extends Base{
 		if(self::$is_post){
 			$user = new User();
 			$status = $user->login();
-			var_dump($status);
 			//处理post数据
+			return self::success('登陆成功' , '/');
 		}
 		self::view('auth/login');
 	}

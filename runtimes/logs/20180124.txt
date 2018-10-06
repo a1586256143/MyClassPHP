@@ -1,0 +1,24 @@
+[ 2018-01-24 14:03:14 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:14 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:21 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:21 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:22 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:22 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:27 ] http://www.myclassphp.cn/admin
+一个未定义的路由
+[ 2018-01-24 14:03:27 ] http://www.myclassphp.cn/admin
+一个未定义的路由
+[ 2018-01-24 14:03:27 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:27 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:29 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2018-01-24 14:03:29 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由

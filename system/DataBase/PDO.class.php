@@ -7,7 +7,7 @@ namespace system\DataBase;
 use system\Db;
 
 class PDO extends Db{
-    protected $_db;
+    protected static $link;
 
     /**
      * 连接数据库操作
@@ -15,7 +15,7 @@ class PDO extends Db{
      */
     public function connect(){
         $string = "mysql:host=%s;dbname=%s";
-        $this->_db = new \PDO(sprintf($string , Config('DB_HOST') , Config('DB_NAME')) , Config('DB_USER') , Config('DB_PASS'));
+        self::$link = new \PDO(sprintf($string , Config('DB_HOST') , Config('DB_TABS')) , Config('DB_USER') , Config('DB_PASS'));
     }
 
     /**
@@ -24,7 +24,7 @@ class PDO extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function query($sql){
-        $this->query = $this->_db->query($sql);
+        $this->query = self::$link->query($sql);
         return $this->query;
     }
 
@@ -34,7 +34,7 @@ class PDO extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function select_db($tables){
-        if($this->_db){
+        if(self::$link){
             return true;
         }
     }
@@ -46,9 +46,9 @@ class PDO extends Db{
      */
     public function fetch_array($query = null){
         if($query){
-            return $query->fetch();
+            return $query->fetch_array();
         }
-        return $this->query->fetch();
+        return $this->query->fetch_array();
     }
 
     /**
@@ -56,7 +56,7 @@ class PDO extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function insert_id(){
-        return $this->_db->lastInsertId();
+        return self::$link->lastInsertId();
     }
 
     /**
@@ -72,7 +72,7 @@ class PDO extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function close(){
-        $this->_db = null;
+        self::$link = null;
     }
 
     /**
@@ -80,7 +80,7 @@ class PDO extends Db{
      * @author Colin <15070091894@163.com>
      */
     public function showerror(){
-        $info = $this->query->errorInfo();
+        $info = self::$link->errorInfo();
         return $info[2];
     }
 

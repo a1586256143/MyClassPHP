@@ -37,7 +37,6 @@ class Base{
 		self::$is_get = GET;
 		self::$is_post = POST;
 		self::$session = session();
-		self::$cache = S();
 		self::$get = values('get.');
 		self::$post = values('post.');
 		unset(self::$post['_token']);
@@ -50,7 +49,7 @@ class Base{
      * @param time  跳转时间
      * @author Colin <15070091894@163.com>
 	 */
-	public static function redirect($url , $info = '正在跳转.....', $time = 3){
+	public static function redirect($url , $info = 'Skipping...', $time = 3){
 		if(!empty($info)){
 			echo "<meta http-equiv='refresh' content='$time; url=$url'/>";
 			exit($info);
@@ -77,7 +76,7 @@ class Base{
 	 * 显示视图
 	 * @return [type] [description]
 	 */
-	protected static function view($filename , $params){
+	protected static function view($filename , $params = null){
 		$filename = $filename . Config('TPL_TYPE');
 		$path = APP_PATH . ltrim(self::$view->template_dir , '/') . $filename;
 		if($params){
@@ -104,7 +103,7 @@ class Base{
 	public static function MessageTemplate($message , $type , $param = array()){
 		$tpl = Config('TPL_' . $type . '_PAGE');
 		if(!$tpl){
-			E('请设置提示载入的页面');
+			E('Please set up the page to be loaded.');
 		}
 		if(count(explode('/' , $tpl)) <= 1){
 			$tpl = MyClass . '/Tpl/' . $tpl . Config('TPL_TYPE');

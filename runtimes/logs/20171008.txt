@@ -1,0 +1,4 @@
+[ 2017-10-08 20:10:44 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由
+[ 2017-10-08 20:10:44 ] http://www.myclassphp.cn/favicon.ico
+一个未定义的路由

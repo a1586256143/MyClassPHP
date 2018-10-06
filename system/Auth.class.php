@@ -90,7 +90,7 @@ class Auth{
 	 */
 	protected function getUserAuths($uid = null){
 		if(empty($uid)){
-			throw new MyError('请设置权限uid');
+			throw new MyError('Please set the permissions UID');
 		}
 		//获取用户的权限组
 		$auth_users = M('AuthUsers')->where(array('uid' => $uid))->find();

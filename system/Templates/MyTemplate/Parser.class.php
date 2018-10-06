@@ -180,6 +180,15 @@ class Parser{
      * @author Colin <15070091894@163.com>
      */
 	public function comile($parFile){
+		//调用第三方页面解析
+		if(is_array(Config('LOAD_TEMPLATE'))){
+			$LOAD_TEMPLATE = Config('LOAD_TEMPLATE');
+			foreach ($LOAD_TEMPLATE as $key => $value) {
+				$name = '\system\Templates\\' . $value;
+				$template = new $name;
+				$this->_tpl = $template->parse($this->_tpl);
+			}
+		}
 		$this->parDefault();		//解析模板默认常量
 		$this->parWeb();			//解析系统变量
 		$this->parinclude();

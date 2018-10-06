@@ -13,7 +13,7 @@ class Url{
      * @return [type] [description]
      */
     public static function parseUrl($url = null){
-        $url = $url == '' ?  $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] : $url;
+        $url = $url == '' ?  '//' . $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] : $url;
         $path = parse_url($url);
         $if_path = $path['path'] ? ltrim($path['path'] , '/') : '';
         $parse_path = explode('/' , $if_path);
@@ -54,31 +54,31 @@ class Url{
         $parse_url = parse_url($current_url);
         $path_array = explode('/' , ROOT_PATH);
         $patten = '/\./';
-        foreach ($parse_path as $key => $value) {
+        foreach ($parse_url as $key => $value) {
             //处理根目录
             if(in_array($value , $path_array)){
-                unset($parse_path[$key]);
+                unset($parse_url[$key]);
             }
-            $parse_path = array_merge($parse_path);
+            $parse_url = array_merge($parse_url);
         }
         //匹配是否是index.php
-        if(!empty($parse_path)){
-            if(preg_match($patten,$parse_path[0],$match)){
+        if(!empty($parse_url) && isset($parse_url[0])){
+            if(preg_match($patten,$parse_url[0],$match)){
                 //确认文件是否存在
-                if(!file_exists(ROOT_PATH.$parse_path[0])){
-                    E('无效的入口文件'.$parse_path[0]);
+                if(!file_exists(ROOT_PATH.$parse_url[0])){
+                    E('Invalid entry file '.$parse_url[0]);
                 }
-                unset($parse_path[0]);
+                unset($parse_url[0]);
             }
-            $parse_path = array_merge($parse_path);
+            $parse_url = array_merge($parse_url);
         }
-        if(empty($parse_path)){
-            $parse_path = array(Config('DEFAULT_MODULE') , Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
+        if(empty($parse_url)){
+            $parse_url = array(Config('DEFAULT_MODULE') , Config('DEFAULT_CONTROLLER') , Config('DEFAULT_METHOD'));
         }
-        self::$param = $parse_path;
+        self::$param = $parse_url;
         if($is_return_current_url) return $current_url;
         if($is_return_array) return $parse_url;
-        return $parse_path;
+        return $parse_url;
     }
 
     /**

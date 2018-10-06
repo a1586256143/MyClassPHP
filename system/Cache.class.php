@@ -23,11 +23,11 @@ class Cache {
 	public function CacheDir(){
 		//检查是否有可写的权限
 		if(!is_writable($this->cache_data_dir)){
-			E('该目录没有可写权限！'.$this->cache_data_dir);
+			E('There is no writable permissions in this directory!'.$this->cache_data_dir);
 		}
 		//检查是否有可读的全选
 		if(!is_readable($this->cache_data_dir)){
-			E('该目录没有可读权限！'.$this->cache_data_dir);
+			E('There is no readable permission in this directory!'.$this->cache_data_dir);
 		}
 	}
 
@@ -42,7 +42,7 @@ class Cache {
 		$FileName = $this->UrlAndDefaultSuffix($name);
 		//写入文件
 		if(!$this->file->WriteFile($FileName , $data)){
-			E('写入文件失败！'.$FileName);
+			E('Write file failed!'.$FileName);
 		}
 	}
 

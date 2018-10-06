@@ -46,7 +46,12 @@ class Model{
 		$this->db = ObjFactory::getIns();
 		//如果表名为空，并且TableName为空
 		if(empty($tables) && !$this->TableName){
-			return $this;
+			// 处理是否有实例化类名
+			$this->TableName = array_pop(explode('\\' , get_class($this)));
+			$currentModelName = array_pop(explode('\\' , __CLASS__));
+			if($this->TableName == $currentModelName){
+				return $this;
+			}
 		}
 		//是否设置表名
 		if($this->TableName){
@@ -58,6 +63,7 @@ class Model{
 		$this->db->CheckTables($this->db_prefix . $this->DataName , $this->db_tabs);
 		//初始化回调函数的句柄
 		$this->callback = $tables;
+		return $this;
 	}
 
 	/**
@@ -297,13 +303,14 @@ class Model{
 	 * @param num 查询结果集的数量 0,10
 	 * @author Colin <15070091894@163.com>
 	 */
-	public function limit($start , $end = 1){
-		if(!empty($start)){
-			$start = ($start-1) * $end;
+	public function limit($start = 0 , $end = null){
+		if(!empty($start) && $end){
+			$start = ($start - 1) * $end;
+			$str = $start . ',' . $end;
 		}else{
-			$start = 0;
+			$str = $start;
 		}
-		$this->Limit = " LIMIT " . $start . ',' . $end;
+		$this->Limit = " LIMIT " . $str;
 		return $this;
 	}
 
@@ -686,7 +693,7 @@ class Model{
 			if($this->startTransaction){
 				return false;
 			}
-			E('SQL语句执行错误' . $this->db->showerror());
+			E('SQL statement execution error ' . $this->db->showerror());
 		}
 		if($ist == 'ist'){
 			return $this->db->insert_id();
@@ -716,7 +723,7 @@ class Model{
 					$this->ParKey = substr($setKey, 0 , -1);
 					$this->Parvalue = substr($setValue, 0 , -1);
 				}else if(is_string($array)){
-					E('解析insert sql 字段失败!' . $this->Sql);
+					E('Resolve failure!' . $this->Sql);
 				}
 				break;
 			//如果是更新操作
@@ -840,7 +847,7 @@ class Model{
 	 */
 	protected static function CheckConnectInfo(){
 		if(!Config('DB_TYPE') || !Config('DB_HOST') || !Config('DB_USER') || !Config('DB_TABS')){
-			E('请设置数据库连接信息！');
+			E('Please set up the database connection information!');
 		}
 	}
 

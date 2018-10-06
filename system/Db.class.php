@@ -95,7 +95,7 @@ abstract class Db{
         $database = Config('DB_TABS');
         $result = self::$db->select_db($database);
         if(!$result){
-            E('数据库不存在或数据库名不正确！'.$database);
+            E('The database does not exist or the name of the database is incorrect!'.$database);
         }
     }
 

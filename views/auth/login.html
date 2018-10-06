@@ -1,23 +1,19 @@
 {include file="master/header"}
+<style>
+	input,select{margin-bottom: 20px;outline: none;}
+	select{width:100%;}
+</style>
 <div class="container">
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			Login
 		</div>
 		<div class="panel-body">
-			{:libsStatic('Form' , 'openForm("public/login" , 'post')')}
-				<div class="form-group">
-					<label for="" class="label-control">User</label>
-					{:libsStatic('Form' , 'inputText('username' , '' , array('placeholder' => 'Enter Username' , 'class' => 'form-control'))')}
-				</div>
-				<div class="form-group">
-					<label for="" class="label-control">Pass</label>
-					{:libsStatic('Form' , 'inputPass('password' , '' , array('placeholder' => 'Enter Password' , 'class' => 'form-control'))')}
-				</div>
-				<div class="form-group">
-					{:libsStatic('Form' , 'button('button' , '' , 'Login' , array('class' => 'btn btn-primary'))')}
-					&nbsp;<a href="/public/register">to Register</a>
-				</div>
+			{:libsStatic('Form' , 'openForm('Index/user' , 'post' , array('name' => 'formnAME' , 'class' => 'form-class'))')}
+			    {:libsStatic('Form' , 'inputText('username' , '' , array('placeholder' => '请输入用户名' , 'class' => 'form-control'))')}
+			    {:libsStatic('Form' , 'inputPass('password' , '' , array('placeholder' => '请输入密码' , 'class' => 'form-control'))')}
+			    {:libsStatic('Form' , 'select(array(0 => '男' , 1 => '女') , 'sex' , 0 , array('class' => 'form-control'))')}
+			    {:libsStatic('Form' , 'submitButton('submit' , '提交' , array('class' => 'btn btn-success'))')}
 			{:libsStatic('Form' , 'closeForm()')}
 		</div>
 	</div>

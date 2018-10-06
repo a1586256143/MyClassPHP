@@ -32,6 +32,14 @@ class Route{
     }
 
     /**
+     * 合并控制器
+     * @return [type] [description]
+     */
+    protected static function mergeController($controller){
+        return '\\' . Config('DEFAULT_CONTROLLER_LAYER') . '\\' . $controller;
+    }
+
+    /**
      * 添加路由规则
      * @author Colin <15070091894@163.com>
      */
@@ -52,7 +60,7 @@ class Route{
         $parse_url = Url::parseUrl();
         //处理attr路由规则
         if(!$attr || !$attr['routes']){
-            E("请设置 $groupName 路由组的属性");
+            E("Please set $groupName the properties of the routing group");
         }
         //给$groupName增加/
         $groupName = '/' . ltrim($groupName , '/');
@@ -65,7 +73,7 @@ class Route{
             }
             if(!isset($value['middleware'])){
                 //是否中间件
-                if($attr['middleware']){
+                if(isset($attr['middleware'])){
                     is_array($value) ? $value['middleware'] = $attr['middleware'] : $value = array('route' => $value , 'middleware' => $attr['middleware']);
                 }
             }
@@ -90,9 +98,12 @@ class Route{
         $parse_url = Url::parseUrl();
         //处理方法
         $request_method = $_SERVER["REQUEST_METHOD"];
+        $request_with = $_SERVER["HTTP_X_REQUESTED_WITH"];
         define('POST' , $request_method == 'POST' ? true : false);
         //定义get和post常量
         define('GET' , $request_method == 'GET' ? true : false);
+        //定义ajax
+        define('AJAX' , strtolower($request_with) == 'xmlhttprequest' ? true : false);
         //寻找路由
         if(array_key_exists($parse_url , self::$routes)){
             self::execRoute(self::$routes[$parse_url]);
@@ -116,7 +127,7 @@ class Route{
             }
             //没有找到
             if(count($equalLength) == 0){
-                E('一个未定义的路由');
+                E('An undefined route');
             }
             $isFind = false;
             //处理获取的长度数组
@@ -141,15 +152,15 @@ class Route{
                             $isFind = true;
                             self::execRoute(self::$routes[$items]);
                         }else{
-                            E('一个未定义的路由');
+                            E('An undefined route');
                         }
                     }
                 }else{
-                    E('一个未定义的路由');
+                    E('An undefined route');
                 }
             }
             if(!$isFind){
-                E('一个未定义的路由');
+                E('An undefined route');
             }
         }
     }
@@ -161,6 +172,7 @@ class Route{
      * @return [type] [description]
      */
     public static function execRoute($route){
+        $route['route'] = self::mergeController($route['route']);
         $controllerOrAction = explode('@' , $route['route']);
         list($namespace , $method) = $controllerOrAction;
         $controller = new $namespace;
@@ -172,14 +184,14 @@ class Route{
         $controller_path = APP_PATH . ltrim(implode('/' , $class_name_array) , '/') . '/' . ucfirst($get_class_name) . '.class.php';
         //是否存在控制器
         if(!file_exists($controller_path)){
-            E($get_class_name . ' 控制器不存在！');
+            E($get_class_name . ' The controller does not exist!');
         }
         //控制器方法是否存在
         if(!method_exists($controller , $method)){
-            E($method.'() 这个方法不存在');
+            E($method.'() This method does not exist');
         }
         //执行中间件
-        if(!!$route['middleware']){
+        if(!!isset($route['middleware'])){
             $middleware = new $route['middleware'];
             $middleware->execMiddleware();
         }
@@ -188,8 +200,9 @@ class Route{
         //反射
         $ReflectionMethod = new \ReflectionMethod($controller , $method);
         $method_params = $ReflectionMethod->getParameters($method);
+        $get = values('get.');
         //处理参数返回
-        $param = array_filter(values('get.'));
+        $param = array_filter($get ? $get : array());
         if(!empty($param)){
             if(!empty($method_params)){
                 foreach ($method_params as $key => $value) {

@@ -75,7 +75,7 @@ class Validate {
 		if(method_exists($this, $method)){
 			$this->$method($string);
 		}else{
-			E($method . '此方法不存在！');
+			E($method . ' This method does not exist!');
 		}
 	}
 

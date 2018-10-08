@@ -1,9 +1,7 @@
 # MyClassPHP
 MyClassPHP是一个开源、免费的学习框架，也被称之为类库包，属于MVC框架成品
 官方交流群，提交BUG群  438695935
-## 主要更新
-### 1.目录不在多样化，而是传统的web结构
-### 2.简单MVC实现多样控制器
+
 例如：在/controllers 建立Admin目录，并建立Index.class.php，代码如下
 ```
 namespace controllers\Admin;

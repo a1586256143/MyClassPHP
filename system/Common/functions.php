@@ -54,7 +54,7 @@ function E($message){
  * @author Colin <15070091894@163.com>
  */
 function require_file($path , $modules = '' , $return = true){
-	$content = '';
+	$content = [];
 	if(is_array($path)){
 		foreach ($path as $key => $value) {
 			if(file_exists($modules.$value)){
@@ -124,6 +124,14 @@ function dump($array){
 	echo '<pre>';
 	print_r($array);
 	echo '</pre>';
+}
+
+/**
+ * 生成url
+ * @return [type] [description]
+ */
+function url($url){
+	return getSiteUrl(true) . '/' . ltrim($url , '/');
 }
 
 /**
@@ -228,7 +236,7 @@ function values($type , $formname = null , $function = 'trim' , $default = null)
  * @param value 存储的value
  * @author Colin <15070091894@163.com>
  */
-function S($name , $value = '' , $time = 0){
+function S($name = '' , $value = '' , $time = 0){
 	//实例化一个缓存句柄
 	$cache = \system\ObjFactory::CreateCache();
 	if($name == 'null'){
@@ -280,7 +288,7 @@ function Config($name = null , $value = ''){
 		//设置
 		$config = array_merge($config , $name);
 	}else if(is_string($name) && $value == ''){
-		return isset($config[$name]) ? $config[$name] : '';
+		return $config[$name];
 	}else if(is_string($name) && !empty($value)){
 		$config[$name] = $value;
 	}
@@ -298,8 +306,8 @@ function getCurrentUrl(){
  * 获取站点地址
  * @author Colin <15070091894@163.com>
  */
-function getSiteUrl($scame = true){
-	return \system\Url::getSiteUrl($scame , false);
+function getSiteUrl($isIndex = false){
+	return \system\Url::getSiteUrl($isIndex);
 }
 
 

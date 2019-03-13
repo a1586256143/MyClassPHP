@@ -5,34 +5,6 @@
  */
 namespace system;
 class MyClass{
-
-	/**
-	 * 初始化
-	 * @return [type] [description]
-	 * @author Colin <15070091894@163.com>
-	 */
-	public static function init(){
-		define('MyClass' , str_replace('\\' , '/' , __DIR__));
-		//根目录
-		define('ROOT_PATH' , substr(MyClass , 0 , -28));
-		//APP路径
-		define('APP_PATH' , substr(MyClass , 0 , -28));
-		//核心文件
-		define('Core' , MyClass . '/');
-		//第三方类库文件目录
-		define('Library' , APP_PATH . 'librarys');
-		//定义运行目录
-		define('RunTime' , APP_PATH . 'runtimes');
-		//公共文件目录
-		define('Common' , APP_PATH . 'globals');
-		//系统公共目录
-		define('CommonDIR' , Core . 'Common');
-		//定义版本信息
-		define('VERSION' , '3.0');
-		//执行run方法
-		self::run();
-	}
-
 	/**
 	 * 运行方法
 	 * @author Colin <15070091894@163.com>
@@ -65,6 +37,11 @@ class MyClass{
 		if(preg_match("/\\\\/" , $ClassName)){
 			//是否为命名空间加载
 			$ClassName = preg_replace("/\\\\/" , "/" , $ClassName);
+			// 简单处理app命名空间
+			list($dirname) = explode('/' , $ClassName);
+			if($dirname != 'system'){
+				$ClassName = APP_NAME . '/' . $ClassName;
+			}
 			require_file(ROOT_PATH . $ClassName . Config('DEFAULT_CLASS_SUFFIX'));
 		}
 	}
@@ -84,9 +61,9 @@ class MyClass{
 		Config($merge);
 		//设置默认工作空间目录结构
 		$dirnames = array(
-						'ControllerDIR' => APP_PATH . Config('DEFAULT_CONTROLLER_LAYER') , 
-						'ModelDIR' 		=> APP_PATH . Config('DEFAULT_MODEL_LAYER') , 
-						'ViewDIR'		=> APP_PATH . Config('TPL_DIR') , 
+						'ControllerDIR' => APP_DIR . Config('DEFAULT_CONTROLLER_LAYER') , 
+						'ModelDIR' 		=> APP_DIR . Config('DEFAULT_MODEL_LAYER') , 
+						'ViewDIR'		=> APP_DIR . Config('TPL_DIR') , 
 					);
 		//根据数组的key 生成常量
 		foreach ($dirnames as $key => $value) {
@@ -117,10 +94,11 @@ class MyClass{
 			$cacheTmp = '/' . $cacheTmp;
 		}
 		//更新文件权限
-		shell_exec('chmod -R 0777 ' . APP_PATH);
+		shell_exec('chmod -R 0755 ' . APP_DIR);
 		//批量创建目录
 		$dir = array(
 					APP_PATH , 				//应用路径
+					APP_DIR , 				//系统app目录
 					RunTime , 				//运行目录
 					ControllerDIR , 		//控制器目录
 					ModelDIR , 				//模型目录

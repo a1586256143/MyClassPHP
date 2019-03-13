@@ -103,15 +103,17 @@ function replace_recursive_params($name1 , $name2 = null , $name3 = null){
  * @author Colin <15070091894@163.com>
  */
 function outdir($param){
+	$result = array();
 	if(is_array($param)){
 		foreach ($param as $key => $value) {
 			if(!is_dir($value)){
-				mkdir($value , 0777);
+				$result[$value] = mkdir($value , 0777);
 			}
 		}
 	}else if(is_string($param)){
-		if(!is_dir($param)) mkdir($param , 0777);
+		if(!is_dir($param)) $result[$param] = mkdir($param , 0777);
 	}
+	return $result;
 }
 
 /**

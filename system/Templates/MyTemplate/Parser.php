@@ -110,7 +110,7 @@ class Parser{
 		if(preg_match($patten,$this->_tpl,$file)){
 			$filename = $file[2];
 			$modules = defined('CURRENT_MODULE') ? CURRENT_MODULE : Config('DEFAULT_MODULE');
-			$path = APP_PATH . ltrim(Config('TPL_DIR') , '/');
+			$path = APP_DIR . ltrim(Config('TPL_DIR') , '/');
 			$filepath = $path.$filename.Config('TPL_TYPE');
 			if(!file_exists($filepath) || empty($file)){
 				E($filepath.'引入文件出错！请检查！');

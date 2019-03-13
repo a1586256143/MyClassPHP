@@ -40,7 +40,7 @@ class Templates{
 		$default_modules2 = defined('CURRENT_MODULE') ? CURRENT_MODULE : $default_modules;
 		$modules = empty($default_modules2) ? $modules : $default_modules2;
 		//设置路径
-		$dirname = APP_PATH . $this->template_dir;
+		$dirname = APP_DIR . $this->template_dir;
 		//编译文件目录
 		$dircname = $this->compile_dir;
 		//判断编译文件夹和缓存文件夹是否存在
@@ -93,7 +93,7 @@ class Templates{
 		$tplFile = $file;
 		//判断是否写了目录名支持持一级
 		$_patten = '/(.*)\/(.*)/';
-		$path = APP_PATH . '/' . CURRENT_MODULE;
+		$path = APP_DIR . '/' . CURRENT_MODULE;
 		if(preg_match($_patten , $file , $_match)){
 			$tplFile = $path . Config('LAYOUT_DIR').'/'.$_match[2];
 		}

@@ -171,7 +171,8 @@ class Route{
         //得到controllers\index 中的 index
         $get_class_name = array_pop($class_name_array);
         //拼接路径，并自动将路由中的index转换成Index
-        $controller_path = APP_PATH . ltrim(implode('/' , $class_name_array) , '/') . '/' . ucfirst($get_class_name) . '.php';
+        $controller_path = APP_DIR . ltrim(implode('/' , $class_name_array) , '/') . '/' . ucfirst($get_class_name) . Config('DEFAULT_CLASS_SUFFIX');
+
         //是否存在控制器
         if(!file_exists($controller_path)){
             E($get_class_name . ' 控制器不存在！');
@@ -208,8 +209,11 @@ class Route{
      * @return [type] [description]
      */
     protected static function showView($result){
+        if(!$result){
+            return '';
+        }
         switch ($result) {
-            case is_array($result) :
+            case is_array($result) || is_object($result) :
                 ajaxReturn($result);
                 break;
             case is_file($result) : 

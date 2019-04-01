@@ -42,10 +42,8 @@ class MyClass {
             $ClassName = preg_replace("/\\\\/", "/", $ClassName);
             // 简单处理app命名空间
             list($dirname) = explode('/', $ClassName);
-            if ($dirname != 'system') {
-                $ClassName = APP_NAME . '/' . $ClassName;
-            }
-            require_file(ROOT_PATH . $ClassName . Config('DEFAULT_CLASS_SUFFIX'));
+            $ClassName = $dirname != 'system' ? APP_NAME . '/' . $ClassName : NAME_SPACE . $ClassName;
+            require_file($ClassName . Config('DEFAULT_CLASS_SUFFIX'));
         }
     }
 
@@ -59,7 +57,7 @@ class MyClass {
         //载入函数库文件
         require_once CommonDIR . '/functions.php';
         //合并config文件内容
-        $merge = replace_recursive_params(MyClass . '/Conf/config.php', Common . '/config.php');
+        $merge = replace_recursive_params(Core . '/Conf/config.php', Common . '/config.php');
         //加入配置文件
         Config($merge);
         //设置默认工作空间目录结构

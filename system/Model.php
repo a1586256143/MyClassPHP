@@ -36,7 +36,9 @@ class Model {
 
     /**
      * 构造方法
+     *
      * @param
+     *
      * @author Colin <15070091894@163.com>
      */
     final public function __construct($tables = null) {
@@ -75,6 +77,7 @@ class Model {
      * @param  tables 表名
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function from($tables = null) {
         $tables     = $tables === null ? $this->TablesName : $tables;
@@ -90,6 +93,7 @@ class Model {
      * @param field 字段名
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function field($field) {
         if (!empty($field)) {
@@ -105,6 +109,7 @@ class Model {
      * @param  data 创建对象的数据
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function create($data = array()) {
         if (!$data) $data = values('post.');
@@ -138,12 +143,13 @@ class Model {
     /**
      * 条件
      *
-     * @param fuild 字段名称
-     * @param wherevalue 字段值
-     * @param whereor OR和AND
-     * @param sub 操作符号 可以为 =,!=,in,not in,between,not between
+     * @param string $field      字段名称
+     * @param string $wherevalue 字段值
+     * @param string $whereor    OR和AND
+     * @param string $sub        操作符号 可以为 =,!=,in,not in,between,not between
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function where($field, $wherevalue = null, $whereor = null, $sub = '=') {
         $fieldlen = count($field);
@@ -156,9 +162,6 @@ class Model {
         } else {
             //非数组
             extract($this->parseWhere(array($field => array($sub, $wherevalue)), false, $sub));
-        }
-        if ($tmp) {
-            $this->Where[] = $tmp;
         }
 
         return $this;
@@ -184,6 +187,7 @@ class Model {
      * @param sql sql语句
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function query($sql = null) {
         $sql         = $sql === null ? $this->Sql : $sql;
@@ -204,7 +208,11 @@ class Model {
 
     /**
      * 查询一条数据
+     *
+     * @param string $pk 主键名
+     *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function find($pk = null) {
         if ($pk) {
@@ -242,6 +250,7 @@ class Model {
      * @param values   要插入的数据
      *
      * @author Colin <15070091894@163.com>
+     * @return int
      */
     public function insert($values = null) {
         $values = myclass_filter($values);
@@ -261,6 +270,7 @@ class Model {
      * @param value 唯一标示符
      *
      * @author Colin <15070091894@163.com>
+     * @return int
      */
     public function delete($value, $field = null) {
         $field = $field === null ? $this->getpk() : $field;
@@ -280,6 +290,7 @@ class Model {
      * @param value    要被修改的值
      *
      * @author Colin <15070091894@163.com>
+     * @return int
      */
     public function update($field, $value = null) {
         if (is_string($field)) {
@@ -303,7 +314,11 @@ class Model {
 
     /**
      * 左连接
-     * @return [type] [description]
+     *
+     * @param string $join   表名
+     * @param string $method 连接名
+     *
+     * @return \system\Model
      */
     public function join($join, $method = 'LEFT') {
         $join         = $this->_parse_prefix($join);
@@ -314,7 +329,7 @@ class Model {
 
     /**
      * 增加字段值
-     * @return [type] [description]
+     * @return int
      */
     public function incField($field, $num = 1) {
         $this->ParKey = ' SET ' . '`' . $field . '`' . "=$field + $num";
@@ -324,7 +339,7 @@ class Model {
 
     /**
      * 减少字段值
-     * @return [type] [description]
+     * @return int
      */
     public function decField($field, $num = 1) {
         $this->ParKey = ' SET ' . '`' . $field . '`' . "=$field - $num";
@@ -335,9 +350,11 @@ class Model {
     /**
      * limt
      *
-     * @param num 查询结果集的数量 0,10
+     * @param int $start 查询结果集的数量 0
+     * @param int $end   10
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function limit($start = 0, $end = null) {
         if (!empty($start) && $end) {
@@ -353,7 +370,12 @@ class Model {
 
     /**
      * order
+     *
+     * @param string $field 字段名
+     * @param string $desc  排序方式
+     *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function order($field, $desc = null) {
         $this->Order = " ORDER BY " . $field . " " . $desc . " ";
@@ -364,9 +386,10 @@ class Model {
     /**
      * 别名
      *
-     * @param as 新的别名
+     * @param string $as 新的别名
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function alias($as = 'alias') {
         $this->Alias = ' AS ' . $as;
@@ -377,9 +400,10 @@ class Model {
     /**
      * 求最大值
      *
-     * @param fuild  要求出最大值的数值
+     * @param string $field 要求出最大值的数值
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function max($field) {
         $this->setDefaultAs($field);
@@ -390,9 +414,10 @@ class Model {
     /**
      * 最小值
      *
-     * @param field   要被求出最小值的字段
+     * @param string $field 要被求出最小值的字段
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function min($field) {
         $this->setDefaultAs($field);
@@ -403,9 +428,10 @@ class Model {
     /**
      * 某个字段求和
      *
-     * @param field 要被求和的字段
+     * @param string $field 要被求和的字段
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function sum($field) {
         $this->setDefaultAs($field);
@@ -416,9 +442,10 @@ class Model {
     /**
      * 求平均值
      *
-     * @param field 平均值的字段
+     * @param string $field 平均值的字段
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function avg($field) {
         $this->setDefaultAs($field);
@@ -429,10 +456,11 @@ class Model {
     /**
      * in
      *
-     * @param field 字段
-     * @param values 值
+     * @param string $field  字段
+     * @param string $values 值
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function in($field, $values) {
         $this->in_common($field, $values, 'in ');
@@ -443,10 +471,11 @@ class Model {
     /**
      * not in
      *
-     * @param field 字段
-     * @param values 值
+     * @param string $field  字段
+     * @param string $values 值
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function notin($field, $values) {
         $this->in_common($field, $values, 'not in ');
@@ -457,10 +486,11 @@ class Model {
     /**
      * like
      *
-     * @param field 要被like的字段名
-     * @param value like的值
+     * @param string $field 要被like的字段名
+     * @param string $value like的值
      *
      * @author Colin <15070091894@163.com>
+     * @return string
      */
     public function like($field, $value) {
         return $this->where($field, $value, null, 'LIKE ');
@@ -473,6 +503,7 @@ class Model {
      * @param between between的值 格式为 1,2
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function between($field, $between) {
         $this->between_common($field, $between, 'BETWEEN');
@@ -487,6 +518,7 @@ class Model {
      * @param between between的值 格式为 1,2
      *
      * @author Colin <15070091894@163.com>
+     * @return \system\Model
      */
     public function notbetween($field, $between) {
         $this->between_common($field, $between, 'NOT BETWEEN');
@@ -500,6 +532,7 @@ class Model {
      * @param sql 要执行的sql语句
      *
      * @author Colin <15070091894@163.com>
+     * @return bool
      */
     public function execute($sql) {
         return $this->db->execute($sql);
@@ -511,6 +544,7 @@ class Model {
      * @param sql 要执行的sql语句
      *
      * @author Colin <15070091894@163.com>
+     * @return int
      */
     public function execute_resource($sql) {
         return $this->ADUP($sql);
@@ -519,10 +553,11 @@ class Model {
     /**
      * 获取下一条数据
      *
-     * @param  id 获取下一条数据的ID
-     * @param  field 查询字段
+     * @param string $id    获取下一条数据的ID
+     * @param string $field 查询字段
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function next($id, $field = '*') {
         return $this->field($field)->where('id', $id, null, '>')->find();
@@ -535,6 +570,7 @@ class Model {
      * @param  field 查询字段
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     public function prev($id, $field = '*') {
         return $this->field($field)->where('id', $id, null, '<')->find();
@@ -568,6 +604,10 @@ class Model {
 
     /**
      * 容错处理机制
+     *
+     * @param string $fun
+     * @param string $param
+     *
      * @author Colin <15070091894@163.com>
      */
     public function __call($fun, $param = null) {
@@ -576,6 +616,10 @@ class Model {
 
     /**
      * 静态方法容错处理机制
+     *
+     * @param string $fun
+     * @param string $param
+     *
      * @author Colin <15070091894@163.com>
      */
     static public function __callStatic($fun, $param = null) {
@@ -596,6 +640,7 @@ class Model {
      * @param  tables 表名
      *
      * @author Colin <15070091894@163.com>
+     * @return string
      */
     protected function getFields($tables = null) {
         if (!$tables) $tables = $this->DataName;
@@ -755,7 +800,7 @@ class Model {
      *
      * @param  [type] $data [description]
      *
-     * @return [type]       [description]
+     * @return string
      */
     protected function _parse_prefix($data = null) {
         //处理表前缀
@@ -768,11 +813,10 @@ class Model {
 
     /**
      * 清理where条件和join
-     * @return [type] [description]
      */
     protected function _clearThis() {
-        $this->Where = [];
-        $this->Join  = [];
+        $this->Where = array();
+        $this->Join  = array();
     }
 
     /**
@@ -806,6 +850,8 @@ class Model {
      * @param array 要被解析的数据
      *
      * @author Colin <15070091894@163.com>
+     * @return string
+     * @throws
      */
     protected function ParData($type, $array) {
         $setKey   = '';
@@ -849,7 +895,7 @@ class Model {
      * @param boolean $showOr 是否显示and 或 $this->whereOr
      * @param string  $sub    条件操作符
      *
-     * @return [type] [description]
+     * @return array
      */
     protected function parseWhere($field = null, $showOr = false, $sub = null) {
         $field = myclass_filter($field);
@@ -883,7 +929,7 @@ class Model {
 
     /**
      * 获取where条件
-     * @return [type] [description]
+     * @return string
      */
     protected function getWhere() {
         $where      = '';
@@ -902,10 +948,11 @@ class Model {
     /**
      * 获取结果集
      *
-     * @param sql sql语句
-     * @param is_more 是否为获取多条数据
+     * @param string $sql     sql语句
+     * @param bool   $is_more 是否为获取多条数据
      *
      * @author Colin <15070091894@163.com>
+     * @return array
      */
     protected function getResult($sql = null, $is_more = false) {
         $sql    = $sql === null ? $this->Sql : $sql;
@@ -939,7 +986,7 @@ class Model {
 
     /**
      * in操作公共方法
-     * @return [type] [description]
+     * @return string
      */
     protected function in_common($field, $in, $keyword) {
         if (is_array($in)) {
@@ -977,5 +1024,3 @@ class Model {
         }
     }
 }
-
-?>

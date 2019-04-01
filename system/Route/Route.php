@@ -19,7 +19,6 @@ class Route {
     /**
      * 初始化路由
      * @author Colin <15070091894@163.com>
-     * @return [type] [description]
      */
     public static function init() {
         self::enableRoute();
@@ -55,7 +54,7 @@ class Route {
      * @param array  $attr      属性 array('middleware' => '中间件' , 'routes' => array('/index'));
      *
      * @author Colin <15070091894@163.com>
-     * @return [type] [description]
+     * @throws
      */
     public static function group($groupName, $attr = array()) {
         $parse_url = Url::parseUrl();
@@ -87,7 +86,6 @@ class Route {
 
     /**
      * 开启Route
-     * @return [type] [description]
      */
     public static function enableRoute() {
         self::parseRoutes();
@@ -96,7 +94,6 @@ class Route {
     /**
      * 解析路由
      * @author Colin <15070091894@163.com>
-     * @return [type] [description]
      */
     public static function parseRoutes() {
         $parse_url = Url::parseUrl();
@@ -173,7 +170,8 @@ class Route {
      * @param array $route 当前执行的路由
      *
      * @author Colin <15070091894@163.com>
-     * @return [type] [description]
+     * @return string
+     * @throws
      */
     public static function execRoute($route) {
         $controllerOrAction = explode('@', $route['route']);
@@ -219,7 +217,6 @@ class Route {
 
     /**
      * 显示视图
-     * @return [type] [description]
      */
     protected static function showView($result) {
         Log::generator();
@@ -241,5 +238,3 @@ class Route {
         }
     }
 }
-
-?>

@@ -10,11 +10,6 @@
     ],
     "require": {
     	"php" : ">=5.3.0", 
-    	"ext-gd2": "*"
-    } , 
-    "autoload" : {
-    	"psr-4" : {
-    		"myclassphp\\" : "src/"
-    	}
+        "myclassphp/src": "^3.1"
     }
 }

@@ -2,6 +2,12 @@
 MyClassPHP是一个开源、免费的学习框架，也被称之为类库包，属于MVC框架成品
 官方交流群，提交BUG群  438695935
 
+## composer
+git clone完成后，执行 
+```
+composer install
+```
+
 例如：在/controllers 建立Admin目录，并建立Index.class.php，代码如下
 ```
 namespace controllers\Admin;

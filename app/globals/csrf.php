@@ -9,4 +9,3 @@ use system\Route\CSRF;
 CSRF::setAllow(array(
     //'/loginAction' , //对'/loginAction'这个路由不验证CSRF
 ));
-?>

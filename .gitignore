@@ -1,3 +1,5 @@
 # mac
 .DS_Store
 system/.DS_Store
+vendor
+app

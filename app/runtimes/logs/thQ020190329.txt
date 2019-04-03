@@ -1,8 +1,0 @@
-[ 2019-03-29 18:37:49 ] http://test.myclassphp.com
-SELECT *  FROM weixin_media
-[ 2019-03-29 18:37:59 ] http://test.myclassphp.com
-SELECT *  FROM weixin_media LIMIT 1
-[ 2019-03-29 18:38:30 ] http://test.myclassphp.com
-SELECT *  FROM weixin_media LIMIT 1
-[ 2019-03-29 19:06:02 ] http://test.myclassphp.com
-SELECT *  FROM weixin_media LIMIT 1

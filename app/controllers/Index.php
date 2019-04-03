@@ -3,6 +3,7 @@
 namespace controllers;
 
 use system\Base;
+use system\Log;
 use system\Model;
 
 class Index extends Base {
@@ -12,7 +13,9 @@ class Index extends Base {
 
     public function test() {
         $model = new Model();
-        $list  = $model->from('weixin_media')->limit(1)->select();
+        Log::debug('debug test');
+        Log::info('info test');
+        $list = $model->from('weixin_media')->limit(1)->select();
 
         return $list;
     }

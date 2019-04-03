@@ -12,4 +12,3 @@ Route::add(array(
     '/'     => '\controllers\Index@index',
     '/test' => '\controllers\Index@test'
 ));
-?>

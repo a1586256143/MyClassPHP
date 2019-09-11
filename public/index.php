@@ -4,4 +4,4 @@ define('Debug', true);
 //MyClass目录
 define('MyClass', substr(__DIR__, 0, -7));
 //引入核心文件
-require_once MyClass . '/vendor/myclassphp/src/system/Run.php';
+require_once MyClass . '/vendor/autoload.php';

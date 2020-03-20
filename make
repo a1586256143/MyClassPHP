@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 if (PHP_SAPI !== 'cli') {
     exit('Please run in CLI mode');

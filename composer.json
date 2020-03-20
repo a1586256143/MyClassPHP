@@ -1,5 +1,5 @@
 {
     "require": {
-        "myclassphp/src": ">=3.2.0"
+        "myclassphp/src": ">=3.2.2"
     }
 }

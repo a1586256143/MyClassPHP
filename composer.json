@@ -1,5 +1,25 @@
 {
+	"name": "myclassphp/src",
+	"description": "The MyClassPHP Framework..",
+	"license": "MIT",
+	"authors": [
+        {
+            "name": "Colin",
+            "email": "amcolin@126.com"
+        }
+    ],
     "require": {
-        "myclassphp/src": ">=3.2.2"
-    }
+        "php": ">=5.5.0",
+        "smarty/smarty": "~3.1.33",
+        "ext-json": "*",
+        "ext-redis": "*",
+        "ext-mysqli": "*",
+        "ext-pdo": "*",
+        "ext-gd": "*",
+        "ext-mbstring": "*" , 
+        "myclassphp/src": "dev-master"
+    },
+	"config": {
+		"bin-dir": "/"
+	}
 }
